@@ -186,8 +186,134 @@
         <h1>📊 CPU Scheduling Algorithms Visualizer</h1>
         <p class="subtitle">Operating Systems Project - by Meelo <3 </p>
 
-                <!-- Top Ad Unit -->
-                <div style="margin: 20px 0; text-align: center;">
+                <!-- Educational Content Section -->
+                <section style="margin: 40px 0; line-height: 1.8; color: #333;">
+                    <h2
+                        style="color: #667eea; font-size: 1.8em; margin-bottom: 15px; border-bottom: 3px solid #667eea; padding-bottom: 10px;">
+                        What is CPU Scheduling?
+                    </h2>
+                    <p style="margin-bottom: 20px; font-size: 1.05em;">
+                        CPU scheduling is a fundamental concept in Operating Systems that determines how processes are
+                        assigned CPU time.
+                        The scheduler is responsible for selecting which process should execute next, directly impacting
+                        system performance,
+                        fairness, and resource utilization. Different scheduling algorithms aim to optimize various
+                        performance metrics such as
+                        <strong>waiting time</strong>, <strong>turnaround time</strong>, <strong>response time</strong>,
+                        and <strong>CPU utilization</strong>.
+                    </p>
+
+                    <h3 style="color: #764ba2; font-size: 1.5em; margin: 25px 0 12px 0;">
+                        📚 Understanding Scheduling Algorithms
+                    </h3>
+
+                    <div
+                        style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #FF6384;">
+                        <h4 style="color: #FF6384; margin-bottom: 8px; font-size: 1.2em;">
+                            🔴 FCFS (First Come First Serve)
+                        </h4>
+                        <p style="margin-bottom: 8px;">
+                            The simplest scheduling algorithm that executes processes in the exact order they arrive in
+                            the ready queue.
+                            While easy to implement and understand, FCFS can suffer from the <strong>"convoy
+                                effect"</strong> where shorter
+                            processes wait for long processes to complete, leading to increased average waiting time.
+                        </p>
+                        <p style="font-size: 0.95em; color: #666;">
+                            <strong>Best for:</strong> Batch systems with similar process lengths •
+                            <strong>Weakness:</strong> Poor average waiting time
+                        </p>
+                    </div>
+
+                    <div
+                        style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #36A2EB;">
+                        <h4 style="color: #36A2EB; margin-bottom: 8px; font-size: 1.2em;">
+                            🔵 SJF (Shortest Job First)
+                        </h4>
+                        <p style="margin-bottom: 8px;">
+                            Selects the process with the smallest burst time to execute next. SJF is proven to give the
+                            <strong>minimum average
+                                waiting time</strong> for a given set of processes. However, it can cause
+                            <strong>starvation</strong> for longer processes
+                            and requires knowledge of future CPU burst times, which is often impossible to predict
+                            accurately.
+                        </p>
+                        <p style="font-size: 0.95em; color: #666;">
+                            <strong>Best for:</strong> Systems where process times are predictable •
+                            <strong>Weakness:</strong> Starvation of long processes
+                        </p>
+                    </div>
+
+                    <div
+                        style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #FFCE56;">
+                        <h4 style="color: #d4a017; margin-bottom: 8px; font-size: 1.2em;">
+                            🟡 Priority Scheduling (Non-Preemptive & Preemptive)
+                        </h4>
+                        <p style="margin-bottom: 8px;">
+                            Assigns each process a priority value, and the scheduler selects the highest-priority
+                            process to execute.
+                            <strong>Non-preemptive</strong> priority scheduling allows a process to run to completion
+                            once started, while
+                            <strong>preemptive</strong> priority scheduling can interrupt a running process if a
+                            higher-priority process arrives.
+                            This algorithm can also suffer from starvation, which is typically solved using
+                            <strong>aging</strong>.
+                        </p>
+                        <p style="font-size: 0.95em; color: #666;">
+                            <strong>Best for:</strong> Real-time systems with critical tasks •
+                            <strong>Weakness:</strong> Low-priority process starvation
+                        </p>
+                    </div>
+
+                    <div
+                        style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #9966FF;">
+                        <h4 style="color: #9966FF; margin-bottom: 8px; font-size: 1.2em;">
+                            🟣 Round Robin (RR)
+                        </h4>
+                        <p style="margin-bottom: 8px;">
+                            Uses a fixed <strong>time quantum</strong> (time slice) to ensure fairness. Each process
+                            gets an equal share of CPU time
+                            in a cyclic manner. If a process doesn't complete within its quantum, it's moved to the end
+                            of the ready queue.
+                            Round Robin is highly effective for time-sharing systems and guarantees that no process
+                            waits indefinitely.
+                        </p>
+                        <p style="font-size: 0.95em; color: #666;">
+                            <strong>Best for:</strong> Interactive/time-sharing systems • <strong>Weakness:</strong>
+                            Context-switching overhead
+                        </p>
+                    </div>
+
+                    <h3 style="color: #764ba2; font-size: 1.5em; margin: 30px 0 12px 0;">
+                        🎯 Why Use This Visualizer?
+                    </h3>
+                    <p style="margin-bottom: 15px; font-size: 1.05em;">
+                        This interactive tool helps <strong>students and educators</strong> understand how each
+                        scheduling algorithm behaves
+                        by generating <strong>Gantt charts</strong> and detailed <strong>performance
+                            comparisons</strong>. You can:
+                    </p>
+                    <ul style="margin: 15px 0 15px 30px; font-size: 1.02em; line-height: 2;">
+                        <li>📊 Visualize process execution timelines with interactive Gantt charts</li>
+                        <li>📈 Compare average waiting time and turnaround time across all algorithms</li>
+                        <li>🔬 Experiment with different arrival times, burst times, and priorities</li>
+                        <li>⚙️ Adjust the time quantum for Round Robin to see its impact</li>
+                        <li>🎓 Learn by doing: test different scenarios and observe algorithm behavior</li>
+                    </ul>
+
+                    <p
+                        style="margin-top: 25px; padding: 20px; background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border-radius: 10px; font-size: 1.05em; border: 2px solid #667eea;">
+                        <strong style="color: #667eea;">💡 Perfect for:</strong> Operating Systems courses, exam
+                        preparation,
+                        understanding OS concepts, and developing intuition about process scheduling trade-offs.
+                        Whether you're a student learning OS fundamentals or an educator demonstrating concepts,
+                        this visualizer provides instant, clear feedback on how scheduling decisions affect system
+                        performance.
+                    </p>
+                </section>
+
+                <!-- Top Ad Unit - Placed AFTER Educational Content -->
+                <div style="margin: 30px 0; text-align: center;">
                     <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
                         data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
                     <script>
@@ -645,6 +771,25 @@
 
         // Generate initial visualizations on page load
         window.onload = () => generateVisualizations();
+    </script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAtn-KqW2bQ2xi2b1RRmSe_JEli_EbVmnc",
+            authDomain: "cpuos-ae329.firebaseapp.com",
+            projectId: "cpuos-ae329",
+            storageBucket: "cpuos-ae329.firebasestorage.app",
+            messagingSenderId: "878125629636",
+            appId: "1:878125629636:web:1fce4ea5c5c8ede8b68991",
+            measurementId: "G-K85JGEX1BV"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        console.log("Firebase initialized");
     </script>
 </body>
 
