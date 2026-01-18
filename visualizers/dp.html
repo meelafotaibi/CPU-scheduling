@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Programming Visualizer | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .visualizer-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .dp-display {
+            width: 100%;
+            height: 450px;
+            
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .dp-table {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .dp-cell {
+            width: 70px;
+            height: 70px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            background: white;
+            position: relative;
+        }
+
+        .dp-cell.active {
+            border-color: var(--primary);
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .dp-cell.filled {
+            /* background: #e6ffed; removed */
+            border-color: #28a745;
+        }
+
+        .dp-cell.highlight {
+            background: #fff3cd;
+            border-color: #f39c12;
+        }
+
+        .cell-index {
+            font-size: 0.7rem;
+            color: #999;
+            position: absolute;
+            top: 5px;
+            left: 8px;
+        }
+
+        .cell-value {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .mode-toggle {
+            display: flex;
+            /* background: #f1f3f5; removed */
+            padding: 5px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .mode-btn.active {
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            color: var(--primary);
+        }
+    </style>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="../index.html">Home</a>
+                <a href="../algorithms.html">Back to Algorithms</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 40px;">
+            <span class="btn-primary"
+                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Optimization</span>
+            <h1>Dynamic Programming</h1>
+            <p>Master DP by visualizing how overlapping subproblems are solved and stored to avoid redundant
+                calculations.</p>
+        </header>
+
+        <div class="visualizer-layout">
+            <div class="glass-card" style="padding: 30px;">
+                <div class="mode-toggle">
+                    <button class="mode-btn active" id="memo-btn">Memoization (Top-Down)</button>
+                    <button class="mode-btn" id="tab-btn">Tabulation (Bottom-Up)</button>
+                </div>
+
+                <div class="dp-display">
+                    <div id="dp-container" class="dp-table"></div>
+                </div>
+
+                <div style="margin-top: 25px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Start
+                            Fibonacci</button>
+                        <button class="btn" id="next-btn" style="background: var(--dark); color: white;">Next
+                            Step</button>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label>Target N:</label>
+                        <select id="n-val" style="padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                            <option value="5">5</option>
+                            <option value="7">7</option>
+                            <option value="8" selected>8</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>📜 Execution Log</h4>
+                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 10px; min-height: 50px;">Set N and
+                        click Start to see DP in action.</p>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>🧠 DP Strategy</h4>
+                    <p id="strategy-info" style="font-size: 0.85rem; color: #666; line-height: 1.5;">
+                        <strong>Memoization:</strong> Recursive approach that stores results in a table (usually
+                        Hash/Array) to avoid re-calculating the same input.
+                    </p>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>💡 Complexity</h4>
+                    <div style="font-size: 0.85rem;">
+                        <p><strong>Naive Recursion:</strong> O(2ⁿ)</p>
+                        <p style="color: var(--primary); font-weight: bold;"><strong>With DP:</strong> O(n)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ad Slot -->
+        <div style="margin: 60px 0; text-align: center;">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
+                data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>
+                window.onload = () => {
+                    setTimeout(() => {
+                        try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { }
+                    }, 1000);
+                };
+            </script>
+        </div>
+    </main>
+
+    <script src="../assets/js/core/playback.js"></script>
+    <script src="../assets/js/algos/dp-fib.js"></script>
+    <script>
+        const ui = {
+            updateStatus: (t) => document.getElementById('explanation-text').innerText = t,
+            updateMemoTable: (memo) => {
+                const container = document.getElementById('dp-container');
+                const n = parseInt(document.getElementById('n-val').value);
+                container.innerHTML = '';
+                for (let i = 0; i <= n; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = `dp-cell ${memo[i] !== undefined ? 'filled' : ''}`;
+                    cell.innerHTML = `
+                        <span class="cell-index">n=${i}</span>
+                        <span class="cell-value">${memo[i] !== undefined ? memo[i] : '?'}</span>
+                    `;
+                    container.appendChild(cell);
+                }
+            },
+            updateTabTable: (arr, activeIdx) => {
+                const container = document.getElementById('dp-container');
+                container.innerHTML = '';
+                arr.forEach((val, i) => {
+                    const cell = document.createElement('div');
+                    cell.className = `dp-cell ${val !== null ? 'filled' : ''} ${i === activeIdx ? 'active' : ''} ${i < activeIdx ? 'highlight' : ''}`;
+                    cell.innerHTML = `
+                        <span class="cell-index">idx=${i}</span>
+                        <span class="cell-value">${val !== null ? val : ''}</span>
+                    `;
+                    container.appendChild(cell);
+                });
+            }
+        };
+
+        const playback = new Playback(() => algo.nextStep());
+        const algo = new DPFibAlgo(null, ui);
+
+        document.getElementById('memo-btn').onclick = () => {
+            algo.mode = 'memo';
+            document.getElementById('memo-btn').classList.add('active');
+            document.getElementById('tab-btn').classList.remove('active');
+            document.getElementById('strategy-info').innerHTML = `<strong>Memoization:</strong> Recursive approach that stores results in a table to avoid re-calculating subproblems.`;
+            algo.reset();
+        };
+
+        document.getElementById('tab-btn').onclick = () => {
+            algo.mode = 'tab';
+            document.getElementById('tab-btn').classList.add('active');
+            document.getElementById('memo-btn').classList.remove('active');
+            document.getElementById('strategy-info').innerHTML = `<strong>Tabulation:</strong> Iterative approach that fills a table from the smallest subproblems up to the final answer.`;
+            algo.reset();
+        };
+
+        document.getElementById('play-btn').onclick = () => {
+            const n = parseInt(document.getElementById('n-val').value);
+            algo.reset();
+            if (algo.mode === 'memo') algo.generateMemoSteps(n);
+            else algo.generateTabSteps(n);
+            playback.play();
+        };
+
+        document.getElementById('next-btn').onclick = () => {
+            if (algo.steps.length === 0) {
+                const n = parseInt(document.getElementById('n-val').value);
+                if (algo.mode === 'memo') algo.generateMemoSteps(n);
+                else algo.generateTabSteps(n);
+            }
+            algo.nextStep();
+        };
+
+        window.onload = () => {
+            algo.reset();
+            ui.updateMemoTable({});
+        };
+    </script>
+
+    <script src='../assets/js/core/ui-extras.js'></script>
+</body>
+
+</html>

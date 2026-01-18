@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BFS Visualizer | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .visualizer-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        #graph-canvas {
+            width: 100%;
+            height: 500px;
+
+            border: 2px solid #eee;
+            border-radius: 12px;
+        }
+
+        .queue-display {
+            display: flex;
+            gap: 10px;
+            /* background: #eee; removed */
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 60px;
+            overflow-x: auto;
+        }
+
+        .queue-item {
+            padding: 10px 15px;
+            background: var(--primary);
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="container nav-content">
+            <a href="../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links"><a href="../index.html">Home</a><a href="../algorithms.html">Back to Algorithms</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 40px;">
+            <span class="btn-primary"
+                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Graph
+                Traversal</span>
+            <h1>Breadth-First Search (BFS)</h1>
+            <p><strong>Breadth-First Search</strong> explores nodes layer by layer using a <strong>Queue</strong>. It is
+                ideal for finding the shortest path in unweighted graphs.</p>
+        </header>
+
+        <div class="visualizer-layout">
+            <div class="glass-card" style="padding: 30px;">
+                <canvas id="graph-canvas"></canvas>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px;">
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Run</button>
+                        <button class="btn" id="grid-toggle-btn" title="Toggle Grid"><i
+                                class="fas fa-border-all"></i></button>
+                        <button class="btn" id="reset-btn"
+                            style="border: 1px solid var(--accent); color: var(--accent);"><i class="fas fa-undo"></i>
+                            Reset</button>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;"><i
+                            class="fas fa-tachometer-alt"></i><input type="range" id="speed-slider" min="1" max="100"
+                            value="50"></div>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>📜 Live Explanation</h4>
+                    <p id="explanation-text" style="font-size: 0.9rem; margin-top: 10px;">Ready to start BFS.</p>
+                </div>
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>🚉 Queue (First-In, First-Out)</h4>
+                    <div id="queue-container" class="queue-display">
+                        <span style="color: #999;">Queue is empty</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Ad Slot -->
+            <div style="margin-top: 40px; text-align: center;">
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
+                    data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            </div>
+    </main>
+
+    <script src="../assets/js/core/graph-engine.js"></script>
+    <script src="../assets/js/core/playback.js"></script>
+    <script src="../assets/js/algos/bfs.js"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
+        crossorigin="anonymous"></script>
+    <script>
+        window.engine = new GraphEngine('graph-canvas');
+        const playback = new Playback(() => window.algo.nextStep());
+        const ui = {
+            updateStatus: (txt) => { document.getElementById('explanation-text').innerText = txt; },
+            updateQueue: (q) => {
+                const container = document.getElementById('queue-container');
+                container.innerHTML = q.length === 0 ? '<span style="color: #999;">Queue is empty</span>' : q.map(id => `<div class="queue-item">${id}</div>`).join('');
+            }
+        };
+        window.algo = new BFSAlgo(window.engine, playback, ui);
+        const nodes = [{ id: 1, x: 100, y: 100 }, { id: 2, x: 250, y: 50 }, { id: 3, x: 400, y: 100 }, { id: 4, x: 100, y: 300 }, { id: 5, x: 250, y: 400 }, { id: 6, x: 400, y: 300 }, { id: 7, x: 250, y: 200 }];
+        const edges = [[1, 2], [1, 4], [1, 7], [2, 3], [3, 6], [4, 5], [5, 6], [7, 5], [7, 2]];
+
+        document.getElementById('play-btn').onclick = () => {
+            if (playback.isRunning) { playback.pause(); document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Play'; }
+            else { playback.play(); document.getElementById('play-btn').innerHTML = '<i class="fas fa-pause"></i> Pause'; }
+        };
+        document.getElementById('step-btn').onclick = () => playback.step();
+        document.getElementById('reset-btn').onclick = () => { playback.reset(); window.algo.reset(); document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Play'; };
+        document.getElementById('speed-slider').oninput = (e) => playback.setSpeed(e.target.value);
+
+        document.getElementById('grid-toggle-btn').onclick = () => {
+            window.engine.showGrid = !window.engine.showGrid;
+            document.getElementById('grid-toggle-btn').classList.toggle('active');
+            window.engine.draw();
+        };
+
+        window.onload = () => {
+            window.engine.setGraph(nodes, edges);
+            window.algo.reset();
+            setTimeout(() => {
+                try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { }
+            }, 1000);
+        };
+    </script>
+
+    <script src='../assets/js/core/ui-extras.js'></script>
+</body>
+
+</html>

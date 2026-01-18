@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Banker's Algorithm | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        [data-theme="dark"] nav {
+            background: rgba(15, 23, 42, 0.95) !important;
+        }
+
+        [data-theme="dark"] input,
+        [data-theme="dark"] select {
+            background: rgba(15, 23, 42, 0.8) !important;
+            color: #f1f5f9 !important;
+            border: 1px solid rgba(148, 163, 184, 0.3) !important;
+        }
+
+        [data-theme="dark"] table {
+            border-color: rgba(148, 163, 184, 0.2) !important;
+        }
+
+        [data-theme="dark"] th {
+            background: rgba(167, 139, 250, 0.2) !important;
+        }
+    </style>
+    <style>
+        .visualizer-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .matrix-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .matrix-box h4 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px;
+            text-align: center;
+        }
+
+        tr.active-row {
+            background: rgba(34, 211, 238, 0.2);
+        }
+
+        tr.safe-row {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+        }
+
+        .status-bar {
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            margin-top: 20px;
+            font-family: monospace;
+        }
+    </style>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <nav>
+        <div class="container nav-content">
+            <a href="../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="../os.html">Back to OS</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 40px;">
+            <span class="btn-primary"
+                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Deadlock
+                Avoidance</span>
+            <h1>Banker's Algorithm</h1>
+            <p>Simulate resource allocation to ensure the system remains in a Safe State.</p>
+        </header>
+
+        <div class="visualizer-layout">
+            <div class="glass-card" style="padding: 20px;">
+                <div class="matrix-container">
+                    <div class="matrix-box">
+                        <h4>Allocation</h4>
+                        <table id="alloc-table"></table>
+                    </div>
+                    <div class="matrix-box">
+                        <h4>Max</h4>
+                        <table id="max-table"></table>
+                    </div>
+                    <div class="matrix-box">
+                        <h4>Need</h4>
+                        <table id="need-table"></table>
+                    </div>
+                    <div class="matrix-box">
+                        <h4>Available</h4>
+                        <table id="avail-table"></table>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="runSafety()">Check Safety</button>
+                    <button class="btn" onclick="addProcess()" style="background: var(--secondary); color: white;">+ Add
+                        Process</button>
+                    <button class="btn" onclick="removeProcess()" style="background: #ef4444; color: white;">-
+                        Remove</button>
+                    <button class="btn" onclick="location.reload()"
+                        style="background: var(--dark); color: white;">Reset</button>
+                </div>
+
+                <div class="status-bar" id="log-display">
+                    System Ready. Initial Available: [3, 3, 2]
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <!-- Info/Code Cards Injected Here -->
+            </div>
+        </div>
+
+        <!-- Ad Slot -->
+        <div style="margin: 60px 0; text-align: center;">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
+                data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>
+                window.onload = () => {
+                    setTimeout(() => { try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { } }, 1000);
+                };
+            </script>
+        </div>
+    </main>
+
+    <script src="../assets/js/algos/bankers.js"></script>
+    <script>
+        const algo = new BankersAlgo('none');
+
+        // Initial rendering
+        function renderTables() {
+            // Render Allocation (Editable)
+            let html = '<tr><th>P</th><th>A</th><th>B</th><th>C</th></tr>';
+            algo.allocation.forEach((row, i) => {
+                html += `<tr id="row-p${i}">
+                    <td>P${i}</td>
+                    ${row.map((v, j) => `<td><input type="number" class="alloc-input" data-p="${i}" data-r="${j}" value="${v}" style="width: 40px; padding: 5px; text-align: center; border-radius: 4px; border: 1px solid #ddd;"></td>`).join('')}
+                </tr>`;
+            });
+            document.getElementById('alloc-table').innerHTML = html;
+
+            // Render Max (Editable)
+            html = '<tr><th>A</th><th>B</th><th>C</th></tr>';
+            algo.max.forEach((row, i) => {
+                html += `<tr>${row.map((v, j) => `<td><input type="number" class="max-input" data-p="${i}" data-r="${j}" value="${v}" style="width: 40px; padding: 5px; text-align: center; border-radius: 4px; border: 1px solid #ddd;"></td>`).join('')}</tr>`;
+            });
+            document.getElementById('max-table').innerHTML = html;
+
+            // Render Need (Read-Only, Calculated)
+            // We calculate need based on current DOM inputs or internal state? 
+            // Better to update internal state first then render.
+            // For now, render based on internal state.
+            html = '<tr><th>A</th><th>B</th><th>C</th></tr>';
+            algo.need.forEach(row => {
+                html += `<tr>${row.map(v => `<td style="width: 50px;">${v}</td>`).join('')}</tr>`;
+            });
+            document.getElementById('need-table').innerHTML = html;
+
+            // Render Available (Editable)
+            document.getElementById('avail-table').innerHTML = `<tr><th>A</th><th>B</th><th>C</th></tr><tr>${algo.available.map((v, j) => `<td><input type="number" class="avail-input" data-r="${j}" value="${v}" style="width: 40px; padding: 5px; text-align: center; border-radius: 4px; border: 1px solid #ddd;"></td>`).join('')}</tr>`;
+        }
+
+        function addProcess() {
+            // Add row to allocation and max
+            algo.allocation.push([0, 0, 0]);
+            algo.max.push([0, 0, 0]);
+            algo.processes++;
+            algo.calcNeed();
+            renderTables();
+        }
+
+        function removeProcess() {
+            if (algo.processes > 1) {
+                algo.allocation.pop();
+                algo.max.pop();
+                algo.processes--;
+                algo.calcNeed();
+                renderTables();
+            }
+        }
+
+        function scrapeInputs() {
+            // Update algo object from DOM inputs
+            const allocInputs = document.querySelectorAll('.alloc-input');
+            allocInputs.forEach(inp => {
+                const p = parseInt(inp.dataset.p);
+                const r = parseInt(inp.dataset.r);
+                algo.allocation[p][r] = parseInt(inp.value) || 0;
+            });
+
+            const maxInputs = document.querySelectorAll('.max-input');
+            maxInputs.forEach(inp => {
+                const p = parseInt(inp.dataset.p);
+                const r = parseInt(inp.dataset.r);
+                algo.max[p][r] = parseInt(inp.value) || 0;
+            });
+
+            const availInputs = document.querySelectorAll('.avail-input');
+            availInputs.forEach(inp => {
+                const r = parseInt(inp.dataset.r);
+                algo.available[r] = parseInt(inp.value) || 0;
+            });
+
+            algo.calcNeed(); // Recalculate Need matrix
+            renderTables();  // Re-render to show updated Need
+        }
+
+        async function runSafety() {
+            scrapeInputs(); // Get latest values from user
+
+            // Reset UI highlights
+            document.querySelectorAll('tr').forEach(tr => {
+                tr.classList.remove('active-row');
+                tr.classList.remove('safe-row');
+            });
+
+            const safe = algo.calculateSafety();
+            const logBox = document.getElementById('log-display');
+
+            if (!safe) {
+                logBox.innerText = "DEADLOCK DETECTED! No safe sequence.";
+                logBox.style.color = "#ff6b6b";
+                return;
+            }
+
+            logBox.innerText = "Checking safety...";
+            logBox.style.color = "var(--light)";
+
+            // Clone available for visualization
+            let vizWork = [...algo.available];
+            // Note: algo.calculateSafety updates algo.steps based on internal state logic
+            // But we want to simulate step-by-step
+
+            for (const step of algo.steps) {
+                if (step.type === 'safe') {
+                    // Highlight row
+                    const row = document.getElementById(`row-p${step.pid}`);
+                    if (row) row.classList.add('active-row');
+
+                    logBox.innerText = `Checking P${step.pid}... Need <= Available. Executing...`;
+                    await new Promise(r => setTimeout(r, 800));
+
+                    if (row) {
+                        row.classList.remove('active-row');
+                        row.classList.add('safe-row');
+                    }
+
+                    // Update Available in UI (Real-time feedback)
+                    document.getElementById('avail-table').innerHTML = `<tr><th>A</th><th>B</th><th>C</th></tr><tr>${step.work.map(v => `<td><strong style="color: var(--accent)">${v}</strong></td>`).join('')}</tr>`;
+
+                    logBox.innerText = step.msg;
+                    await new Promise(r => setTimeout(r, 800));
+                } else if (step.type === 'final') {
+                    logBox.innerText = step.msg;
+                    logBox.style.color = "#22d3ee"; // Neon
+                }
+            }
+        }
+
+        // Add event listeners for auto-recalc need on input change? 
+        // Maybe too heavy. Let's stick to "Check Safety" triggering the update.
+        // Or adding a "Update Need" button? 
+        // Better: Update need when user leaves an input field.
+        document.addEventListener('change', (e) => {
+            if (e.target.classList.contains('alloc-input') || e.target.classList.contains('max-input')) {
+                scrapeInputs();
+            }
+        });
+
+        renderTables();
+    </script>
+    <script src="../assets/js/core/algo-content.js"></script>
+    <script src='../assets/js/core/ui-extras.js'></script>
+</body>
+
+</html>

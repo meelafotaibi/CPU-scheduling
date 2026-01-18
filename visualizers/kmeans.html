@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Means Clustering Visualizer | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .visualizer-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        #ml-canvas {
+            width: 100%;
+            height: 500px;
+            
+            border: 2px solid #eee;
+            border-radius: 12px;
+            cursor: crosshair;
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .centroid-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            /* background: #f8f9fa; removed */
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+
+        .color-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+        }
+    </style>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="../index.html">Home</a>
+                <a href="../ai.html">Back to AI</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 40px;">
+            <span class="btn-primary"
+                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Machine
+                Learning</span>
+            <h1>K-Means Clustering Visualizer</h1>
+            <p>An unsupervised learning algorithm that groups similar data points into <strong>K</strong> clusters based
+                on their distance to centroids.</p>
+        </header>
+
+        <div class="visualizer-layout">
+            <div class="glass-card" style="padding: 30px;">
+                <canvas id="ml-canvas"></canvas>
+
+                <div style="margin-top: 25px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="btn btn-primary" id="step-btn">Next Step</button>
+                        <button class="btn" id="run-btn" style="background: var(--dark); color: white;">Run
+                            Auto</button>
+                        <button class="btn" id="grid-toggle-btn" title="Toggle Grid"><i
+                                class="fas fa-border-all"></i></button>
+                        <button class="btn" id="reset-btn"
+                            style="border: 1px solid var(--accent); color: var(--accent);">Reset</button>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <label>K (Clusters):</label>
+                        <input type="number" id="k-value" value="3" min="2" max="6" style="width: 50px; padding: 5px;">
+                        <button class="btn" onclick="generateRandomData()" style="background: #6c757d; color: white;">🎲
+                            Random Data</button>
+                    </div>
+                </div>
+                <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">Click on the canvas to add custom data
+                    points.</p>
+            </div>
+
+            <div class="side-panel">
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>📜 Algorithm State</h4>
+                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 10px; min-height: 50px;">Ready. Add
+                        points or generate random ones, then click Next Step.</p>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>📍 Centroids (Mean Positions)</h4>
+                    <div id="centroids-list"></div>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>💡 How it works</h4>
+                    <div style="font-size: 0.85rem; margin-top: 10px;">
+                        <ol style="padding-left: 15px;">
+                            <li>Initialize K centroids randomly.</li>
+                            <li><strong>Assignment:</strong> Each point joins the nearest centroid's cluster.</li>
+                            <li><strong>Update:</strong> Centroids move to the center (mean) of their assigned points.
+                            </li>
+                            <li>Repeat until centroids stop moving.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ad Slot -->
+        <div style="margin: 60px 0; text-align: center;">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
+                data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>
+                window.onload = () => {
+                    setTimeout(() => {
+                        try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { }
+                    }, 1000);
+                };
+            </script>
+        </div>
+    </main>
+
+    <script src="../assets/js/core/ml-engine.js"></script>
+    <script>
+        const engine = new MLEngine('ml-canvas');
+        const colors = ['#e74c3c', '#2ecc71', '#3498db', '#f1c40f', '#9b59b6', '#e67e22'];
+        let state = 'init'; // init, assign, update, convergent
+        let isAutoRunning = false;
+
+        function updateUI() {
+            const list = document.getElementById('centroids-list');
+            list.innerHTML = engine.centroids.map((c, i) => `
+                <div class="centroid-item">
+                    <div class="color-dot" style="background: ${c.color}"></div>
+                    <span>Cluster ${i + 1}: (${Math.round(c.x)}, ${Math.round(c.y)})</span>
+                </div>
+            `).join('');
+        }
+
+        function generateRandomData() {
+            engine.clear();
+            state = 'init';
+            const k = parseInt(document.getElementById('k-value').value);
+
+            // Random points in groups
+            for (let i = 0; i < k; i++) {
+                const cx = Math.random() * (engine.canvas.width - 200) + 100;
+                const cy = Math.random() * (engine.canvas.height - 200) + 100;
+                for (let j = 0; j < 10; j++) {
+                    engine.addPoint(
+                        cx + (Math.random() - 0.5) * 150,
+                        cy + (Math.random() - 0.5) * 150
+                    );
+                }
+            }
+            document.getElementById('explanation-text').innerText = "Data generated. Click Next Step to initialize centroids.";
+        }
+
+        async function nextStep() {
+            if (engine.points.length === 0) {
+                alert("Add some points first!");
+                return;
+            }
+
+            if (state === 'init') {
+                const k = parseInt(document.getElementById('k-value').value);
+                engine.centroids = [];
+                for (let i = 0; i < k; i++) {
+                    const randomPoint = engine.points[Math.floor(Math.random() * engine.points.length)];
+                    engine.centroids.push({ x: randomPoint.x, y: randomPoint.y, color: colors[i] });
+                }
+                state = 'assign';
+                document.getElementById('explanation-text').innerText = "Centroids initialized randomly. Click Next to assign points.";
+            } else if (state === 'assign') {
+                engine.points.forEach(p => {
+                    let minDist = Infinity;
+                    let nearest = engine.centroids[0];
+                    engine.centroids.forEach(c => {
+                        const d = engine.getDistance(p, c);
+                        if (d < minDist) {
+                            minDist = d;
+                            nearest = c;
+                        }
+                    });
+                    p.color = nearest.color;
+                });
+                state = 'update';
+                document.getElementById('explanation-text').innerText = "Points assigned to the nearest centroid. Click Next to update centroid positions.";
+            } else if (state === 'update') {
+                let moved = false;
+                engine.centroids.forEach(c => {
+                    const assignedPoints = engine.points.filter(p => p.color === c.color);
+                    if (assignedPoints.length > 0) {
+                        const avgX = assignedPoints.reduce((s, p) => s + p.x, 0) / assignedPoints.length;
+                        const avgY = assignedPoints.reduce((s, p) => s + p.y, 0) / assignedPoints.length;
+                        if (Math.abs(c.x - avgX) > 1 || Math.abs(c.y - avgY) > 1) moved = true;
+                        c.x = avgX;
+                        c.y = avgY;
+                    }
+                });
+                if (!moved) {
+                    state = 'convergent';
+                    document.getElementById('explanation-text').innerText = "CONVERGED! Centroids are now at the center of their clusters.";
+                    isAutoRunning = false;
+                    document.getElementById('run-btn').innerText = "Run Auto";
+                } else {
+                    state = 'assign';
+                    document.getElementById('explanation-text').innerText = "Centroids moved to the mean of their clusters. Click Next to re-assign.";
+                }
+            }
+            engine.draw();
+            updateUI();
+        }
+
+        document.getElementById('step-btn').onclick = nextStep;
+        document.getElementById('reset-btn').onclick = () => {
+            engine.clear();
+            state = 'init';
+            updateUI();
+            document.getElementById('explanation-text').innerText = "Cleared. Click to add points or 'Random Data'.";
+        };
+
+        document.getElementById('run-btn').onclick = async () => {
+            if (isAutoRunning) {
+                isAutoRunning = false;
+                document.getElementById('run-btn').innerText = "Run Auto";
+                return;
+            }
+            isAutoRunning = true;
+            document.getElementById('run-btn').innerText = "Stop Auto";
+            while (isAutoRunning && state !== 'convergent') {
+                await nextStep();
+                await new Promise(r => setTimeout(r, 600));
+            }
+        };
+
+        document.getElementById('grid-toggle-btn').onclick = () => {
+            engine.showGrid = !engine.showGrid;
+            document.getElementById('grid-toggle-btn').classList.toggle('active');
+            engine.draw();
+        };
+
+        window.onload = () => {
+            generateRandomData();
+            setTimeout(() => { try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { } }, 1000);
+        };
+    </script>
+
+    <script src='../assets/js/core/ui-extras.js'></script>
+</body>
+
+</html>

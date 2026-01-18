@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Roadmap | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .roadmap-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+
+        .roadmap-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .category-section {
+            margin-bottom: 50px;
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .category-title i {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .skill-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .skill-item {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .skill-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .status-pill {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-done {
+            background: #e6ffed;
+            color: #28a745;
+        }
+
+        .status-planned {
+            background: #fff8e1;
+            color: #f39c12;
+        }
+
+        .status-soon {
+            background: #f1f3f5;
+            color: #666;
+        }
+
+        .progress-banner {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .progress-bar-container {
+            background: rgba(255, 255, 255, 0.2);
+            height: 12px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+
+        .progress-fill {
+            background: white;
+            height: 100%;
+            border-radius: 10px;
+            width: 100%;
+            /* Updated Progress */
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="container nav-content">
+            <a href="index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dsa.html">DSA</a>
+                <a href="algorithms.html">Algorithms</a>
+                <a href="os.html">OS</a>
+                <a href="ai.html">AI</a>
+                <a href="roadmap.html" style="color: var(--accent); font-weight: 700;">Roadmap</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="roadmap-container">
+        <div class="progress-banner glass-card">
+            <h1>Platform Roadmap</h1>
+            <p>Transparency is key. Here's our journey toward building the world's most comprehensive algorithm
+                visualizer.</p>
+            <div class="progress-bar-container">
+                <div class="progress-fill"></div>
+            </div>
+            <small>Current Completion: <strong>~100%</strong></small>
+        </div>
+
+        <!-- DSA SECTION -->
+        <div class="category-section">
+            <h2 class="category-title"><i class="fas fa-sitemap"></i> 1. Data Structures</h2>
+            <div class="skill-list">
+                <div class="skill-item"><span>Linked List</span> <span class="status-pill status-done">Done</span></div>
+                <div class="skill-item"><span>Stack & Queue</span> <span class="status-pill status-done">Done</span>
+                </div>
+                <div class="skill-item"><span>Binary Search Tree</span> <span
+                        class="status-pill status-done">Done</span></div>
+                <div class="skill-item"><span>AVL Trees</span> <span class="status-pill status-done">Done</span>
+                </div>
+                <div class="skill-item"><span>Binary Heaps</span> <span class="status-pill status-done">Done</span>
+                </div>
+                <div class="skill-item"><span>Trie Structure</span> <span class="status-pill status-done">Done</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALGORITHMS SECTION -->
+        <div class="category-section">
+            <h2 class="category-title"><i class="fas fa-project-diagram"></i> 2. Algorithms</h2>
+            <div class="skill-list">
+                <div class="skill-item"><span>Searching Suite</span> <span class="status-pill status-done">Done</span>
+                </div>
+                <div class="skill-item"><span>Sorting Suite</span> <span class="status-pill status-done">Done</span>
+                </div>
+                <div class="skill-item"><span>BFS & DFS</span> <span class="status-pill status-done">Done</span></div>
+                <div class="skill-item"><span>Dijkstra's Path</span> <span class="status-pill status-done">Done</span>
+                </div>
+                <div class="skill-item"><span>A* Search</span> <span class="status-pill status-done">Done</span></div>
+                <div class="skill-item"><span>Bellman-Ford</span> <span class="status-pill status-done">Done</span>
+                </div>
+                <div class="skill-item"><span>Prim's MST</span> <span class="status-pill status-done">Done</span></div>
+                <div class="skill-item"><span>Topo Sort</span> <span class="status-pill status-done">Done</span></div>
+                <div class="skill-item"><span>Cycle Detection</span> <span class="status-pill status-done">Done</span>
+                </div>
+                <div class="skill-item"><span>Recursion Tree</span> <span class="status-pill status-done">Done</span>
+                </div>
+                <div class="skill-item"><span>Dynamic Programming</span> <span
+                        class="status-pill status-done">Done</span></div>
+            </div>
+        </div>
+
+        <!-- OS SECTION -->
+        <div class="category-section">
+            <h2 class="category-title"><i class="fas fa-microchip"></i> 3. Operating Systems</h2>
+            <div class="skill-list">
+                <div class="skill-item"><span>CPU Scheduling</span> <span class="status-pill status-done">Done</span>
+                </div>
+                <div class="skill-item"><span>Memory Allocation</span> <span class="status-pill status-done">Done</span>
+                </div>
+                <div class="skill-item"><span>Page Replacement</span> <span class="status-pill status-done">Done</span>
+                </div>
+                <div class="skill-item"><span>Banker's Algorithm</span> <span
+                        class="status-pill status-done">Done</span></div>
+                <div class="skill-item"><span>Disk Scheduling</span> <span class="status-pill status-done">Done</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI SECTION -->
+        <div class="category-section">
+            <h2 class="category-title"><i class="fas fa-brain"></i> 4. Artificial Intelligence</h2>
+            <div class="skill-list">
+                <div class="skill-item"><span>Minimax Theory</span> <span class="status-pill status-done">Done</span>
+                </div>
+                <div class="skill-item"><span>Alpha-Beta Pruning</span> <span
+                        class="status-pill status-done">Done</span></div>
+                <div class="skill-item"><span>K-Means Clustering</span> <span
+                        class="status-pill status-done">Done</span></div>
+                <div class="skill-item"><span>Linear Regression</span> <span class="status-pill status-done">Done</span>
+                </div>
+                <div class="skill-item"><span>KNN / ML Basics</span> <span class="status-pill status-done">Done</span>
+                </div>
+                <div class="skill-item"><span>Neural Networks</span> <span
+                        class="status-pill status-planned">Planned</span></div>
+            </div>
+        </div>
+
+        <section class="glass-card" style="padding: 40px; text-align: center; margin-top: 80px;">
+            <h3>suggest a feature?</h3>
+            <p>AlgoVisual Hub is community-driven. If you need a specific visualization for your course or interview
+                prep, let us know.</p>
+            <a href="contact.html" class="btn btn-primary" style="margin-top: 20px;">Contact Developer</a>
+        </section>
+    </main>
+
+    <footer style="margin-top: 100px;">
+        <div class="container">
+            <p>&copy; 2025 AlgoVisual Hub — CTO Approved Roadmap 👑</p>
+        </div>
+    </footer>
+
+    <script src='assets/js/core/ui-extras.js'></script>
+</body>
+
+</html>

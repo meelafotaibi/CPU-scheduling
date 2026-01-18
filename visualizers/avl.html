@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVL Tree (Self-Balancing) Visualizer | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .visualizer-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        #avl-canvas {
+            width: 100%;
+            height: 550px;
+
+            border: 2px solid #eee;
+            border-radius: 12px;
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .avl-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 20px;
+        }
+    </style>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="../index.html">Home</a>
+                <a href="../dsa.html">Back to DSA</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 40px;">
+            <span class="btn-primary"
+                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Self-Balancing
+                Trees</span>
+            <h1>AVL Tree Visualizer</h1>
+            <p>Experience self-balancing trees in action. Watch how node rotations maintain O(log n) height.</p>
+        </header>
+
+        <div class="visualizer-layout">
+            <div class="glass-card" style="padding: 30px;">
+                <canvas id="avl-canvas"></canvas>
+
+                <div class="avl-controls">
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="avl-input" value="30"
+                            style="width: 80px; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                        <button class="btn btn-primary" id="insert-btn"><i class="fas fa-plus"></i> Insert</button>
+                    </div>
+                    <button class="btn" id="next-btn"
+                        style="border: 1px solid var(--accent); color: var(--accent);">Next Step</button>
+                    <button class="btn" id="reset-btn" style="border: 1px solid #ddd;">Clear Tree</button>
+                    <button class="btn" id="preset-btn" style="background: var(--dark); color: white;">Sequential
+                        Preset</button>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>📜 Execution Log</h4>
+                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 10px; min-height: 50px;">Insert a
+                        node to see rotations triggered by imbalance.</p>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>🏗️ Balancing Rules</h4>
+                    <p style="font-size: 0.8rem; color: #666; line-height: 1.5;">
+                        An <strong>AVL Tree</strong> ensures the height difference (balance factor) between left and
+                        right subtrees is at most 1. <br><br>
+                        <strong>Rotations:</strong><br>
+                        • Left-Left (LL)<br>
+                        • Right-Right (RR)<br>
+                        • Left-Right (LR)<br>
+                        • Right-Left (RL)
+                    </p>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>💡 Complexity</h4>
+                    <ul style="font-size: 0.85rem; color: #333; padding-left: 20px;">
+                        <li><strong>Search:</strong> O(log n)</li>
+                        <li><strong>Insert:</strong> O(log n)</li>
+                        <li><strong>Delete:</strong> O(log n)</li>
+                        <li><strong>Balance Check:</strong> O(1)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ad Slot -->
+        <div style="margin: 60px 0; text-align: center;">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
+                data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>
+                window.onload = () => {
+                    setTimeout(() => {
+                        try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { }
+                    }, 1000);
+                };
+            </script>
+        </div>
+    </main>
+
+    <script src="../assets/js/core/playback.js"></script>
+    <script src="../assets/js/algos/avl-algo.js"></script>
+    <script>
+        const canvas = document.getElementById('avl-canvas');
+        const engine = {
+            canvas: canvas,
+            ctx: canvas.getContext('2d')
+        };
+
+        const resize = () => {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            if (window.algo) window.algo.draw();
+        };
+        window.addEventListener('resize', resize);
+        resize();
+
+        const ui = {
+            updateStatus: (t) => document.getElementById('explanation-text').innerText = t
+        };
+
+        const playback = new Playback(() => window.algo.nextStep());
+        window.algo = new AVLAlgo(engine, playback, ui);
+
+        document.getElementById('insert-btn').onclick = () => {
+            const val = parseInt(document.getElementById('avl-input').value);
+            if (isNaN(val)) return;
+            playback.stop();
+            window.algo.insert(val);
+            playback.play();
+        };
+
+        document.getElementById('next-btn').onclick = () => {
+            window.algo.nextStep();
+        };
+
+        document.getElementById('reset-btn').onclick = () => {
+            playback.stop();
+            window.algo.reset();
+            ui.updateStatus("Tree cleared.");
+        };
+
+        document.getElementById('preset-btn').onclick = () => {
+            playback.stop();
+            window.algo.reset();
+            const seq = [10, 20, 30, 40, 50, 25];
+            let i = 0;
+            const runNext = () => {
+                if (i < seq.length) {
+                    window.algo.insert(seq[i++]);
+                    // Auto-run steps for preset
+                    const tick = setInterval(() => {
+                        if (!window.algo.nextStep()) {
+                            clearInterval(tick);
+                            setTimeout(runNext, 500);
+                        }
+                    }, 300);
+                }
+            };
+            runNext();
+        };
+
+        window.onload = () => {
+            resize();
+            window.algo.insert(50);
+            window.algo.currentStep = window.algo.steps.length;
+            window.algo.insert(30);
+            window.algo.currentStep = window.algo.steps.length;
+            window.algo.insert(70);
+            window.algo.currentStep = window.algo.steps.length;
+            window.algo.draw();
+            ui.updateStatus("AVL Tree initialized. Insert sequential values (e.g., 10, 20, 30) to trigger rotations.");
+        };
+    </script>
+
+    <script src='../assets/js/core/ui-extras.js'></script>
+</body>
+
+</html>
+Riverside

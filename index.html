@@ -4,793 +4,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OS Scheduling Algorithms - Visualization Dashboard</title>
-    <meta name="google-adsense-account" content="ca-pub-6906580768177940">
+    <title>AlgoVisual Hub | Master Algorithms Visually</title>
+    <meta name="description"
+        content="The ultimate platform to visualize and understand complex algorithms in Operating Systems, DSA, and AI.">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            clip-path: ellipse(150% 100% at 50% 0%);
+            margin-bottom: 60px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            max-width: 700px;
+            margin: 0 auto 40px auto;
+            opacity: 0.9;
+        }
+
+        .category-grid {
+            margin-top: -120px;
+        }
+
+        .category-card {
+            padding: 40px;
+            text-align: center;
+        }
+
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-tag {
+            text-transform: uppercase;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .ad-banner {
+            margin: 60px 0;
+            background: #eee;
+            padding: 20px;
+            text-align: center;
+            border-radius: 15px;
+        }
+    </style>
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
         crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        h1 {
-            text-align: center;
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 40px;
-            font-size: 1.1em;
-        }
-
-        .input-section {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        textarea {
-            font-family: 'Courier New', monospace;
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 40px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: block;
-            margin: 0 auto;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .charts-container {
-            margin-top: 40px;
-        }
-
-        .chart-wrapper {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .chart-title {
-            font-size: 1.5em;
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: 600;
-        }
-
-        canvas {
-            max-height: 400px;
-        }
-
-        .help-text {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 4px solid #2196F3;
-        }
-
-        .help-text strong {
-            color: #1976D2;
-        }
-
-        .gantt-container {
-            overflow-x: auto;
-            margin-top: 20px;
-        }
-
-        .gantt-chart {
-            min-width: 800px;
-        }
-
-        .results-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        .results-table th,
-        .results-table td {
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #ddd;
-        }
-
-        .results-table th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-weight: 600;
-        }
-
-        .results-table tr:nth-child(even) {
-            background: #f8f9fa;
-        }
-
-        .algorithm-label {
-            font-weight: 600;
-            color: #667eea;
-        }
-    </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>📊 CPU Scheduling Algorithms Visualizer</h1>
-        <p class="subtitle">Operating Systems Project - by Meelo <3 </p>
 
-                <!-- Educational Content Section -->
-                <section style="margin: 40px 0; line-height: 1.8; color: #333;">
-                    <h2
-                        style="color: #667eea; font-size: 1.8em; margin-bottom: 15px; border-bottom: 3px solid #667eea; padding-bottom: 10px;">
-                        What is CPU Scheduling?
-                    </h2>
-                    <p style="margin-bottom: 20px; font-size: 1.05em;">
-                        CPU scheduling is a fundamental concept in Operating Systems that determines how processes are
-                        assigned CPU time.
-                        The scheduler is responsible for selecting which process should execute next, directly impacting
-                        system performance,
-                        fairness, and resource utilization. Different scheduling algorithms aim to optimize various
-                        performance metrics such as
-                        <strong>waiting time</strong>, <strong>turnaround time</strong>, <strong>response time</strong>,
-                        and <strong>CPU utilization</strong>.
-                    </p>
+    <nav>
+        <div class="container nav-content">
+            <a href="index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="#categories">Explore</a>
+                <a href="dsa.html">DSA</a>
+                <a href="algorithms.html">Algorithms</a>
+                <a href="os.html">OS</a>
+                <a href="ai.html">AI</a>
+                <a href="roadmap.html" style="color: var(--accent); font-weight: 700;">Roadmap</a>
+            </div>
+        </div>
+    </nav>
 
-                    <h3 style="color: #764ba2; font-size: 1.5em; margin: 25px 0 12px 0;">
-                        📚 Understanding Scheduling Algorithms
-                    </h3>
+    <header class="hero gradient-bg">
+        <div class="container">
+            <h1 id="main-title">Visualize the Inner Workings of Code</h1>
+            <p>Master complex data structures and algorithms through interactive, step-by-step visualizations designed
+                for computer science students and developers.</p>
+            <a href="#categories" class="btn btn-primary" style="background: white; color: var(--primary);">Get Started
+                &rarr;</a>
+        </div>
+    </header>
 
-                    <div
-                        style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #FF6384;">
-                        <h4 style="color: #FF6384; margin-bottom: 8px; font-size: 1.2em;">
-                            🔴 FCFS (First Come First Serve)
-                        </h4>
-                        <p style="margin-bottom: 8px;">
-                            The simplest scheduling algorithm that executes processes in the exact order they arrive in
-                            the ready queue.
-                            While easy to implement and understand, FCFS can suffer from the <strong>"convoy
-                                effect"</strong> where shorter
-                            processes wait for long processes to complete, leading to increased average waiting time.
-                        </p>
-                        <p style="font-size: 0.95em; color: #666;">
-                            <strong>Best for:</strong> Batch systems with similar process lengths •
-                            <strong>Weakness:</strong> Poor average waiting time
-                        </p>
-                    </div>
+    <main class="container">
+        <div id="categories" class="grid grid-4 category-grid">
+            <!-- DSA Card -->
+            <div class="glass-card category-card">
+                <div class="category-icon"><i class="fas fa-sitemap"></i></div>
+                <h3>Data Structures</h3>
+                <p>Interactive visualizations of Linked Lists, Trees, Stacks, and Queues.</p>
+                <a href="dsa.html" class="btn btn-primary" style="margin-top: 20px;">Explore DSA</a>
+            </div>
 
-                    <div
-                        style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #36A2EB;">
-                        <h4 style="color: #36A2EB; margin-bottom: 8px; font-size: 1.2em;">
-                            🔵 SJF (Shortest Job First)
-                        </h4>
-                        <p style="margin-bottom: 8px;">
-                            Selects the process with the smallest burst time to execute next. SJF is proven to give the
-                            <strong>minimum average
-                                waiting time</strong> for a given set of processes. However, it can cause
-                            <strong>starvation</strong> for longer processes
-                            and requires knowledge of future CPU burst times, which is often impossible to predict
-                            accurately.
-                        </p>
-                        <p style="font-size: 0.95em; color: #666;">
-                            <strong>Best for:</strong> Systems where process times are predictable •
-                            <strong>Weakness:</strong> Starvation of long processes
-                        </p>
-                    </div>
+            <!-- Algorithms Card -->
+            <div class="glass-card category-card">
+                <div class="category-icon"><i class="fas fa-project-diagram"></i></div>
+                <h3>DSA Algorithms</h3>
+                <p>Master Sorting, Searching, and Graph algorithms like BFS, DFS, and Dijkstra.</p>
+                <a href="algorithms.html" class="btn btn-primary" style="margin-top: 20px;">Explore Algorithms</a>
+            </div>
 
-                    <div
-                        style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #FFCE56;">
-                        <h4 style="color: #d4a017; margin-bottom: 8px; font-size: 1.2em;">
-                            🟡 Priority Scheduling (Non-Preemptive & Preemptive)
-                        </h4>
-                        <p style="margin-bottom: 8px;">
-                            Assigns each process a priority value, and the scheduler selects the highest-priority
-                            process to execute.
-                            <strong>Non-preemptive</strong> priority scheduling allows a process to run to completion
-                            once started, while
-                            <strong>preemptive</strong> priority scheduling can interrupt a running process if a
-                            higher-priority process arrives.
-                            This algorithm can also suffer from starvation, which is typically solved using
-                            <strong>aging</strong>.
-                        </p>
-                        <p style="font-size: 0.95em; color: #666;">
-                            <strong>Best for:</strong> Real-time systems with critical tasks •
-                            <strong>Weakness:</strong> Low-priority process starvation
-                        </p>
-                    </div>
+            <!-- OS Card -->
+            <div class="glass-card category-card">
+                <div class="category-icon"><i class="fas fa-microchip"></i></div>
+                <h3>Operating Systems</h3>
+                <p>Understand CPU Scheduling, Page Replacement, and Banker's Algorithm visually.</p>
+                <a href="os.html" class="btn btn-primary" style="margin-top: 20px;">Explore OS</a>
+            </div>
 
-                    <div
-                        style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #9966FF;">
-                        <h4 style="color: #9966FF; margin-bottom: 8px; font-size: 1.2em;">
-                            🟣 Round Robin (RR)
-                        </h4>
-                        <p style="margin-bottom: 8px;">
-                            Uses a fixed <strong>time quantum</strong> (time slice) to ensure fairness. Each process
-                            gets an equal share of CPU time
-                            in a cyclic manner. If a process doesn't complete within its quantum, it's moved to the end
-                            of the ready queue.
-                            Round Robin is highly effective for time-sharing systems and guarantees that no process
-                            waits indefinitely.
-                        </p>
-                        <p style="font-size: 0.95em; color: #666;">
-                            <strong>Best for:</strong> Interactive/time-sharing systems • <strong>Weakness:</strong>
-                            Context-switching overhead
-                        </p>
-                    </div>
+            <!-- AI Card -->
+            <div class="glass-card category-card">
+                <div class="category-icon"><i class="fas fa-brain"></i></div>
+                <h3>AI & ML</h3>
+                <p>Visualize K-Means Clustering and Linear Regression to understand modern AI.</p>
+                <a href="ai.html" class="btn btn-primary" style="margin-top: 20px;">Explore AI</a>
+            </div>
+        </div>
 
-                    <h3 style="color: #764ba2; font-size: 1.5em; margin: 30px 0 12px 0;">
-                        🎯 Why Use This Visualizer?
-                    </h3>
-                    <p style="margin-bottom: 15px; font-size: 1.05em;">
-                        This interactive tool helps <strong>students and educators</strong> understand how each
-                        scheduling algorithm behaves
-                        by generating <strong>Gantt charts</strong> and detailed <strong>performance
-                            comparisons</strong>. You can:
-                    </p>
-                    <ul style="margin: 15px 0 15px 30px; font-size: 1.02em; line-height: 2;">
-                        <li>📊 Visualize process execution timelines with interactive Gantt charts</li>
-                        <li>📈 Compare average waiting time and turnaround time across all algorithms</li>
-                        <li>🔬 Experiment with different arrival times, burst times, and priorities</li>
-                        <li>⚙️ Adjust the time quantum for Round Robin to see its impact</li>
-                        <li>🎓 Learn by doing: test different scenarios and observe algorithm behavior</li>
+        <div style="text-align: center; margin-top: 40px;">
+            <p style="opacity: 0.7; margin-bottom: 15px;">Want to see what's coming next?</p>
+            <a href="roadmap.html" class="btn" style="border: 1px solid var(--primary); color: var(--primary);"><i
+                    class="fas fa-map-signs"></i> View Implementation Roadmap</a>
+        </div>
+
+        <section style="margin: 100px 0;">
+            <div class="grid grid-2" style="align-items: center;">
+                <div>
+                    <span class="section-tag">Powerful Learning</span>
+                    <h2>Why Visual Learning Works</h2>
+                    <p>Static code can be hard to grasp. Our platform transforms abstract concepts into dynamic,
+                        step-by-step animations. Whether you're preparing for a technical interview or studying for an
+                        OS exam, visualizing the logic makes it stick.</p>
+                    <ul style="margin: 20px 0; padding-left: 20px;">
+                        <li style="margin-bottom: 10px;">📉 Real-time performance comparisons</li>
+                        <li style="margin-bottom: 10px;">🕹️ Interactive inputs for custom scenarios</li>
+                        <li style="margin-bottom: 10px;">📘 Deep-dive educational guides for every module</li>
                     </ul>
+                </div>
+                <div class="glass-card" style="padding: 20px; background: #fff;">
+                    <img src="https://img.icons8.com/clouds/500/code.png" alt="Algorithm Visualization illustration"
+                        style="width: 100%;">
+                </div>
+            </div>
+        </section>
 
-                    <p
-                        style="margin-top: 25px; padding: 20px; background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border-radius: 10px; font-size: 1.05em; border: 2px solid #667eea;">
-                        <strong style="color: #667eea;">💡 Perfect for:</strong> Operating Systems courses, exam
-                        preparation,
-                        understanding OS concepts, and developing intuition about process scheduling trade-offs.
-                        Whether you're a student learning OS fundamentals or an educator demonstrating concepts,
-                        this visualizer provides instant, clear feedback on how scheduling decisions affect system
-                        performance.
+        <!-- Ad Slot -->
+        <div class="ad-banner">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
+                data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <section id="ai" class="glass-card"
+            style="padding: 60px; text-align: center; background: var(--dark); color: white;">
+            <div class="category-icon"
+                style="background: white; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h2 style="color: white;">Artificial Intelligence</h2>
+            <p style="max-width: 600px; margin: 0 auto 30px auto; opacity: 0.8;">Explore AI fundamentals with
+                visualizations of Minimax, Alpha-Beta Pruning, and Search Trees.</p>
+            <a href="ai.html" class="btn btn-primary">Dive into AI</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About AlgoVisual Hub</h4>
+                    <p>The premium destination for interactive algorithm education. Built for developers, by developers.
                     </p>
-                </section>
-
-                <!-- Top Ad Unit - Placed AFTER Educational Content -->
-                <div style="margin: 30px 0; text-align: center;">
-                    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
-                        data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
-                    <script>
-                        (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
                 </div>
-
-                <div class="input-section">
-                    <div class="help-text">
-                        <strong>📝 Instructions:</strong> Enter process data as comma-separated values.
-                        Example for 3 processes: AT: 0,1,2 | BT: 5,3,8 | Priority: 2,1,3 (lower number = higher
-                        priority)
-                    </div>
-
-                    <div class="input-group">
-                        <label>Number of Processes:</label>
-                        <input type="number" id="numProcesses" value="4" min="1" max="10">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Arrival Times (comma-separated):</label>
-                        <input type="text" id="arrivalTimes" placeholder="e.g., 0,1,2,3" value="0,1,2,3">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Burst Times (comma-separated):</label>
-                        <input type="text" id="burstTimes" placeholder="e.g., 5,3,8,6" value="5,3,8,6">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Priorities (comma-separated, for Priority scheduling):</label>
-                        <input type="text" id="priorities" placeholder="e.g., 2,1,3,4" value="2,1,3,4">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Time Quantum (for Round Robin):</label>
-                        <input type="number" id="quantum" value="2" min="1">
-                    </div>
-
-                    <button class="btn" onclick="generateVisualizations()">🚀 Generate All Visualizations</button>
+                <div class="footer-section">
+                    <h4>Categories</h4>
+                    <ul>
+                        <li><a href="dsa.html">Data Structures</a></li>
+                        <li><a href="algorithms.html">Algorithms</a></li>
+                        <li><a href="os.html">Operating Systems</a></li>
+                        <li><a href="ai.html">AI Fundamentals</a></li>
+                    </ul>
                 </div>
-
-                <div id="chartsContainer" class="charts-container"></div>
-
-                <!-- Bottom Ad Unit -->
-                <div style="margin: 40px 0; text-align: center;">
-                    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
-                        data-ad-slot="0987654321" data-ad-format="auto" data-full-width-responsive="true"></ins>
-                    <script>
-                        (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
                 </div>
-
-                <footer
-                    style="margin-top: 50px; text-align: center; color: #666; padding: 20px 0; border-top: 1px solid #eee;">
-                    <p>&copy; 2025 Meelaf — Educational Use Only</p>
-                    <p style="margin-top: 10px;">
-                        <a href="privacy.html" style="color: #667eea; text-decoration: none; margin: 0 10px;">Privacy
-                            Policy</a> |
-                        <a href="terms.html" style="color: #667eea; text-decoration: none; margin: 0 10px;">Terms of
-                            Service</a> |
-                        <a href="contact.html"
-                            style="color: #667eea; text-decoration: none; margin: 0 10px;">Contact</a>
-                    </p>
-                </footer>
-    </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 AlgoVisual Hub — Created with ❤️ by Meelo</p>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        const algorithms = ['FCFS', 'SJF', 'Priority NP', 'Priority P', 'Round Robin'];
-        const colors = {
-            'FCFS': '#FF6384',
-            'SJF': '#36A2EB',
-            'Priority NP': '#FFCE56',
-            'Priority P': '#4BC0C0',
-            'Round Robin': '#9966FF'
-        };
-
-        function parseInput(inputStr) {
-            return inputStr.split(',').map(x => parseInt(x.trim()));
-        }
-
-        function fcfs(at, bt) {
-            const n = at.length;
-            const processes = at.map((a, i) => ({
-                id: i + 1, at: a, bt: bt[i], st: 0, ct: 0, tat: 0, wt: 0
-            })).sort((a, b) => a.at - b.at);
-
-            let t = 0;
-            processes.forEach(p => {
-                if (t < p.at) t = p.at;
-                p.st = t;
-                p.ct = t + p.bt;
-                p.tat = p.ct - p.at;
-                p.wt = p.tat - p.bt;
-                t = p.ct;
-            });
-
-            return processes;
-        }
-
-        function sjf(at, bt) {
-            const n = at.length;
-            const processes = at.map((a, i) => ({
-                id: i + 1, at: a, bt: bt[i], st: 0, ct: 0, tat: 0, wt: 0
-            }));
-            const done = new Array(n).fill(false);
-            let t = 0, c = 0;
-
-            while (c < n) {
-                let idx = -1, mn = Infinity;
-                for (let i = 0; i < n; i++) {
-                    if (!done[i] && processes[i].at <= t && processes[i].bt < mn) {
-                        mn = processes[i].bt;
-                        idx = i;
-                    }
-                }
-                if (idx === -1) { t++; continue; }
-
-                processes[idx].st = t;
-                processes[idx].ct = t + processes[idx].bt;
-                processes[idx].tat = processes[idx].ct - processes[idx].at;
-                processes[idx].wt = processes[idx].tat - processes[idx].bt;
-                t = processes[idx].ct;
-                done[idx] = true;
-                c++;
-            }
-
-            return processes;
-        }
-
-        function priorityNP(at, bt, pr) {
-            const n = at.length;
-            const processes = at.map((a, i) => ({
-                id: i + 1, at: a, bt: bt[i], pr: pr[i], st: 0, ct: 0, tat: 0, wt: 0
-            }));
-            const done = new Array(n).fill(false);
-            let t = 0, c = 0;
-
-            while (c < n) {
-                let idx = -1, mn = Infinity;
-                for (let i = 0; i < n; i++) {
-                    if (!done[i] && processes[i].at <= t && processes[i].pr < mn) {
-                        mn = processes[i].pr;
-                        idx = i;
-                    }
-                }
-                if (idx === -1) { t++; continue; }
-
-                processes[idx].st = t;
-                processes[idx].ct = t + processes[idx].bt;
-                processes[idx].tat = processes[idx].ct - processes[idx].at;
-                processes[idx].wt = processes[idx].tat - processes[idx].bt;
-                t = processes[idx].ct;
-                done[idx] = true;
-                c++;
-            }
-
-            return processes;
-        }
-
-        function priorityP(at, bt, pr) {
-            const n = at.length;
-            const processes = at.map((a, i) => ({
-                id: i + 1, at: a, bt: bt[i], pr: pr[i], st: -1, ct: 0, tat: 0, wt: 0, rem: bt[i]
-            }));
-            let t = 0, c = 0;
-            const timeline = [];
-
-            while (c < n) {
-                let idx = -1, mn = Infinity;
-                for (let i = 0; i < n; i++) {
-                    if (processes[i].at <= t && processes[i].rem > 0 && processes[i].pr < mn) {
-                        mn = processes[i].pr;
-                        idx = i;
-                    }
-                }
-                if (idx === -1) { t++; continue; }
-
-                if (processes[idx].st === -1) processes[idx].st = t;
-
-                const start = t;
-                processes[idx].rem--;
-                t++;
-
-                if (timeline.length > 0 && timeline[timeline.length - 1].pid === processes[idx].id) {
-                    timeline[timeline.length - 1].end = t;
-                } else {
-                    timeline.push({ pid: processes[idx].id, start: start, end: t });
-                }
-
-                if (processes[idx].rem === 0) {
-                    processes[idx].ct = t;
-                    processes[idx].tat = t - processes[idx].at;
-                    processes[idx].wt = processes[idx].tat - processes[idx].bt;
-                    c++;
-                }
-            }
-
-            return { processes, timeline };
-        }
-
-        function roundRobin(at, bt, quantum) {
-            const n = at.length;
-            const processes = at.map((a, i) => ({
-                id: i + 1, at: a, bt: bt[i], st: -1, ct: 0, tat: 0, wt: 0, rem: bt[i]
-            }));
-            const inQ = new Array(n).fill(false);
-            const queue = [];
-            let t = 0, c = 0;
-            const timeline = [];
-
-            while (c < n) {
-                for (let i = 0; i < n; i++) {
-                    if (!inQ[i] && processes[i].at <= t && processes[i].rem > 0) {
-                        queue.push(i);
-                        inQ[i] = true;
-                    }
-                }
-
-                if (queue.length === 0) { t++; continue; }
-
-                const idx = queue.shift();
-                if (processes[idx].st === -1) processes[idx].st = t;
-
-                const start = t;
-                const run = Math.min(quantum, processes[idx].rem);
-                processes[idx].rem -= run;
-                t += run;
-
-                timeline.push({ pid: processes[idx].id, start: start, end: t });
-
-                for (let i = 0; i < n; i++) {
-                    if (!inQ[i] && processes[i].at <= t && processes[i].rem > 0) {
-                        queue.push(i);
-                        inQ[i] = true;
-                    }
-                }
-
-                if (processes[idx].rem > 0) {
-                    queue.push(idx);
-                } else {
-                    processes[idx].ct = t;
-                    processes[idx].tat = t - processes[idx].at;
-                    processes[idx].wt = processes[idx].tat - processes[idx].bt;
-                    c++;
-                }
-            }
-
-            return { processes, timeline };
-        }
-
-        function createGanttChart(data, title, canvasId) {
-            const labels = [];
-            const dataset = [];
-
-            if (data.timeline) {
-                data.timeline.forEach(slot => {
-                    labels.push(`P${slot.pid}`);
-                    dataset.push([slot.start, slot.end]);
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
                 });
-            } else {
-                const sorted = [...data].sort((a, b) => a.st - b.st);
-                sorted.forEach(p => {
-                    labels.push(`P${p.id}`);
-                    dataset.push([p.st, p.ct]);
-                });
-            }
-
-            const ctx = document.getElementById(canvasId).getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Execution Time',
-                        data: dataset,
-                        backgroundColor: colors[title] || '#FF6384',
-                        borderColor: '#333',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: `${title} - Gantt Chart`,
-                            font: { size: 18, weight: 'bold' }
-                        },
-                        legend: { display: false }
-                    },
-                    scales: {
-                        x: {
-                            title: { display: true, text: 'Time', font: { size: 14, weight: 'bold' } },
-                            beginAtZero: true
-                        }
-                    }
-                }
             });
-        }
-
-        function createResultsTable(results) {
-            let html = '<table class="results-table">';
-            html += '<tr><th>Algorithm</th><th>Avg Waiting Time</th><th>Avg Turnaround Time</th></tr>';
-
-            Object.keys(results).forEach(algo => {
-                const processes = results[algo].processes || results[algo];
-                const avgWT = (processes.reduce((sum, p) => sum + p.wt, 0) / processes.length).toFixed(2);
-                const avgTAT = (processes.reduce((sum, p) => sum + p.tat, 0) / processes.length).toFixed(2);
-
-                html += `<tr>
-                    <td class="algorithm-label">${algo}</td>
-                    <td>${avgWT}</td>
-                    <td>${avgTAT}</td>
-                </tr>`;
-            });
-
-            html += '</table>';
-            return html;
-        }
-
-        function createComparisonCharts(results) {
-            const algorithms = Object.keys(results);
-            const avgWT = algorithms.map(algo => {
-                const processes = results[algo].processes || results[algo];
-                return (processes.reduce((sum, p) => sum + p.wt, 0) / processes.length).toFixed(2);
-            });
-            const avgTAT = algorithms.map(algo => {
-                const processes = results[algo].processes || results[algo];
-                return (processes.reduce((sum, p) => sum + p.tat, 0) / processes.length).toFixed(2);
-            });
-
-            // Waiting Time Comparison
-            const wtCtx = document.getElementById('wtComparison').getContext('2d');
-            new Chart(wtCtx, {
-                type: 'bar',
-                data: {
-                    labels: algorithms,
-                    datasets: [{
-                        label: 'Average Waiting Time',
-                        data: avgWT,
-                        backgroundColor: algorithms.map(a => colors[a]),
-                        borderColor: '#333',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Average Waiting Time Comparison',
-                            font: { size: 20, weight: 'bold' }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: { display: true, text: 'Time Units', font: { size: 14 } }
-                        }
-                    }
-                }
-            });
-
-            // Turnaround Time Comparison
-            const tatCtx = document.getElementById('tatComparison').getContext('2d');
-            new Chart(tatCtx, {
-                type: 'bar',
-                data: {
-                    labels: algorithms,
-                    datasets: [{
-                        label: 'Average Turnaround Time',
-                        data: avgTAT,
-                        backgroundColor: algorithms.map(a => colors[a]),
-                        borderColor: '#333',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Average Turnaround Time Comparison',
-                            font: { size: 20, weight: 'bold' }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: { display: true, text: 'Time Units', font: { size: 14 } }
-                        }
-                    }
-                }
-            });
-        }
-
-        function generateVisualizations() {
-            const at = parseInput(document.getElementById('arrivalTimes').value);
-            const bt = parseInput(document.getElementById('burstTimes').value);
-            const pr = parseInput(document.getElementById('priorities').value);
-            const quantum = parseInt(document.getElementById('quantum').value);
-
-            // Run all algorithms
-            const results = {
-                'FCFS': fcfs(at, bt),
-                'SJF': sjf(at, bt),
-                'Priority NP': priorityNP(at, bt, pr),
-                'Priority P': priorityP(at, bt, pr),
-                'Round Robin': roundRobin(at, bt, quantum)
-            };
-
-            // Clear previous charts
-            const container = document.getElementById('chartsContainer');
-            container.innerHTML = '';
-
-            // Add results table
-            container.innerHTML += `
-                <div class="chart-wrapper">
-                    <div class="chart-title">📊 Algorithm Performance Comparison</div>
-                    ${createResultsTable(results)}
-                </div>
-            `;
-
-            // Add comparison charts
-            container.innerHTML += `
-                <div class="chart-wrapper">
-                    <canvas id="wtComparison"></canvas>
-                </div>
-                <div class="chart-wrapper">
-                    <canvas id="tatComparison"></canvas>
-                </div>
-            `;
-
-            // Add individual Gantt charts
-            Object.keys(results).forEach((algo, idx) => {
-                const canvasId = `gantt${idx}`;
-                container.innerHTML += `
-                    <div class="chart-wrapper gantt-container">
-                        <canvas id="${canvasId}" class="gantt-chart"></canvas>
-                    </div>
-                `;
-            });
-
-            // Render charts (need to wait for DOM update)
-            setTimeout(() => {
-                createComparisonCharts(results);
-                Object.keys(results).forEach((algo, idx) => {
-                    createGanttChart(results[algo], algo, `gantt${idx}`);
-                });
-            }, 100);
-        }
-
-        // Generate initial visualizations on page load
-        window.onload = () => generateVisualizations();
+        });
     </script>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAtn-KqW2bQ2xi2b1RRmSe_JEli_EbVmnc",
-            authDomain: "cpuos-ae329.firebaseapp.com",
-            projectId: "cpuos-ae329",
-            storageBucket: "cpuos-ae329.firebasestorage.app",
-            messagingSenderId: "878125629636",
-            appId: "1:878125629636:web:1fce4ea5c5c8ede8b68991",
-            measurementId: "G-K85JGEX1BV"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        console.log("Firebase initialized");
-    </script>
+    <script src='assets/js/core/ui-extras.js'></script>
 </body>
 
 </html>

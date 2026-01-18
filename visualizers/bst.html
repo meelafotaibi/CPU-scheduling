@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BST Visualizer | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        #dsa-canvas {
+            width: 100%;
+            height: 500px;
+            /* background: #fff; removed */
+            border: 2px solid #eee;
+            border-radius: 12px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            align-items: center;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 80px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="container nav-content">
+            <a href="../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="../index.html">Home</a>
+                <a href="../dsa.html">Back to DSA</a>
+            </div>
+        </div>
+    </nav>
+    <main class="container">
+        <header style="margin-top: 40px;">
+            <span class="btn-primary"
+                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; display: inline-block; margin-bottom: 10px;">Hierarchical
+                DS</span>
+            <h1>Binary Search Tree (BST)</h1>
+            <p>Visualize how values are inserted into a BST based on the rule: Smaller to the left, larger to the right.
+            </p>
+        </header>
+
+        <div class="glass-card" style="padding: 30px; margin-top: 30px;">
+            <canvas id="dsa-canvas"></canvas>
+            <div class="controls">
+                <input type="number" id="node-val" placeholder="Val" value="50">
+                <button class="btn btn-primary" onclick="insert()">Insert Node</button>
+                <button class="btn" onclick="showModal('input-modal')" style="background: var(--dark); color: white;"><i
+                        class="fas fa-edit"></i> Batch Input</button>
+                <button class="btn" onclick="location.reload()" style="/* background: #eee; removed */">Clear Tree</button>
+            </div>
+        </div>
+
+        <div style="margin: 60px 0; text-align: center;">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
+                data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        </div>
+    </main>
+
+    <script src="../assets/js/core/dsa-engine.js"></script>
+    <script src="../assets/js/core/ComplexityTracker.js"></script>
+    <script src="../assets/js/core/ui-extras.js"></script>
+    <script src="../assets/js/algos/bst.js"></script>
+    <script>
+        window.engine = new DSAEngine('dsa-canvas');
+        window.algo = new BSTAlgo(window.engine);
+
+        window.engine.draw = () => window.algo.draw();
+
+        function insert() {
+            const val = parseInt(document.getElementById('node-val').value);
+            if (!isNaN(val)) {
+                window.algo.insert(val);
+                document.getElementById('node-val').value = Math.floor(Math.random() * 100);
+            }
+        }
+
+        window.onload = () => {
+            if (window.complexityTracker) {
+                window.complexityTracker.setComplexity("O(log n) avg", "O(n)");
+            }
+            window.algo.insert(50);
+            window.algo.insert(30);
+            window.algo.insert(70);
+            window.algo.insert(20);
+            window.algo.insert(40);
+        };
+    </script>
+</body>
+
+</html>
+Riverside

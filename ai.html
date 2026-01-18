@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Fundamentals | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dsa.html">DSA</a>
+                <a href="algorithms.html">Algorithms</a>
+                <a href="os.html">OS</a>
+                <a href="ai.html" class="active" style="color: var(--primary);">AI</a>
+                <a href="roadmap.html" style="color: var(--accent); font-weight: 700;">Roadmap</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="gradient-bg" style="padding: 60px 0; text-align: center;">
+        <div class="container">
+            <h1>Artificial Intelligence</h1>
+            <p>Master the searching strategies behind game AI and decision trees.</p>
+        </div>
+    </header>
+
+    <main class="container" style="margin-top: 50px;">
+        <div class="view-controls">
+            <button class="toggle-btn active" id="grid-view-btn" title="Grid View"><i
+                    class="fas fa-th-large"></i></button>
+            <button class="toggle-btn" id="list-view-btn" title="List View"><i class="fas fa-list"></i></button>
+        </div>
+
+        <div id="algo-grid" class="grid grid-4">
+            <!-- K-Means Card -->
+            <div class="glass-card" style="padding: 40px;">
+                <span class="btn-primary"
+                    style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 20px; display: inline-block;">Clustering</span>
+                <h2>K-Means Clustering</h2>
+                <p>Visualize how unsupervised learning groups data points into clusters using iterative centroid
+                    updates.</p>
+                <div style="margin-top: 30px;">
+                    <a href="visualizers/kmeans.html" class="btn btn-primary">Visualize &rarr;</a>
+                </div>
+            </div>
+
+            <!-- KNN Card -->
+            <div class="glass-card" style="padding: 40px;">
+                <span class="btn-primary"
+                    style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 20px; display: inline-block;">Classification</span>
+                <h2>KNN Classification</h2>
+                <p>Visualize how K-Nearest Neighbors classifies new data points based on their spatial proximity to
+                    training data.</p>
+                <div style="margin-top: 30px;">
+                    <a href="visualizers/knn.html" class="btn btn-primary">Visualize &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Linear Regression Card -->
+            <div class="glass-card" style="padding: 40px;">
+                <span class="btn-primary"
+                    style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 20px; display: inline-block;">Regression</span>
+                <h2>Linear Regression</h2>
+                <p>Learn how Gradient Descent finds the best-fit line to predict trends in continuous data.</p>
+                <div style="margin-top: 30px;">
+                    <a href="visualizers/linear-regression.html" class="btn btn-primary">Visualize &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Perceptron Card -->
+            <div class="glass-card" style="padding: 40px;">
+                <span class="btn-primary"
+                    style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 20px; display: inline-block;">Neural
+                    Networks</span>
+                <h2>Perceptron Visualizer</h2>
+                <p>Learn the fundamental unit of deep learning by visualizing how a single neuron classifies data.</p>
+                <div style="margin-top: 30px;">
+                    <a href="visualizers/perceptron.html" class="btn btn-primary">Visualize &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Minimax Card -->
+            <div class="glass-card" style="padding: 40px;">
+                <span class="btn-primary"
+                    style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 20px; display: inline-block;">Game
+                    Theory</span>
+                <h2>Minimax & Alpha-Beta</h2>
+                <p>Visualize how AI searches decision trees and uses Alpha-Beta pruning to optimize games.</p>
+                <div style="margin-top: 30px;">
+                    <a href="visualizers/minimax.html" class="btn btn-primary">Visualize &rarr;</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ad Slot -->
+        <div style="margin: 60px 0; text-align: center;">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
+                data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>
+                window.onload = () => {
+                    setTimeout(() => {
+                        try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { }
+                    }, 1000);
+                };
+            </script>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 AlgoVisual Hub — Created with ❤️ by Meelo</p>
+            </div>
+        </div>
+    </footer>
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
+        crossorigin="anonymous"></script>
+    <script>
+        const grid = document.getElementById('algo-grid');
+        const gridBtn = document.getElementById('grid-view-btn');
+        const listBtn = document.getElementById('list-view-btn');
+
+        gridBtn.onclick = () => {
+            grid.classList.remove('list-view');
+            gridBtn.classList.add('active');
+            listBtn.classList.remove('active');
+        };
+
+        listBtn.onclick = () => {
+            grid.classList.add('list-view');
+            listBtn.classList.add('active');
+            gridBtn.classList.remove('active');
+        };
+    </script>
+
+    <script src='assets/js/core/ui-extras.js'></script>
+</body>
+
+</html>

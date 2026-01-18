@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Guide to CPU Scheduling Algorithms - OS Fundamentals</title>
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --text: #333;
+            --light: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: var(--text);
+            background: #fff;
+            padding-bottom: 50px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 2em;
+            color: var(--primary);
+            margin-top: 50px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.5em;
+            color: var(--secondary);
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .highlight-box {
+            background: var(--light);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid var(--primary);
+            margin: 30px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            font-size: 1em;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 15px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .example-box {
+            background: #eef2ff;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px dashed var(--primary);
+            margin: 30px 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 40px;
+            padding: 12px 30px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .back-link:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        footer {
+            margin-top: 80px;
+            text-align: center;
+            padding: 40px;
+            background: var(--light);
+            color: #666;
+        }
+
+        .nav-links {
+            margin-top: 20px;
+        }
+
+        .nav-links a {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1>Comprehensive Guide to CPU Scheduling</h1>
+            <p>Mastering Process Management in Operating Systems</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <section id="introduction">
+            <h2>What is CPU Scheduling?</h2>
+            <p>
+                In a multi-programming environment, multiple processes exist in the memory simultaneously. The primary
+                goal of an operating system is to maximize CPU utilization by switching the CPU among processes. This
+                mechanism is called <strong>CPU Scheduling</strong>.
+            </p>
+            <p>
+                When the CPU becomes idle, the operating system must select one of the processes in the <strong>ready
+                    queue</strong> to be executed. The selection process is carried out by the short-term scheduler (or
+                CPU scheduler). It picks from among the processes in memory that are ready to execute and allocates the
+                CPU to one of them.
+            </p>
+            <div class="highlight-box">
+                <strong>Main Objectives of CPU Scheduling:</strong>
+                <ul>
+                    <li>Maximize CPU utilization (keep the CPU as busy as possible).</li>
+                    <li>Maximize Throughput (number of processes completed per unit time).</li>
+                    <li>Minimize Waiting Time (total time spent in the ready queue).</li>
+                    <li>Minimize Turnaround Time (total time taken to complete a process).</li>
+                    <li>Minimize Response Time (time from submission until the first response is produced).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="metrics">
+            <h2>Core Scheduling Metrics</h2>
+            <p>To evaluate the performance of different scheduling algorithms, we use specific metrics:</p>
+            <ul>
+                <li><strong>Arrival Time (AT):</strong> The time at which the process arrives in the ready queue.</li>
+                <li><strong>Burst Time (BT):</strong> The time required by the process for its execution on the CPU.
+                </li>
+                <li><strong>Exit Time (ET):</strong> The time at which the process finishes its execution.</li>
+                <li><strong>Turnaround Time (TAT):</strong> The total time taken by the process from arrival to
+                    completion. <br><code>Formula: TAT = Exit Time - Arrival Time</code></li>
+                <li><strong>Waiting Time (WT):</strong> The total time the process waits in the ready queue before
+                    getting the CPU. <br><code>Formula: WT = Turnaround Time - Burst Time</code></li>
+            </ul>
+        </section>
+
+        <section id="algorithms">
+            <h2>Popular Scheduling Algorithms</h2>
+
+            <h3>1. First Come First Served (FCFS)</h3>
+            <p>
+                As the name suggests, the process that arrives first is executed first. It is a non-preemptive algorithm
+                managed with a FIFO (First-In-First-Out) queue.
+            </p>
+            <p>
+                <strong>Pros:</strong> Simple to implement and understand. <br>
+                <strong>Cons:</strong> Suffers from the <strong>Convoy Effect</strong>, where a long process can block
+                many short processes behind it, leading to high average waiting times.
+            </p>
+
+            <h3>2. Shortest Job First (SJF)</h3>
+            <p>
+                This algorithm picks the process with the smallest burst time. It can be either non-preemptive or
+                preemptive. The preemptive version is called <strong>Shortest Remaining Time First (SRTF)</strong>.
+            </p>
+            <p>
+                <strong>Pros:</strong> Provides the minimum average waiting time for a specific set of processes. <br>
+                <strong>Cons:</strong> Difficult to implement because it's hard to know the burst time of the next
+                process in advance. Can lead to <strong>starvation</strong> of longer processes.
+            </p>
+
+            <h3>3. Priority Scheduling</h3>
+            <p>
+                A priority is associated with each process, and the CPU is allocated to the process with the highest
+                priority (usually the smallest integer represents the highest priority).
+            </p>
+            <p>
+                <strong>Pros:</strong> Critical tasks can be prioritized. <br>
+                <strong>Cons:</strong> Starvation of low-priority tasks. This is solved by <strong>Aging</strong>, where
+                the priority of processes waiting in the queue for a long time is gradually increased.
+            </p>
+
+            <h3>4. Round Robin (RR)</h3>
+            <p>
+                Designed for time-sharing systems, it assigns a small unit of time called a <strong>Time
+                    Quantum</strong> to each process. If the process doesn't finish within its quantum, it is preempted
+                and put back at the end of the ready queue.
+            </p>
+            <p>
+                <strong>Pros:</strong> Fair and responsive for interactive users. No process waits forever. <br>
+                <strong>Cons:</strong> Performance depends heavily on the size of the time quantum. If too small,
+                context switching overhead increases.
+            </p>
+        </section>
+
+        <section id="comparison">
+            <h2>Comparison of Algorithms</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Algorithm</th>
+                        <th>Type</th>
+                        <th>Main Feature</th>
+                        <th>Drawback</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>FCFS</td>
+                        <td>Non-Preemptive</td>
+                        <td>Simple implementation</td>
+                        <td>Convoy Effect</td>
+                    </tr>
+                    <tr>
+                        <td>SJF</td>
+                        <td>Non-Preemptive</td>
+                        <td>Optimal Avg Waiting Time</td>
+                        <td>Starvation Possible</td>
+                    </tr>
+                    <tr>
+                        <td>Priority</td>
+                        <td>Both</td>
+                        <td>Supports Task Importance</td>
+                        <td>Starvation of Low Priority</td>
+                    </tr>
+                    <tr>
+                        <td>Round Robin</td>
+                        <td>Preemptive</td>
+                        <td>Interactive / Periodic</td>
+                        <td>High Context Switch Overhead</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="example">
+            <h2>Solved Problem: FCFS</h2>
+            <div class="example-box">
+                <p><strong>Consider 3 Processes:</strong></p>
+                <ul>
+                    <li>P1: Arrival Time = 0ms, Burst Time = 5ms</li>
+                    <li>P2: Arrival Time = 1ms, Burst Time = 3ms</li>
+                    <li>P3: Arrival Time = 2ms, Burst Time = 8ms</li>
+                </ul>
+                <p><strong>Step-by-Step Walkthrough:</strong></p>
+                <ol>
+                    <li><strong>At Time 0:</strong> P1 arrives and starts immediately (CPU idle).</li>
+                    <li><strong>At Time 5:</strong> P1 finishes. TAT = 5 - 0 = 5ms. WT = 5 - 5 = 0ms.</li>
+                    <li><strong>At Time 5:</strong> P2 (which arrived at 1ms) starts.</li>
+                    <li><strong>At Time 8:</strong> P2 finishes. TAT = 8 - 1 = 7ms. WT = 7 - 3 = 4ms.</li>
+                    <li><strong>At Time 8:</strong> P3 (which arrived at 2ms) starts.</li>
+                    <li><strong>At Time 16:</strong> P3 finishes. TAT = 16 - 2 = 14ms. WT = 14 - 8 = 6ms.</li>
+                </ol>
+                <p><strong>Calculations:</strong></p>
+                <p>Average TAT = (5 + 7 + 14) / 3 = <strong>8.67ms</strong></p>
+                <p>Average WT = (0 + 4 + 6) / 3 = <strong>3.33ms</strong></p>
+            </div>
+        </section>
+
+        <a href="index.html" class="back-link">Try the Scheduling Visualizer &rarr;</a>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Meelaf — Educational Hub for Operating Systems.</p>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="contact.html">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

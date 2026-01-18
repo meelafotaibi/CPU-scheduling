@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPU Scheduling Visualizer | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
+        crossorigin="anonymous"></script>
+    <style>
+        [data-theme="dark"] input,
+        [data-theme="dark"] select {
+            background: rgba(15, 23, 42, 0.8) !important;
+            color: #f1f5f9 !important;
+            border: 1px solid rgba(148, 163, 184, 0.3) !important;
+        }
+
+        [data-theme="dark"] table th {
+            background: rgba(167, 139, 250, 0.3) !important;
+        }
+
+        [data-theme="dark"] canvas {
+            background: rgba(15, 23, 42, 0.3) !important;
+        }
+    </style>
+    <style>
+        .visualizer-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .charts-container {
+            margin-top: 40px;
+        }
+
+        .chart-wrapper {
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 1px solid #eee;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .results-table th {
+            background: var(--primary);
+            color: white;
+        }
+
+        .gantt-container {
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        .gantt-timeline {
+            display: flex;
+            align-items: center;
+            height: 60px;
+            position: relative;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .gantt-block {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 0.9rem;
+        }
+
+        .gantt-axis {
+            display: flex;
+            margin-top: 5px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .gantt-tick {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="../index.html">Home</a>
+                <a href="../os.html">Back to OS</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" style="margin-top: 40px;">
+        <section style="margin-bottom: 40px;">
+            <span class="btn-primary"
+                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Operating
+                Systems</span>
+            <h1>CPU Scheduling Visualizer</h1>
+            <p>Enter your process parameters below to compare five different scheduling algorithms simultaneously.</p>
+        </section>
+
+        <div class="grid grid-2">
+            <div class="visualizer-card">
+                <h3>Process Configuration</h3>
+                <div class="input-section" style="margin-top: 20px;">
+                    <table id="process-table" style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); color: var(--accent);">
+                                <th style="padding: 8px; text-align: left;">PID</th>
+                                <th style="padding: 8px;">Arrival</th>
+                                <th style="padding: 8px;">Burst</th>
+                                <th style="padding: 8px;">Priority</th>
+                                <th style="padding: 8px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="process-tbody">
+                            <!-- Rows injected via JS -->
+                        </tbody>
+                    </table>
+
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                        <button class="btn" onclick="addProcessRow()"
+                            style="background: var(--secondary); color: white; padding: 5px 15px; font-size: 0.8rem;">
+                            <i class="fas fa-plus"></i> Add Process
+                        </button>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Time Quantum (for Round Robin):</label>
+                        <input type="number" id="quantum" value="2" min="1">
+                    </div>
+                    <button class="btn btn-primary" onclick="generateVisualizations()" style="width: 100%;">🚀 Generate
+                        Comparisons</button>
+                </div>
+            </div>
+
+            <div class="glass-card" style="padding: 30px;">
+                <h3>📜 Quick Instructions</h3>
+                <ul style="margin-top: 15px; padding-left: 20px;">
+                    <li>Use the <strong>process table</strong> to add/edit jobs.</li>
+                    <li><strong>Arrival:</strong> When the process enters the ready queue.</li>
+                    <li><strong>Burst:</strong> CPU time required.</li>
+                    <li><strong>Priority:</strong> Lower value = Higher priority.</li>
+                    <li>Refer to the <a href="../guides/cpu-scheduling.html" style="color: var(--primary);">Full
+                            Guide</a> for algorithm details.</li>
+                </ul>
+                <div id="ad-container" style="margin-top: 30px; text-align: center; min-height: 90px;">
+                    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
+                        data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                </div>
+            </div>
+        </div>
+
+        <div id="chartsContainer" class="charts-container"></div>
+    </main>
+
+    <script>
+        // Core Logic
+        const colors = { 'FCFS': '#FF6384', 'SJF': '#36A2EB', 'Priority NP': '#FFCE56', 'Priority P': '#4BC0C0', 'Round Robin': '#9966FF' };
+
+        let pidCounter = 1;
+
+        function addProcessRow(at = 0, bt = 5, pr = 1) {
+            const tbody = document.getElementById('process-tbody');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="padding: 8px;">P${pidCounter++}</td>
+                <td style="padding: 8px;"><input type="number" class="at-input" value="${at}" style="width: 60px; padding: 5px; border-radius: 5px; border: 1px solid #ddd;"></td>
+                <td style="padding: 8px;"><input type="number" class="bt-input" value="${bt}" min="1" style="width: 60px; padding: 5px; border-radius: 5px; border: 1px solid #ddd;"></td>
+                <td style="padding: 8px;"><input type="number" class="pr-input" value="${pr}" min="1" style="width: 60px; padding: 5px; border-radius: 5px; border: 1px solid #ddd;"></td>
+                <td style="padding: 8px;">
+                    <button onclick="this.closest('tr').remove()" style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function initTable() {
+            addProcessRow(0, 5, 2);
+            addProcessRow(1, 4, 1);
+            addProcessRow(2, 2, 3);
+            addProcessRow(4, 1, 4);
+            generateVisualizations();
+        }
+
+        function fcfs(at, bt) {
+            const processes = at.map((a, i) => ({ id: i + 1, at: a, bt: bt[i] })).sort((a, b) => a.at - b.at);
+            let t = 0;
+            processes.forEach(p => { if (t < p.at) t = p.at; p.st = t; p.ct = t + p.bt; p.tat = p.ct - p.at; p.wt = p.tat - p.bt; t = p.ct; });
+            return processes;
+        }
+
+        function sjf(at, bt) {
+            const n = at.length; const processes = at.map((a, i) => ({ id: i + 1, at: a, bt: bt[i] }));
+            const done = new Array(n).fill(false); let t = 0, c = 0;
+            while (c < n) {
+                let idx = -1, mn = Infinity;
+                for (let i = 0; i < n; i++) if (!done[i] && processes[i].at <= t && processes[i].bt < mn) { mn = processes[i].bt; idx = i; }
+                if (idx === -1) { t++; continue; }
+                processes[idx].st = t; processes[idx].ct = t + processes[idx].bt; processes[idx].tat = processes[idx].ct - processes[idx].at; processes[idx].wt = processes[idx].tat - processes[idx].bt; t = processes[idx].ct; done[idx] = true; c++;
+            }
+            return processes;
+        }
+
+        function priorityNP(at, bt, pr) {
+            const n = at.length; const processes = at.map((a, i) => ({ id: i + 1, at: a, bt: bt[i], pr: pr[i] }));
+            const done = new Array(n).fill(false); let t = 0, c = 0;
+            while (c < n) {
+                let idx = -1, mn = Infinity;
+                for (let i = 0; i < n; i++) if (!done[i] && processes[i].at <= t && processes[i].pr < mn) { mn = processes[i].pr; idx = i; }
+                if (idx === -1) { t++; continue; }
+                processes[idx].st = t; processes[idx].ct = t + processes[idx].bt; processes[idx].tat = processes[idx].ct - processes[idx].at; processes[idx].wt = processes[idx].tat - processes[idx].bt; t = processes[idx].ct; done[idx] = true; c++;
+            }
+            return processes;
+        }
+
+        function priorityP(at, bt, pr) {
+            const n = at.length; const processes = at.map((a, i) => ({ id: i + 1, at: a, bt: bt[i], pr: pr[i], rem: bt[i], st: -1 }));
+            let t = 0, c = 0; const timeline = [];
+            while (c < n) {
+                let idx = -1, mn = Infinity;
+                for (let i = 0; i < n; i++) if (processes[i].at <= t && processes[i].rem > 0 && processes[i].pr < mn) { mn = processes[i].pr; idx = i; }
+                if (idx === -1) { t++; continue; }
+                if (processes[idx].st === -1) processes[idx].st = t;
+                const start = t; processes[idx].rem--; t++;
+                if (timeline.length > 0 && timeline[timeline.length - 1].pid === processes[idx].id) timeline[timeline.length - 1].end = t;
+                else timeline.push({ pid: processes[idx].id, start, end: t });
+                if (processes[idx].rem === 0) { processes[idx].ct = t; processes[idx].tat = t - processes[idx].at; processes[idx].wt = processes[idx].tat - processes[idx].bt; c++; }
+            }
+            return { processes, timeline };
+        }
+
+        function roundRobin(at, bt, q) {
+            const n = at.length; const processes = at.map((a, i) => ({ id: i + 1, at: a, bt: bt[i], rem: bt[i], st: -1 }));
+            const inQ = new Array(n).fill(false); const queue = []; let t = 0, c = 0; const timeline = [];
+            while (c < n) {
+                for (let i = 0; i < n; i++) if (!inQ[i] && processes[i].at <= t && processes[i].rem > 0) { queue.push(i); inQ[i] = true; }
+                if (queue.length === 0) { t++; continue; }
+                const idx = queue.shift(); if (processes[idx].st === -1) processes[idx].st = t;
+                const start = t; const run = Math.min(q, processes[idx].rem); processes[idx].rem -= run; t += run;
+                timeline.push({ pid: processes[idx].id, start, end: t });
+                for (let i = 0; i < n; i++) if (!inQ[i] && processes[i].at <= t && processes[i].rem > 0) { queue.push(i); inQ[i] = true; }
+                if (processes[idx].rem > 0) queue.push(idx);
+                else { processes[idx].ct = t; processes[idx].tat = t - processes[idx].at; processes[idx].wt = processes[idx].tat - processes[idx].bt; c++; }
+            }
+            return { processes, timeline };
+        }
+
+        function generateVisualizations() {
+            const rows = document.querySelectorAll('#process-tbody tr');
+            const at = [], bt = [], pr = [];
+
+            rows.forEach(row => {
+                at.push(parseInt(row.querySelector('.at-input').value) || 0);
+                bt.push(parseInt(row.querySelector('.bt-input').value) || 1);
+                pr.push(parseInt(row.querySelector('.pr-input').value) || 1);
+            });
+
+            const q = parseInt(document.getElementById('quantum').value) || 2;
+
+            if (at.length === 0) {
+                document.getElementById('chartsContainer').innerHTML = '<p class="text-center">Add at least one process to visualize.</p>';
+                return;
+            }
+
+            const res = { 'FCFS': fcfs(at, bt), 'SJF': sjf(at, bt), 'Priority NP': priorityNP(at, bt, pr), 'Priority P': priorityP(at, bt, pr), 'Round Robin': roundRobin(at, bt, q) };
+            const container = document.getElementById('chartsContainer');
+            container.innerHTML = '';
+
+            container.innerHTML += `<div class="visualizer-card"><h3>📊 Algorithm Performance Comparison</h3><table class="results-table"><tr><th>Algorithm</th><th>Avg Wait</th><th>Avg TAT</th></tr>${Object.keys(res).map(algo => {
+                const ps = res[algo].processes || res[algo];
+                const aw = (ps.reduce((s, p) => s + p.wt, 0) / ps.length).toFixed(2);
+                const atat = (ps.reduce((s, p) => s + p.tat, 0) / ps.length).toFixed(2);
+                return `<tr><td>${algo}</td><td>${aw}</td><td>${atat}</td></tr>`;
+            }).join('')}</table></div>`;
+
+            container.innerHTML += `<div class="grid grid-2"><div class="chart-wrapper"><canvas id="wtComp"></canvas></div><div class="chart-wrapper"><canvas id="tatComp"></canvas></div></div>`;
+
+            // Generate Traditional Gantt Charts
+            Object.keys(res).forEach((algo) => {
+                const data = res[algo];
+                let timeline = [];
+
+                if (data.timeline) {
+                    timeline = data.timeline;
+                } else {
+                    [...data].sort((a, b) => a.st - b.st).forEach(p => {
+                        timeline.push({ pid: p.id, start: p.st, end: p.ct });
+                    });
+                }
+
+                const maxTime = Math.max(...timeline.map(t => t.end));
+                const pixelPerUnit = 40;
+
+                let ganttHTML = `<div class="chart-wrapper gantt-container">
+                    <h3>${algo} Gantt Chart</h3>
+                    <div class="gantt-timeline" style="width: ${maxTime * pixelPerUnit}px;">`;
+
+                timeline.forEach(segment => {
+                    const width = (segment.end - segment.start) * pixelPerUnit;
+                    ganttHTML += `<div class="gantt-block" style="width: ${width}px; background: ${colors[algo]};">
+                        P${segment.pid}
+                    </div>`;
+                });
+
+                ganttHTML += `</div><div class="gantt-axis" style="width: ${maxTime * pixelPerUnit}px;">`;
+                for (let t = 0; t <= maxTime; t++) {
+                    ganttHTML += `<div class="gantt-tick" style="width: ${pixelPerUnit}px;">${t}</div>`;
+                }
+                ganttHTML += `</div></div>`;
+
+                container.innerHTML += ganttHTML;
+            });
+
+            setTimeout(() => {
+                const algos = Object.keys(res);
+                const awts = algos.map(a => { const p = res[a].processes || res[a]; return (p.reduce((s, x) => s + x.wt, 0) / p.length).toFixed(2); });
+                const tats = algos.map(a => { const p = res[a].processes || res[a]; return (p.reduce((s, x) => s + x.tat, 0) / p.length).toFixed(2); });
+
+                const chartConfig = {
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: { size: 14, weight: 'bold' },
+                                color: '#f1f5f9'
+                            }
+                        },
+                        tooltip: {
+                            titleFont: { size: 16, weight: 'bold' },
+                            bodyFont: { size: 14 }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { font: { size: 14 }, color: '#f1f5f9' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        },
+                        y: {
+                            ticks: { font: { size: 14 }, color: '#f1f5f9' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        }
+                    }
+                };
+
+                new Chart(document.getElementById('wtComp').getContext('2d'), {
+                    type: 'bar',
+                    data: { labels: algos, datasets: [{ label: 'Avg Waiting Time', data: awts, backgroundColor: algos.map(a => colors[a]) }] },
+                    options: chartConfig
+                });
+
+                new Chart(document.getElementById('tatComp').getContext('2d'), {
+                    type: 'bar',
+                    data: { labels: algos, datasets: [{ label: 'Avg Turnaround Time', data: tats, backgroundColor: algos.map(a => colors[a]) }] },
+                    options: chartConfig
+                });
+            }, 100);
+        }
+
+        window.onload = function () {
+            initTable();
+            setTimeout(() => { try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { } }, 1000);
+        };
+    </script>
+
+    <script src="../assets/js/core/algo-content.js"></script>
+    <script src='../assets/js/core/ui-extras.js'></script>
+</body>
+
+</html>

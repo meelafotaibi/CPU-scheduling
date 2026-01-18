@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Sorting Visualizer | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .visualizer-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .canvas-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        #main-canvas {
+            width: 100%;
+            height: 300px;
+            /* background: #fff; removed */
+            border: 2px solid #eee;
+            border-radius: 12px;
+        }
+
+        #bucket-canvas {
+            width: 100%;
+            height: 250px;
+            
+            border: 1px dashed #ddd;
+            border-radius: 12px;
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .algo-toggle {
+            display: flex;
+            /* background: #f1f3f5; removed */
+            padding: 5px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .toggle-btn.active {
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            color: var(--primary);
+        }
+    </style>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="../index.html">Home</a>
+                <a href="../algorithms.html">Back to Algorithms</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 40px;">
+            <span class="btn-primary"
+                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Distribution
+                Sorts</span>
+            <h1>Radix & Bucket Sort</h1>
+            <p>Visualize distribution-based sorting algorithms that avoid direct comparisons between all elements.</p>
+        </header>
+
+        <div class="visualizer-layout">
+            <div class="glass-card" style="padding: 30px;">
+                <div class="algo-toggle">
+                    <button class="toggle-btn active" id="radix-btn">Radix Sort (LSD)</button>
+                    <button class="toggle-btn" id="bucket-btn">Bucket Sort</button>
+                </div>
+
+                <div class="canvas-container">
+                    <div>
+                        <small style="color: #999; margin-bottom: 5px; display: block;">Main Array</small>
+                        <canvas id="main-canvas"></canvas>
+                    </div>
+                    <div>
+                        <small style="color: #999; margin-bottom: 5px; display: block;">Buckets</small>
+                        <canvas id="bucket-canvas"></canvas>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; display: flex; gap: 15px;">
+                    <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Start Sort</button>
+                    <button class="btn" id="next-btn" style="background: var(--dark); color: white;">Next Step</button>
+                    <button class="btn" id="random-btn" style="border: 1px solid #ddd;">Randomize</button>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>📜 Execution Log</h4>
+                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 10px; min-height: 50px;">Click Start
+                        to begin the distribution.</p>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>🏗️ Strategy</h4>
+                    <p id="strategy-info" style="font-size: 0.85rem; color: #666; line-height: 1.5;">
+                        <strong>Radix Sort:</strong> Sorts numbers digit by digit starting from the least significant
+                        digit (LSD). It uses 10 buckets (0-9).
+                    </p>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>💡 Complexity</h4>
+                    <div style="font-size: 0.85rem;">
+                        <p><strong>Radix:</strong> O(nk) where k is digits.</p>
+                        <p><strong>Bucket:</strong> O(n + k) on average.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/core/array-engine.js"></script>
+    <script src="../assets/js/core/playback.js"></script>
+    <script src="../assets/js/algos/radix-bucket-algo.js"></script>
+    <script>
+        const mainCanvas = document.getElementById('main-canvas');
+        const bucketCanvas = document.getElementById('bucket-canvas');
+
+        const arrayEngine = new ArrayEngine('main-canvas');
+        const playback = new Playback(() => algo.nextStep());
+
+        const ui = {
+            updateStatus: (t) => document.getElementById('explanation-text').innerText = t,
+            drawBuckets: (step) => {
+                const ctx = bucketCanvas.getContext('2d');
+                const { width, height } = bucketCanvas;
+                ctx.clearRect(0, 0, width, height);
+
+                if (!step.buckets) return;
+
+                const numBuckets = step.buckets.length;
+                const bWidth = (width - 40) / numBuckets;
+
+                step.buckets.forEach((b, i) => {
+                    const x = 20 + i * bWidth;
+
+                    // Draw bucket box
+                    ctx.strokeStyle = '#ddd';
+                    ctx.strokeRect(x + 5, 20, bWidth - 10, height - 60);
+
+                    // Bucket Label
+                    ctx.fillStyle = '#999';
+                    ctx.font = '10px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(i, x + bWidth / 2, height - 25);
+
+                    // Draw items in bucket
+                    b.forEach((val, j) => {
+                        const y = height - 70 - j * 20;
+                        ctx.fillStyle = (step.digit === i || step.bucketIdx === i) ? '#4a90e2' : '#eee';
+                        ctx.fillRect(x + 10, y, bWidth - 20, 18);
+                        ctx.fillStyle = (step.digit === i || step.bucketIdx === i) ? '#fff' : '#333';
+                        ctx.font = 'bold 10px Arial';
+                        ctx.fillText(val, x + bWidth / 2, y + 13);
+                    });
+                });
+            }
+        };
+
+        const algo = new AdvancedSortAlgo(arrayEngine, playback, ui);
+        let currentMode = 'radix';
+        let currentArray = [170, 45, 75, 90, 802, 24, 2, 66];
+
+        const resize = () => {
+            mainCanvas.width = mainCanvas.offsetWidth;
+            mainCanvas.height = mainCanvas.offsetHeight;
+            bucketCanvas.width = bucketCanvas.offsetWidth;
+            bucketCanvas.height = bucketCanvas.offsetHeight;
+            arrayEngine.drawFullArray(currentArray);
+        };
+        window.onresize = resize;
+        resize();
+
+        document.getElementById('radix-btn').onclick = () => {
+            currentMode = 'radix';
+            document.getElementById('radix-btn').classList.add('active');
+            document.getElementById('bucket-btn').classList.remove('active');
+            document.getElementById('strategy-info').innerHTML = `<strong>Radix Sort:</strong> Sorts numbers digit by digit starting from the least significant digit (LSD). It uses 10 buckets (0-9).`;
+            playback.stop();
+            algo.reset();
+            arrayEngine.drawFullArray(currentArray);
+        };
+
+        document.getElementById('bucket-btn').onclick = () => {
+            currentMode = 'bucket';
+            document.getElementById('bucket-btn').classList.add('active');
+            document.getElementById('radix-btn').classList.remove('active');
+            document.getElementById('strategy-info').innerHTML = `<strong>Bucket Sort:</strong> Divides elements into several "buckets", sorts each bucket individually (usually with another algorithm), and then combines them.`;
+            playback.stop();
+            algo.reset();
+            arrayEngine.drawFullArray(currentArray);
+        };
+
+        document.getElementById('play-btn').onclick = () => {
+            playback.stop();
+            algo.reset();
+            if (currentMode === 'radix') algo.generateRadixSteps(currentArray);
+            else algo.generateBucketSteps(currentArray);
+            playback.play();
+        };
+
+        document.getElementById('next-btn').onclick = () => algo.nextStep();
+
+        document.getElementById('random-btn').onclick = () => {
+            playback.stop();
+            currentArray = Array.from({ length: 8 }, () => Math.floor(Math.random() * 900) + 1);
+            arrayEngine.drawFullArray(currentArray);
+            algo.reset();
+        };
+
+        window.onload = () => {
+            resize();
+            arrayEngine.drawFullArray(currentArray);
+        };
+    </script>
+
+    <script src='../assets/js/core/ui-extras.js'></script>
+</body>
+
+</html>
+Riverside
