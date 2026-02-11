@@ -1,5 +1,6 @@
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
+
     /* Navigation */
     nav .container {
         padding: 0 16px;
@@ -9,7 +10,7 @@
         flex-direction: column;
         gap: 16px;
     }
-    
+
     .nav-links {
         flex-wrap: wrap;
         justify-content: center;
@@ -31,10 +32,12 @@
     }
 
     /* Grids */
-    .grid-2, .grid-3, .grid-4 {
+    .grid-2,
+    .grid-3,
+    .grid-4 {
         grid-template-columns: 1fr;
     }
-    
+
     .visualizer-layout {
         display: flex !important;
         flex-direction: column;
@@ -50,7 +53,8 @@
 
     .side-panel {
         width: 100% !important;
-        order: 2; /* Put controls below on mobile */
+        order: 2;
+        /* Put controls below on mobile */
     }
 
     canvas {
@@ -58,10 +62,10 @@
     }
 
     /* Buttons inside visualizer header */
-    .visualizer-layout .glass-card > div[style*="justify-content"] {
+    .visualizer-layout .glass-card>div[style*="justify-content"] {
         flex-direction: column;
         gap: 12px;
-        align-items: stretch !important; 
+        align-items: stretch !important;
     }
 
     .visualizer-layout button {
@@ -73,6 +77,26 @@
     .hero::before {
         animation: none;
     }
+
+    /* Fix for Searching Algorithms (inline grid styles) */
+    #visualizer-container>div[style*="grid"] {
+        display: flex !important;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    #array-container {
+        flex-wrap: wrap;
+        height: auto !important;
+        padding: 20px 0;
+    }
+
+    #array-container>div {
+        width: 35px !important;
+        height: 35px !important;
+        font-size: 0.8rem !important;
+        margin: 2px;
+    }
 }
 
 /* Very small screens */
@@ -80,7 +104,7 @@
     .nav-links {
         gap: 8px 12px;
     }
-    
+
     .logo {
         font-size: 1.25rem;
     }
