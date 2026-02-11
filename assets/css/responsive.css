@@ -1,0 +1,87 @@
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    /* Navigation */
+    nav .container {
+        padding: 0 16px;
+    }
+
+    .nav-content {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px 20px;
+        width: 100%;
+    }
+
+    .nav-links a {
+        font-size: 0.9rem;
+    }
+
+    /* Hero Section */
+    .hero {
+        padding: 100px 0 60px;
+    }
+
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+
+    /* Grids */
+    .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
+    }
+    
+    .visualizer-layout {
+        display: flex !important;
+        flex-direction: column;
+        grid-template-columns: 1fr !important;
+        gap: 20px;
+    }
+
+    /* Visualizer Components */
+    #array-canvas {
+        height: 300px !important;
+        width: 100% !important;
+    }
+
+    .side-panel {
+        width: 100% !important;
+        order: 2; /* Put controls below on mobile */
+    }
+
+    canvas {
+        max-width: 100%;
+    }
+
+    /* Buttons inside visualizer header */
+    .visualizer-layout .glass-card > div[style*="justify-content"] {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch !important; 
+    }
+
+    .visualizer-layout button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Hide less critical decorative elements on mobile */
+    .hero::before {
+        animation: none;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 380px) {
+    .nav-links {
+        gap: 8px 12px;
+    }
+    
+    .logo {
+        font-size: 1.25rem;
+    }
+}
