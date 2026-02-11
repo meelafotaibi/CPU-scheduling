@@ -62,9 +62,7 @@
             color: var(--primary);
         }
     </style>
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
-        crossorigin="anonymous"></script>
+    <!-- Ads handled centrally -->
 </head>
 
 <body>
@@ -89,7 +87,7 @@
         </header>
 
         <div class="visualizer-layout">
-            <div class="glass-card" style="padding: 30px;">
+            <div class="glass-card" id="visualizer-container" style="padding: 30px;">
                 <div class="mode-toggle">
                     <button class="mode-btn active" id="max-btn">Max Heap</button>
                     <button class="mode-btn" id="min-btn">Min Heap</button>
@@ -107,7 +105,11 @@
                             class="fas fa-minus"></i> Extract Root</button>
                     <button class="btn" id="next-btn"
                         style="border: 1px solid var(--accent); color: var(--accent);">Next Step</button>
+                    <button class="btn" id="next-btn"
+                        style="border: 1px solid var(--accent); color: var(--accent);">Next Step</button>
                     <button class="btn" id="reset-btn" style="border: 1px solid #ddd;">Clear</button>
+                    <button class="btn btn-secondary"
+                        onclick="shareScreenshot('visualizer-container', 'Binart Heap')">📸 Share</button>
                 </div>
             </div>
 
@@ -141,17 +143,8 @@
         </div>
 
         <!-- Ad Slot -->
-        <div style="margin: 60px 0; text-align: center;">
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
-                data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
-            <script>
-                window.onload = () => {
-                    setTimeout(() => {
-                        try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { }
-                    }, 1000);
-                };
-            </script>
-        </div>
+        <!-- Ad Slot handled by ui-extras -->
+        <div class="adsbygoogle-container"></div>
     </main>
 
     <script src="../assets/js/core/heap-engine.js"></script>
@@ -159,10 +152,12 @@
     <script src="../assets/js/algos/heap-algo.js"></script>
     <script>
         const engine = new HeapEngine('heap-canvas');
-        const ui = {
+        window.ui = {
             updateStatus: (t) => document.getElementById('explanation-text').innerText = t
         };
+        const ui = window.ui;
         const playback = new Playback(() => window.algo.nextStep());
+        window.playback = playback;
         window.algo = new HeapAlgo(engine, playback, ui);
 
         document.getElementById('max-btn').onclick = () => {

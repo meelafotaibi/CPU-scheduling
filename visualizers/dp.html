@@ -18,7 +18,7 @@
         .dp-display {
             width: 100%;
             height: 450px;
-            
+
             border: 2px solid #eee;
             border-radius: 12px;
             padding: 30px;
@@ -207,7 +207,7 @@
     <script src="../assets/js/core/playback.js"></script>
     <script src="../assets/js/algos/dp-fib.js"></script>
     <script>
-        const ui = {
+        window.ui = {
             updateStatus: (t) => document.getElementById('explanation-text').innerText = t,
             updateMemoTable: (memo) => {
                 const container = document.getElementById('dp-container');
@@ -237,9 +237,11 @@
                 });
             }
         };
+        const ui = window.ui;
 
-        const playback = new Playback(() => algo.nextStep());
-        const algo = new DPFibAlgo(null, ui);
+        const playback = new Playback(() => window.algo.nextStep());
+        window.algo = new DPFibAlgo(null, ui);
+        const algo = window.algo;
 
         document.getElementById('memo-btn').onclick = () => {
             algo.mode = 'memo';

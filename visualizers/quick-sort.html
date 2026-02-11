@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-algo="quick-sort">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Sort Visualizer - AlgoVisual Hub</title>
+    <meta name="description" content="Interactive quick sort visualization showing partitioning and recursive sorting.">
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+
+<body>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <a href="../index.html" class="logo">AlgoVisual Hub</a>
+                <div class="nav-links">
+                    <a href="../algorithms.html">Algorithms</a>
+                    <a href="../dsa.html">DSA</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main></main>
+
+    <script src="../assets/js/core/algo-content.js"></script>
+    <script src="../assets/js/core/quick-sort-content.js"></script>
+    <script src="../assets/js/core/ui-extras.js"></script>
+    <script>
+
+        let array = [64, 34, 25, 12, 22, 11, 90];
+        let pivotIndex = -1;
+        let comparing = [];
+        let partitioned = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const visualizerContainer = document.getElementById('visualizer-container');
+                if (visualizerContainer) {
+                    visualizerContainer.innerHTML = `
+                        <div id="array-container" style="display: flex; justify-content: center; align-items: end; height: 300px; gap: 4px; margin: 20px 0;"></div>
+                        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 12px;">
+                            <button class="btn btn-primary" onclick="startQuickSort()">Start Quick Sort</button>
+                            <button class="btn btn-secondary" onclick="generateArray()">New Array</button>
+                            <button class="btn btn-secondary" onclick="resetArray()">Reset</button>
+                            <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'Quick Sort')">📸 Share</button>
+                        </div>
+                    `;
+                    drawArray();
+                    logStep('Quick sort visualizer ready', 'info');
+                }
+            }, 100);
+        });
+
+        function drawArray() {
+            const container = document.getElementById('array-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            const maxVal = Math.max(...array);
+
+            array.forEach((val, idx) => {
+                const bar = document.createElement('div');
+                let color = 'var(--primary)';
+
+                if (idx === pivotIndex) color = 'var(--accent)';
+                else if (comparing.includes(idx)) color = 'var(--warning)';
+                else if (partitioned.includes(idx)) color = 'var(--success)';
+
+                bar.style.cssText = `
+                    width: 40px;
+                    height: ${(val / maxVal) * 250}px;
+                    background: ${color};
+                    display: flex;
+                    align-items: end;
+                    justify-content: center;
+                    color: white;
+                    font-weight: bold;
+                    border-radius: 4px 4px 0 0;
+                    transition: all 0.3s ease;
+                `;
+                bar.textContent = val;
+                container.appendChild(bar);
+            });
+        }
+
+        async function startQuickSort() {
+            logStep('Starting quick sort algorithm', 'info');
+            await quickSort(0, array.length - 1);
+            logStep('Quick sort complete!', 'success');
+            pivotIndex = -1;
+            comparing = [];
+            partitioned = [];
+            drawArray();
+        }
+
+        async function quickSort(low, high) {
+            if (low < high) {
+                logStep(`Sorting subarray from index ${low} to ${high}`, 'info');
+                const pi = await partition(low, high);
+                await quickSort(low, pi - 1);
+                await quickSort(pi + 1, high);
+            }
+        }
+
+        async function partition(low, high) {
+            const pivot = array[high];
+            pivotIndex = high;
+            logStep(`Pivot selected: ${pivot} at index ${high}`, 'info');
+            drawArray();
+            await sleep(800);
+
+            let i = low - 1;
+
+            for (let j = low; j < high; j++) {
+                comparing = [j];
+                drawArray();
+                await sleep(500);
+
+                if (array[j] <= pivot) {
+                    i++;
+                    if (i !== j) {
+                        logStep(`${array[j]} ≤ ${pivot}, swap with position ${i}`, 'warning');
+                        [array[i], array[j]] = [array[j], array[i]];
+                        drawArray();
+                        await sleep(500);
+                    } else {
+                        logStep(`${array[j]} ≤ ${pivot}, already in correct position`, 'info');
+                    }
+                } else {
+                    logStep(`${array[j]} > ${pivot}, no swap needed`, 'info');
+                }
+            }
+
+            // Place pivot in correct position
+            i++;
+            [array[i], array[high]] = [array[high], array[i]];
+            pivotIndex = i;
+            partitioned.push(i);
+            comparing = [];
+
+            logStep(`Pivot ${pivot} placed at final position ${i}`, 'success');
+            drawArray();
+            await sleep(800);
+
+            return i;
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function generateArray() {
+            array = Array.from({ length: 7 }, () => Math.floor(Math.random() * 90) + 10);
+            pivotIndex = -1;
+            comparing = [];
+            partitioned = [];
+            drawArray();
+            logStep('New random array generated', 'info');
+        }
+
+        function resetArray() {
+            array = [64, 34, 25, 12, 22, 11, 90];
+            pivotIndex = -1;
+            comparing = [];
+            partitioned = [];
+            drawArray();
+            logStep('Array reset to original values', 'info');
+        }
+    </script>
+</body>
+
+</html>

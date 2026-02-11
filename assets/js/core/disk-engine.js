@@ -29,9 +29,10 @@ class DiskEngine {
         resize();
     }
 
-    setData(requests, initialHead, path) {
+    setData(requests, initialHead, path, maxSteps) {
         this.requests = requests;
-        this.path = path;
+        this.path = path; // Current path subset
+        this.maxSteps = maxSteps || path.length; // Lock Y scale
         this.draw();
     }
 
@@ -95,7 +96,7 @@ class DiskEngine {
         const ctx = this.ctx;
 
         const scaleX = (width - 2 * this.padding) / (this.maxCylinders - 1);
-        const scaleY = (height - 2 * this.padding) / (this.path.length || 1);
+        const scaleY = (height - 2 * this.padding) / (this.maxSteps || 1);
 
         ctx.beginPath();
         ctx.strokeStyle = this.colors.line;

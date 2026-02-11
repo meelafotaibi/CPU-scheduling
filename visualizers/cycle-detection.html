@@ -18,7 +18,7 @@
         #graph-canvas {
             width: 100%;
             height: 500px;
-            
+
             border: 2px solid #eee;
             border-radius: 12px;
             cursor: crosshair;
@@ -119,20 +119,26 @@
     <script src="../assets/js/core/playback.js"></script>
     <script src="../assets/js/algos/cycle-detection.js"></script>
     <script>
-        const engine = new GraphEngine('graph-canvas');
-        engine.directed = true;
-        engine.setEditMode(true);
+        window.engine = new GraphEngine('graph-canvas');
+        window.engine.directed = true;
+        window.engine.setEditMode(true);
 
-        const ui = {
+        window.ui = {
             updateStatus: (t) => document.getElementById('explanation-text').innerText = t
         };
+        const ui = window.ui;
+        const engine = window.engine;
 
-        const playback = new Playback(() => algo.nextStep());
-        const algo = new CycleDetectionAlgo(engine, playback, ui);
+        // Expose Playback
+        const playback = new Playback(() => window.algo.nextStep());
+        window.playback = playback;
+
+        window.algo = new CycleDetectionAlgo(window.engine, playback, ui);
+        const algo = window.algo;
 
         document.getElementById('play-btn').onclick = () => {
-            if (engine.nodes.length === 0) return alert("Please add nodes first");
-            algo.reset();
+            if (window.engine.nodes.length === 0) return alert("Please add nodes first");
+            window.algo.reset();
             playback.play();
         };
 

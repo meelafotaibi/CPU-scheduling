@@ -2,8 +2,9 @@
  * minimax.js - Minimax and Alpha-Beta implementation for tree search.
  */
 class MinimaxAlgo {
-    constructor(engine, ui) {
+    constructor(engine, playback, ui) {
         this.engine = engine;
+        this.playback = playback;
         this.ui = ui;
         this.root = null;
         this.isAlphaBeta = false;

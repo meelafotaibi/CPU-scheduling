@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-algo="bst">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BST Visualizer - AlgoVisual Hub</title>
+    <meta name="description"
+        content="Interactive Binary Search Tree visualization with insert, search, and delete operations.">
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+
+<body>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <a href="../index.html" class="logo">AlgoVisual Hub</a>
+                <div class="nav-links">
+                    <a href="../dsa.html">DSA</a>
+
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main></main>
+
+    <script src="../assets/js/core/algo-content.js"></script>
+    <script src="../assets/js/core/bst-content.js"></script>
+    <script src="../assets/js/core/ui-extras.js"></script>
+    <script>
+
+
+        class BSTNode {
+            constructor(val) {
+                this.val = val;
+                this.left = null;
+                this.right = null;
+            }
+        }
+
+        let root = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const visualizerContainer = document.getElementById('visualizer-container');
+                if (visualizerContainer) {
+                    visualizerContainer.innerHTML = `
+                        <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px;">
+                            <div id="tree-container" style="height: 400px; border: 1px solid var(--border); border-radius: 8px; position: relative; overflow: hidden;"></div>
+                            <div class="glass-card" style="padding: 20px;">
+                                <h4>Operations</h4>
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    <input type="number" id="node-input" placeholder="Enter value" style="padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+                                    <button class="btn btn-primary" onclick="insertNode()">Insert</button>
+                                    <button class="btn btn-secondary" onclick="searchNode()">Search</button>
+                                    <button class="btn btn-secondary" onclick="clearTree()" style="width: 100%; margin-bottom: 8px;">Clear</button>
+                            <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'BST')" style="width: 100%;">📸 Share</button>
+                        </div>        </div>
+                            </div>
+                        </div>
+                    `;
+                    drawTree();
+                    logStep('BST visualizer ready', 'info');
+                }
+            }, 100);
+        });
+
+        function insertNode() {
+            const input = document.getElementById('node-input');
+            const val = parseInt(input.value);
+            if (isNaN(val)) return;
+
+            root = insert(root, val);
+            drawTree();
+            logStep(`Inserted ${val} into BST`, 'success');
+            input.value = '';
+        }
+
+        function insert(node, val) {
+            if (!node) return new BSTNode(val);
+            if (val < node.val) {
+                node.left = insert(node.left, val);
+            } else if (val > node.val) {
+                node.right = insert(node.right, val);
+            }
+            return node;
+        }
+
+        function searchNode() {
+            const input = document.getElementById('node-input');
+            const val = parseInt(input.value);
+            if (isNaN(val)) return;
+
+            const found = search(root, val);
+            logStep(`Search ${val}: ${found ? 'Found' : 'Not found'}`, found ? 'success' : 'warning');
+        }
+
+        function search(node, val) {
+            if (!node || node.val === val) return node;
+            if (val < node.val) return search(node.left, val);
+            return search(node.right, val);
+        }
+
+        function clearTree() {
+            root = null;
+            drawTree();
+            logStep('Tree cleared', 'info');
+        }
+
+        function drawTree() {
+            const container = document.getElementById('tree-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            if (!root) {
+                container.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-muted);">Empty Tree</div>';
+                return;
+            }
+
+            drawNode(root, container, 200, 50, 100);
+        }
+
+        function drawNode(node, container, x, y, offset) {
+            if (!node) return;
+
+            // Draw connections first
+            if (node.left) {
+                const line = document.createElement('div');
+                line.style.cssText = `
+                    position: absolute;
+                    left: ${x}px;
+                    top: ${y + 20}px;
+                    width: ${offset}px;
+                    height: 2px;
+                    background: var(--border);
+                    transform-origin: left;
+                    transform: rotate(45deg);
+                `;
+                container.appendChild(line);
+                drawNode(node.left, container, x - offset, y + 80, offset * 0.6);
+            }
+
+            if (node.right) {
+                const line = document.createElement('div');
+                line.style.cssText = `
+                    position: absolute;
+                    left: ${x}px;
+                    top: ${y + 20}px;
+                    width: ${offset}px;
+                    height: 2px;
+                    background: var(--border);
+                    transform-origin: left;
+                    transform: rotate(-45deg);
+                `;
+                container.appendChild(line);
+                drawNode(node.right, container, x + offset, y + 80, offset * 0.6);
+            }
+
+            // Draw node
+            const nodeEl = document.createElement('div');
+            nodeEl.style.cssText = `
+                position: absolute;
+                left: ${x - 20}px;
+                top: ${y}px;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: var(--primary);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                border: 2px solid white;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            `;
+            nodeEl.textContent = node.val;
+            container.appendChild(nodeEl);
+        }
+    </script>
+</body>
+
+</html>

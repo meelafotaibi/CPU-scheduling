@@ -1,231 +1,291 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlgoVisual Hub | Master Algorithms Visually</title>
+    <title>AlgoVisual Hub - Master Algorithms Visually | Free Interactive CS Education</title>
+
+    <!-- SEO Meta Tags -->
     <meta name="description"
-        content="The ultimate platform to visualize and understand complex algorithms in Operating Systems, DSA, and AI.">
+        content="Master algorithms through interactive visualizations. Free platform for computer science students featuring CPU scheduling, sorting algorithms, memory management, and more. Step-by-step animations make complex concepts easy to understand.">
+    <meta name="keywords"
+        content="algorithm visualization, CPU scheduling, sorting algorithms, operating systems, computer science, interactive learning, data structures, OS algorithms, educational programming, coding tutorial, algorithm animation">
+    <meta name="author" content="Meelo">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cpuos-ae329.web.app/">
+    <meta property="og:title" content="AlgoVisual Hub - Master Algorithms Visually">
+    <meta property="og:description"
+        content="Free interactive algorithm visualizations for computer science students. Learn CPU scheduling, sorting, memory management and more through step-by-step animations.">
+    <meta property="og:image" content="https://cpuos-ae329.web.app/assets/img/logo.png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://cpuos-ae329.web.app/">
+    <meta name="twitter:title" content="AlgoVisual Hub - Master Algorithms Visually">
+    <meta name="twitter:description"
+        content="Free interactive algorithm visualizations for computer science students. Learn CPU scheduling, sorting, memory management and more.">
+    <meta name="twitter:image" content="https://cpuos-ae329.web.app/assets/img/logo.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://cpuos-ae329.web.app/">
+
     <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .hero {
-            padding: 100px 0;
-            text-align: center;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            clip-path: ellipse(150% 100% at 50% 0%);
-            margin-bottom: 60px;
-        }
+    <link rel="icon" href="assets/img/logo.png" type="image/png">
 
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 900;
-            margin-bottom: 20px;
-            letter-spacing: -1px;
-        }
-
-        .hero p {
-            font-size: 1.4rem;
-            max-width: 700px;
-            margin: 0 auto 40px auto;
-            opacity: 0.9;
-        }
-
-        .category-grid {
-            margin-top: -120px;
-        }
-
-        .category-card {
-            padding: 40px;
-            text-align: center;
-        }
-
-        .category-icon {
-            font-size: 3rem;
-            margin-bottom: 25px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .section-tag {
-            text-transform: uppercase;
-            font-weight: 800;
-            color: var(--primary);
-            letter-spacing: 2px;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .ad-banner {
-            margin: 60px 0;
-            background: #eee;
-            padding: 20px;
-            text-align: center;
-            border-radius: 15px;
-        }
-    </style>
-    <!-- Google AdSense -->
+    <!-- AdSense -->
+    <meta name="google-adsense-account" content="ca-pub-6906580768177940">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
         crossorigin="anonymous"></script>
+
+    <!-- Structured Data for Google -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "EducationalOrganization",
+        "name": "AlgoVisual Hub",
+        "description": "Interactive algorithm visualization platform for computer science education",
+        "url": "https://cpuos-ae329.web.app",
+        "logo": "https://cpuos-ae329.web.app/assets/img/logo.png",
+        "sameAs": [
+            "https://github.com/yourprofile"
+        ],
+        "educationalLevel": "University",
+        "educationalUse": "Interactive Learning",
+        "audience": {
+            "@type": "EducationalAudience",
+            "educationalRole": "student"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
+    }
+    </script>
 </head>
 
 <body>
+    <!-- Loading Screen -->
+    <div class="loader-wrapper">
+        <img src="assets/img/logo1.png" alt="Loading" class="loader-logo">
+    </div>
 
     <nav>
-        <div class="container nav-content">
-            <a href="index.html" class="logo">AlgoVisual Hub</a>
-            <div class="nav-links">
-                <a href="#categories">Explore</a>
-                <a href="dsa.html">DSA</a>
-                <a href="algorithms.html">Algorithms</a>
-                <a href="os.html">OS</a>
-                <a href="ai.html">AI</a>
-                <a href="roadmap.html" style="color: var(--accent); font-weight: 700;">Roadmap</a>
+        <div class="container">
+            <div class="nav-content">
+                <a href="index.html" class="logo">
+                    <img src="assets/img/logo1.png" alt="AlgoVisual Hub">
+                    <span>AlgoVisual Hub</span>
+                </a>
+                <div class="nav-links">
+                    <a href="#categories">Categories</a>
+                    <a href="roadmap.html">Roadmap</a>
+                    <a href="#about">About</a>
+                </div>
             </div>
         </div>
     </nav>
 
-    <header class="hero gradient-bg">
-        <div class="container">
-            <h1 id="main-title">Visualize the Inner Workings of Code</h1>
-            <p>Master complex data structures and algorithms through interactive, step-by-step visualizations designed
-                for computer science students and developers.</p>
-            <a href="#categories" class="btn btn-primary" style="background: white; color: var(--primary);">Get Started
-                &rarr;</a>
-        </div>
-    </header>
-
-    <main class="container">
-        <div id="categories" class="grid grid-4 category-grid">
-            <!-- DSA Card -->
-            <div class="glass-card category-card">
-                <div class="category-icon"><i class="fas fa-sitemap"></i></div>
-                <h3>Data Structures</h3>
-                <p>Interactive visualizations of Linked Lists, Trees, Stacks, and Queues.</p>
-                <a href="dsa.html" class="btn btn-primary" style="margin-top: 20px;">Explore DSA</a>
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Visualize the Inner Workings of Code</h1>
+                <p>Master complex algorithms through interactive, step-by-step visualizations designed for computer
+                    science students and developers.</p>
+                <a href="#categories" class="btn btn-primary">Explore Categories →</a>
             </div>
+        </section>
 
-            <!-- Algorithms Card -->
-            <div class="glass-card category-card">
-                <div class="category-icon"><i class="fas fa-project-diagram"></i></div>
-                <h3>DSA Algorithms</h3>
-                <p>Master Sorting, Searching, and Graph algorithms like BFS, DFS, and Dijkstra.</p>
-                <a href="algorithms.html" class="btn btn-primary" style="margin-top: 20px;">Explore Algorithms</a>
-            </div>
-
-            <!-- OS Card -->
-            <div class="glass-card category-card">
-                <div class="category-icon"><i class="fas fa-microchip"></i></div>
-                <h3>Operating Systems</h3>
-                <p>Understand CPU Scheduling, Page Replacement, and Banker's Algorithm visually.</p>
-                <a href="os.html" class="btn btn-primary" style="margin-top: 20px;">Explore OS</a>
-            </div>
-
-            <!-- AI Card -->
-            <div class="glass-card category-card">
-                <div class="category-icon"><i class="fas fa-brain"></i></div>
-                <h3>AI & ML</h3>
-                <p>Visualize K-Means Clustering and Linear Regression to understand modern AI.</p>
-                <a href="ai.html" class="btn btn-primary" style="margin-top: 20px;">Explore AI</a>
-            </div>
-        </div>
-
-        <div style="text-align: center; margin-top: 40px;">
-            <p style="opacity: 0.7; margin-bottom: 15px;">Want to see what's coming next?</p>
-            <a href="roadmap.html" class="btn" style="border: 1px solid var(--primary); color: var(--primary);"><i
-                    class="fas fa-map-signs"></i> View Implementation Roadmap</a>
-        </div>
-
-        <section style="margin: 100px 0;">
-            <div class="grid grid-2" style="align-items: center;">
-                <div>
-                    <span class="section-tag">Powerful Learning</span>
-                    <h2>Why Visual Learning Works</h2>
-                    <p>Static code can be hard to grasp. Our platform transforms abstract concepts into dynamic,
-                        step-by-step animations. Whether you're preparing for a technical interview or studying for an
-                        OS exam, visualizing the logic makes it stick.</p>
-                    <ul style="margin: 20px 0; padding-left: 20px;">
-                        <li style="margin-bottom: 10px;">📉 Real-time performance comparisons</li>
-                        <li style="margin-bottom: 10px;">🕹️ Interactive inputs for custom scenarios</li>
-                        <li style="margin-bottom: 10px;">📘 Deep-dive educational guides for every module</li>
-                    </ul>
+        <section id="categories" style="padding: 80px 0;">
+            <div class="container">
+                <div class="text-center" style="margin-bottom: 60px;">
+                    <span class="section-tag">Algorithm Categories</span>
+                    <h2 style="font-size: 2.5rem; font-weight: 800; margin: 16px 0;">What Would You Like to Learn?</h2>
+                    <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 600px; margin: 0 auto;">
+                        Choose from our collection of interactive algorithm visualizations
+                    </p>
                 </div>
-                <div class="glass-card" style="padding: 20px; background: #fff;">
-                    <img src="https://img.icons8.com/clouds/500/code.png" alt="Algorithm Visualization illustration"
-                        style="width: 100%;">
+
+                <div class="grid grid-2" style="gap: 30px;">
+                    <!-- DSA Category -->
+                    <div class="glass-card category-card interactive-element"
+                        style="text-align: center; padding: 48px 32px;">
+                        <div class="category-icon" style="font-size: 4rem; margin-bottom: 24px;">🌲</div>
+                        <h3 style="font-size: 1.8rem; margin-bottom: 16px;">Data Structures</h3>
+                        <p style="margin-bottom: 24px; color: var(--text-muted);">
+                            Linked Lists, Stacks, Queues, Trees, and Graphs
+                        </p>
+                        <span class="status-pill status-planned"
+                            style="display: inline-block; margin-bottom: 16px;">Coming Soon</span>
+                        <br>
+                        <a href="#" class="btn btn-secondary" style="pointer-events: none; opacity: 0.6;">View
+                            Structures</a>
+                    </div>
+
+                    <!-- Algorithms Category -->
+                    <div class="glass-card category-card interactive-element"
+                        style="text-align: center; padding: 48px 32px;">
+                        <div class="category-icon" style="font-size: 4rem; margin-bottom: 24px;">⚡</div>
+                        <h3 style="font-size: 1.8rem; margin-bottom: 16px;">Sorting & Searching</h3>
+                        <p style="margin-bottom: 24px; color: var(--text-muted);">
+                            Bubble, Selection, Insertion Sort & More
+                        </p>
+                        <span class="status-pill status-done" style="display: inline-block; margin-bottom: 16px;">3
+                            Live</span>
+                        <br>
+                        <a href="algorithms.html" class="btn btn-primary">Explore Algorithms →</a>
+                    </div>
+
+                    <!-- OS Category -->
+                    <div class="glass-card category-card interactive-element"
+                        style="text-align: center; padding: 48px 32px;">
+                        <div class="category-icon" style="font-size: 4rem; margin-bottom: 24px;">🖥️</div>
+                        <h3 style="font-size: 1.8rem; margin-bottom: 16px;">Operating Systems</h3>
+                        <p style="margin-bottom: 24px; color: var(--text-muted);">
+                            CPU Scheduling, Memory, Paging, Disk & Deadlock
+                        </p>
+                        <span class="status-pill status-done" style="display: inline-block; margin-bottom: 16px;">5
+                            Live</span>
+                        <br>
+                        <a href="os.html" class="btn btn-primary">Explore OS →</a>
+                    </div>
+
+                    <!-- AI Category -->
+                    <div class="glass-card category-card interactive-element"
+                        style="text-align: center; padding: 48px 32px;">
+                        <div class="category-icon" style="font-size: 4rem; margin-bottom: 24px;">🧠</div>
+                        <h3 style="font-size: 1.8rem; margin-bottom: 16px;">AI & Machine Learning</h3>
+                        <p style="margin-bottom: 24px; color: var(--text-muted);">
+                            Search Algorithms, Clustering, and Neural Networks
+                        </p>
+                        <span class="status-pill status-planned"
+                            style="display: inline-block; margin-bottom: 16px;">Coming Soon</span>
+                        <br>
+                        <a href="#" class="btn btn-secondary" style="pointer-events: none; opacity: 0.6;">View
+                            AI</a>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Ad Slot -->
-        <div class="ad-banner">
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
-                data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-
-        <section id="ai" class="glass-card"
-            style="padding: 60px; text-align: center; background: var(--dark); color: white;">
-            <div class="category-icon"
-                style="background: white; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
-                <i class="fas fa-brain"></i>
+        <!-- AdSense Section -->
+        <section style="padding: 40px 0;">
+            <div class="container">
+                <div class="glass-card" style="padding: 40px; text-align: center;">
+                    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
+                        data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
             </div>
-            <h2 style="color: white;">Artificial Intelligence</h2>
-            <p style="max-width: 600px; margin: 0 auto 30px auto; opacity: 0.8;">Explore AI fundamentals with
-                visualizations of Minimax, Alpha-Beta Pruning, and Search Trees.</p>
-            <a href="ai.html" class="btn btn-primary">Dive into AI</a>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" style="padding: 80px 0; background: rgba(99, 102, 241, 0.03);">
+            <div class="container">
+                <div class="grid grid-2" style="align-items: center; gap: 60px;">
+                    <div>
+                        <span class="section-tag">Why AlgoVisual Hub?</span>
+                        <h2 style="font-size: 2.2rem; font-weight: 800; margin: 16px 0 24px;">Learn by Seeing</h2>
+                        <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 24px;">
+                            Static textbooks make algorithms hard to grasp. AlgoVisual Hub brings code to life with
+                            interactive, step-by-step animations that make complex concepts click.
+                        </p>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+                                <span style="color: var(--success); font-size: 1.2rem;">✓</span>
+                                <span>Real-time step-by-step execution</span>
+                            </li>
+                            <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+                                <span style="color: var(--success); font-size: 1.2rem;">✓</span>
+                                <span>Custom input for personalized learning</span>
+                            </li>
+                            <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+                                <span style="color: var(--success); font-size: 1.2rem;">✓</span>
+                                <span>Interview prep for top tech companies</span>
+                            </li>
+                            <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+                                <span style="color: var(--success); font-size: 1.2rem;">✓</span>
+                                <span>Free forever - no paywalls, ever</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="glass-card" style="padding: 40px; text-align: center;">
+                        <div style="font-size: 10rem; margin-bottom: 16px;">🧠</div>
+                        <h3 style="font-size: 1.5rem; font-weight: 700;">Built for Students</h3>
+                        <p style="color: var(--text-muted);">Created by a CS student, for CS students worldwide</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section style="padding: 100px 0;">
+            <div class="container">
+                <div class="glass-card" style="padding: 60px; text-align: center; background: var(--gradient-primary);">
+                    <h2 style="font-size: 2.5rem; font-weight: 800; color: white; margin-bottom: 16px;">Ready to Master
+                        Algorithms?</h2>
+                    <p style="font-size: 1.2rem; color: rgba(255,255,255,0.9); margin-bottom: 32px;">
+                        Start visualizing complex concepts today
+                    </p>
+                    <div style="display: flex; gap: 16px; justify-content: center;">
+                        <a href="os.html" class="btn" style="background: white; color: var(--primary);">Explore OS
+                            Algorithms</a>
+                        <a href="algorithms.html" class="btn btn-secondary"
+                            style="border-color: white; color: white;">Try Sorting</a>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
 
-    <footer>
+    <footer style="padding: 60px 0; background: rgba(0,0,0,0.02); margin-top: 80px;">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>About AlgoVisual Hub</h4>
-                    <p>The premium destination for interactive algorithm education. Built for developers, by developers.
+            <div class="grid grid-3" style="gap: 40px; margin-bottom: 40px;">
+                <div>
+                    <h4 style="font-weight: 700; margin-bottom: 16px;">AlgoVisual Hub</h4>
+                    <p style="color: var(--text-muted); line-height: 1.6;">
+                        Interactive algorithm visualizations for computer science education.
                     </p>
                 </div>
-                <div class="footer-section">
-                    <h4>Categories</h4>
-                    <ul>
-                        <li><a href="dsa.html">Data Structures</a></li>
-                        <li><a href="algorithms.html">Algorithms</a></li>
-                        <li><a href="os.html">Operating Systems</a></li>
-                        <li><a href="ai.html">AI Fundamentals</a></li>
+                <div>
+                    <h4 style="font-weight: 700; margin-bottom: 16px;">Quick Links</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 8px;"><a href="os.html" style="color: var(--text-muted);">OS
+                                Algorithms</a></li>
+                        <li style="margin-bottom: 8px;"><a href="algorithms.html"
+                                style="color: var(--text-muted);">Sorting</a></li>
+                        <li style="margin-bottom: 8px;"><a href="roadmap.html"
+                                style="color: var(--text-muted);">Roadmap</a></li>
+                        <li style="margin-bottom: 8px;"><a href="guide.html" style="color: var(--text-muted);">Guide</a>
+                        </li>
                     </ul>
                 </div>
-                <div class="footer-section">
-                    <h4>Legal</h4>
-                    <ul>
-                        <li><a href="privacy.html">Privacy Policy</a></li>
-                        <li><a href="terms.html">Terms of Service</a></li>
-                        <li><a href="contact.html">Contact Us</a></li>
+                <div>
+                    <h4 style="font-weight: 700; margin-bottom: 16px;">Resources</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 8px;"><a href="support.html"
+                                style="color: var(--text-muted);">Support</a></li>
+                        <li style="margin-bottom: 8px;"><a href="privacy.html" style="color: var(--text-muted);">Privacy
+                                Policy</a></li>
+                        <li style="margin-bottom: 8px;"><a href="terms.html" style="color: var(--text-muted);">Terms of
+                                Use</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 AlgoVisual Hub — Created with ❤️ by Meelo</p>
+            <div style="text-align: center; padding-top: 40px; border-top: 1px solid rgba(0,0,0,0.1);">
+                <p style="color: var(--text-muted);">&copy; 2025 by Meelo 💙</p>
             </div>
         </div>
     </footer>
 
-    <script>
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-    </script>
-
-    <script src='assets/js/core/ui-extras.js'></script>
+    <script src="assets/js/loader.js"></script>
+    <script src="assets/js/main.js"></script>
 </body>
 
 </html>

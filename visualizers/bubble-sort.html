@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-algo="bubble-sort">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Sort Visualizer - AlgoVisual Hub</title>
+    <meta name="description" content="Interactive bubble sort visualization with step-by-step array sorting animation.">
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+
+<body>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <a href="../index.html" class="logo">AlgoVisual Hub</a>
+                <div class="nav-links">
+                    <a href="../algorithms.html">Algorithms</a>
+                    <a href="../dsa.html">DSA</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main></main>
+
+    <script src="../assets/js/core/algo-content.js"></script>
+    <script src="../assets/js/core/bubble-sort-content.js"></script>
+    <script src="../assets/js/core/ui-extras.js"></script>
+
+    <script>
+
+        let array = [64, 34, 25, 12, 22, 11, 90];
+        let comparing = [];
+        let swapping = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const visualizerContainer = document.getElementById('visualizer-container');
+                if (visualizerContainer) {
+                    visualizerContainer.innerHTML = `
+                        <div id="array-container" style="display: flex; justify-content: center; align-items: end; height: 300px; gap: 4px; margin: 20px 0;"></div>
+                        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 12px;">
+                            <button class="btn btn-primary" onclick="startBubbleSort()">Start Sort</button>
+                            <button class="btn btn-secondary" onclick="generateArray()">New Array</button>
+                            <button class="btn btn-secondary" onclick="resetArray()">Reset</button>
+                            <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'Bubble Sort')">📸 Share</button>
+                        </div>
+                    `;
+                    drawArray();
+                    logStep('Bubble sort ready - array initialized', 'info');
+                }
+            }, 100);
+        });
+
+        function drawArray() {
+            const container = document.getElementById('array-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            const maxVal = Math.max(...array);
+
+            array.forEach((val, idx) => {
+                const bar = document.createElement('div');
+                bar.style.cssText = `
+            width: 40px;
+            height: ${(val / maxVal) * 250}px;
+            background: ${comparing.includes(idx) ? 'var(--warning)' :
+                        swapping.includes(idx) ? 'var(--accent)' : 'var(--primary)'};
+            display: flex;
+            align-items: end;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+            `;
+                bar.textContent = val;
+                container.appendChild(bar);
+            });
+        }
+
+        function startBubbleSort() {
+            logStep('Starting bubble sort algorithm', 'info');
+            bubbleSortStep(0, 0);
+        }
+
+        function bubbleSortStep(i, j) {
+            if (i >= array.length - 1) {
+                logStep('Sorting complete!', 'success');
+                comparing = [];
+                swapping = [];
+                drawArray();
+                return;
+            }
+
+            if (j >= array.length - i - 1) {
+                logStep(`Pass ${i + 1} complete`, 'info');
+                setTimeout(() => bubbleSortStep(i + 1, 0), 500);
+                return;
+            }
+
+            comparing = [j, j + 1];
+            drawArray();
+
+            if (array[j] > array[j + 1]) {
+                logStep(`Swapping ${array[j]} and ${array[j + 1]}`, 'warning');
+                swapping = [j, j + 1];
+                [array[j], array[j + 1]] = [array[j + 1], array[j]];
+                drawArray();
+                setTimeout(() => {
+                    swapping = [];
+                    setTimeout(() => bubbleSortStep(i, j + 1), 300);
+                }, 500);
+            } else {
+                logStep(`${array[j]} ≤ ${array[j + 1]}, no swap needed`, 'info');
+                setTimeout(() => bubbleSortStep(i, j + 1), 300);
+            }
+        }
+
+        function generateArray() {
+            array = Array.from({ length: 7 }, () => Math.floor(Math.random() * 90) + 10);
+            comparing = [];
+            swapping = [];
+            drawArray();
+            logStep('New random array generated', 'info');
+        }
+
+        function resetArray() {
+            array = [64, 34, 25, 12, 22, 11, 90];
+            comparing = [];
+            swapping = [];
+            drawArray();
+            logStep('Array reset to original values', 'info');
+        }
+    </script>
+</body>
+
+</html>

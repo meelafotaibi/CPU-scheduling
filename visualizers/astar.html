@@ -18,7 +18,7 @@
         #graph-canvas {
             width: 100%;
             height: 500px;
-            
+
             border: 2px solid #eee;
             border-radius: 12px;
             cursor: crosshair;
@@ -161,10 +161,10 @@
     <script src="../assets/js/core/playback.js"></script>
     <script src="../assets/js/algos/astar.js"></script>
     <script>
-        const engine = new GraphEngine('graph-canvas');
-        engine.setEditMode(true);
+        window.engine = new GraphEngine('graph-canvas');
+        window.engine.setEditMode(true);
 
-        const ui = {
+        window.ui = {
             updateStatus: (t) => document.getElementById('explanation-text').innerText = t,
             updateTable: (data, visited, goal) => {
                 const body = document.getElementById('stats-body');
@@ -184,13 +184,16 @@
                 `).join('');
             }
         };
-
-        const playback = new Playback(() => algo.nextStep());
-        const algo = new AStarAlgo(engine, playback, ui);
+        const ui = window.ui;
+        const playback = new Playback(() => window.algo.nextStep());
+        window.playback = playback;
+        const engine = window.engine;
+        window.algo = new AStarAlgo(window.engine, playback, ui);
+        const algo = window.algo;
 
         document.getElementById('play-btn').onclick = () => {
-            if (engine.nodes.length === 0) return alert("Please add nodes first");
-            algo.reset();
+            if (window.engine.nodes.length === 0) return alert("Please add nodes first");
+            window.algo.reset();
             playback.play();
         };
 

@@ -8,8 +8,7 @@
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
-        crossorigin="anonymous"></script>
+    <!-- Ads handled centrally -->
     <style>
         [data-theme="dark"] input,
         [data-theme="dark"] select {
@@ -155,7 +154,7 @@
                     <table id="process-table" style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
                         <thead>
                             <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); color: var(--accent);">
-                                <th style="padding: 8px; text-align: left;">PID</th>
+                                <th style="padding: 8px; text-align: center;">PID</th>
                                 <th style="padding: 8px;">Arrival</th>
                                 <th style="padding: 8px;">Burst</th>
                                 <th style="padding: 8px;">Priority</th>
@@ -176,10 +175,14 @@
 
                     <div class="input-group">
                         <label>Time Quantum (for Round Robin):</label>
-                        <input type="number" id="quantum" value="2" min="1">
+                        <input type="number" id="quantum" value="2" min="1" style="text-align: center;">
                     </div>
-                    <button class="btn btn-primary" onclick="generateVisualizations()" style="width: 100%;">🚀 Generate
-                        Comparisons</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="generateVisualizations()" style="flex: 1;">🚀 Generate
+                            Comparisons</button>
+                        <button class="btn btn-secondary" onclick="shareScreenshot('chartsContainer', 'CPU Scheduling')"
+                            style="flex: 0 0 100px;">📸 Share</button>
+                    </div>
                 </div>
             </div>
 
@@ -193,10 +196,8 @@
                     <li>Refer to the <a href="../guides/cpu-scheduling.html" style="color: var(--primary);">Full
                             Guide</a> for algorithm details.</li>
                 </ul>
-                <div id="ad-container" style="margin-top: 30px; text-align: center; min-height: 90px;">
-                    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
-                        data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
-                </div>
+                <!-- Ad Slot handled by ui-extras -->
+                <div class="adsbygoogle-container"></div>
             </div>
         </div>
 
@@ -213,11 +214,11 @@
             const tbody = document.getElementById('process-tbody');
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td style="padding: 8px;">P${pidCounter++}</td>
-                <td style="padding: 8px;"><input type="number" class="at-input" value="${at}" style="width: 60px; padding: 5px; border-radius: 5px; border: 1px solid #ddd;"></td>
-                <td style="padding: 8px;"><input type="number" class="bt-input" value="${bt}" min="1" style="width: 60px; padding: 5px; border-radius: 5px; border: 1px solid #ddd;"></td>
-                <td style="padding: 8px;"><input type="number" class="pr-input" value="${pr}" min="1" style="width: 60px; padding: 5px; border-radius: 5px; border: 1px solid #ddd;"></td>
-                <td style="padding: 8px;">
+                <td style="padding: 8px; vertical-align: middle;">P${pidCounter++}</td>
+                <td style="padding: 8px; vertical-align: middle;"><input type="number" class="at-input" value="${at}" style="width: 100%; text-align: center; padding: 5px; border-radius: 5px; border: 1px solid #ddd;"></td>
+                <td style="padding: 8px; vertical-align: middle;"><input type="number" class="bt-input" value="${bt}" min="1" style="width: 100%; text-align: center; padding: 5px; border-radius: 5px; border: 1px solid #ddd;"></td>
+                <td style="padding: 8px; vertical-align: middle;"><input type="number" class="pr-input" value="${pr}" min="1" style="width: 100%; text-align: center; padding: 5px; border-radius: 5px; border: 1px solid #ddd;"></td>
+                <td style="padding: 8px; vertical-align: middle;">
                     <button onclick="this.closest('tr').remove()" style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
                         <i class="fas fa-trash"></i>
                     </button>

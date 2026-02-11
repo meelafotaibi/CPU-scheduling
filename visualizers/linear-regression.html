@@ -18,7 +18,7 @@
         #ml-canvas {
             width: 100%;
             height: 500px;
-            
+
             border: 2px solid #eee;
             border-radius: 12px;
             cursor: crosshair;
@@ -68,7 +68,7 @@
         </header>
 
         <div class="visualizer-layout">
-            <div class="glass-card" style="padding: 30px;">
+            <div class="glass-card" id="visualizer-container" style="padding: 30px;">
                 <canvas id="ml-canvas"></canvas>
 
                 <div style="margin-top: 25px; display: flex; justify-content: space-between; align-items: center;">
@@ -78,6 +78,8 @@
                             Auto</button>
                         <button class="btn" id="reset-btn"
                             style="border: 1px solid var(--accent); color: var(--accent);">Reset</button>
+                        <button class="btn btn-secondary"
+                            onclick="shareScreenshot('visualizer-container', 'Linear Regression')">📸 Share</button>
                     </div>
 
                     <div style="display: flex; gap: 10px; align-items: center;">

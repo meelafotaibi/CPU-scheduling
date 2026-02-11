@@ -81,13 +81,16 @@
         </header>
 
         <div class="visualizer-layout">
-            <div class="glass-card" style="padding: 30px;">
+            <div class="glass-card" id="visualizer-container" style="padding: 30px;">
                 <canvas id="dsa-canvas"></canvas>
                 <div class="controls">
                     <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Run Minimax</button>
                     <button class="btn" id="ab-btn" style="background: var(--dark); color: white;">Run
                         Alpha-Beta</button>
-                    <button class="btn" onclick="location.reload()" style="/* background: #eee; removed */">New Tree</button>
+                    <button class="btn" onclick="location.reload()" style="/* background: #eee; removed */">New
+                        Tree</button>
+                    <button class="btn btn-secondary"
+                        onclick="shareScreenshot('visualizer-container', 'Minimax/Alpha-Beta')">📸 Share</button>
                 </div>
                 <div class="legend">
                     <div class="legend-item">
@@ -132,12 +135,23 @@
     <script src="../assets/js/core/playback.js"></script>
     <script src="../assets/js/algos/minimax.js"></script>
     <script>
-        const engine = new DSAEngine('dsa-canvas');
-        const ui = {
+        window.engine = new DSAEngine('dsa-canvas');
+        window.ui = {
             updateStatus: (t) => { document.getElementById('explanation-text').innerText = t; }
         };
-        const algo = new MinimaxAlgo(engine, ui);
-        const playback = new Playback(() => algo.nextStep());
+        const ui = window.ui;
+        const engine = window.engine;
+
+        // Fix: Use generic ui update if ui-extras didn't override
+        if (!ui.updateStatus) ui.updateStatus = (t) => { if (document.getElementById('explanation-text')) document.getElementById('explanation-text').innerText = t; };
+
+        // Expose Playback
+        const playback = new Playback(() => window.algo.nextStep());
+        window.playback = playback;
+
+        // Pass playback to Algo
+        window.algo = new MinimaxAlgo(window.engine, playback, ui);
+        const algo = window.algo;
 
         engine.draw = () => algo.draw();
 

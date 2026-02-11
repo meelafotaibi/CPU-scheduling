@@ -18,7 +18,7 @@
         #graph-canvas {
             width: 100%;
             height: 500px;
-            
+
             border: 2px solid #eee;
             border-radius: 12px;
             cursor: crosshair;
@@ -103,7 +103,7 @@
         </header>
 
         <div class="visualizer-layout">
-            <div class="glass-card" style="padding: 30px;">
+            <div class="glass-card" id="visualizer-container" style="padding: 30px;">
                 <canvas id="graph-canvas"></canvas>
 
                 <div style="margin-top: 25px; display: flex; justify-content: space-between;">
@@ -115,6 +115,8 @@
                             style="border: 1px solid var(--accent); color: var(--accent);">Reset</button>
                         <button class="btn" id="grid-toggle-btn" title="Toggle Grid"><i
                                 class="fas fa-border-all"></i></button>
+                        <button class="btn btn-secondary"
+                            onclick="shareScreenshot('visualizer-container', 'Topological Sort')">📸 Share</button>
                     </div>
                 </div>
                 <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">Drag from node to node to create
@@ -171,11 +173,11 @@
     <script src="../assets/js/core/playback.js"></script>
     <script src="../assets/js/algos/topo.js"></script>
     <script>
-        const engine = new GraphEngine('graph-canvas');
-        engine.directed = true;
-        engine.setEditMode(true);
+        window.engine = new GraphEngine('graph-canvas');
+        window.engine.directed = true;
+        window.engine.setEditMode(true);
 
-        const ui = {
+        window.ui = {
             updateStatus: (t) => document.getElementById('explanation-text').innerText = t,
             updateInDegree: (data) => {
                 const body = document.getElementById('indegree-body');
@@ -190,13 +192,17 @@
                 `).join('');
             }
         };
+        const ui = window.ui;
 
-        const playback = new Playback(() => algo.nextStep());
-        const algo = new TopoAlgo(engine, playback, ui);
+        const playback = new Playback(() => window.algo.nextStep());
+        window.playback = playback;
+        const engine = window.engine;
+        window.algo = new TopoAlgo(window.engine, playback, ui);
+        const algo = window.algo;
 
         document.getElementById('play-btn').onclick = () => {
-            if (engine.nodes.length === 0) return alert("Please add nodes first");
-            algo.reset();
+            if (window.engine.nodes.length === 0) return alert("Please add nodes first");
+            window.algo.reset();
             playback.play();
         };
 

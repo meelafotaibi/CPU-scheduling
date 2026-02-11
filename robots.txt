@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /assets/js/
+Disallow: /assets/css/
+
+# Sitemap
+Sitemap: https://cpuos-ae329.web.app/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1

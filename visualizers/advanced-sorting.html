@@ -32,7 +32,7 @@
         #bucket-canvas {
             width: 100%;
             height: 250px;
-            
+
             border: 1px dashed #ddd;
             border-radius: 12px;
         }
@@ -94,7 +94,7 @@
         </header>
 
         <div class="visualizer-layout">
-            <div class="glass-card" style="padding: 30px;">
+            <div class="glass-card" id="visualizer-container" style="padding: 30px;">
                 <div class="algo-toggle">
                     <button class="toggle-btn active" id="radix-btn">Radix Sort (LSD)</button>
                     <button class="toggle-btn" id="bucket-btn">Bucket Sort</button>
@@ -115,6 +115,8 @@
                     <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Start Sort</button>
                     <button class="btn" id="next-btn" style="background: var(--dark); color: white;">Next Step</button>
                     <button class="btn" id="random-btn" style="border: 1px solid #ddd;">Randomize</button>
+                    <button class="btn btn-secondary"
+                        onclick="shareScreenshot('visualizer-container', 'Radix/Bucket Sort')">📸 Share</button>
                 </div>
             </div>
 
@@ -151,10 +153,10 @@
         const mainCanvas = document.getElementById('main-canvas');
         const bucketCanvas = document.getElementById('bucket-canvas');
 
-        const arrayEngine = new ArrayEngine('main-canvas');
-        const playback = new Playback(() => algo.nextStep());
+        window.engine = new ArrayEngine('main-canvas');
+        const playback = new Playback(() => window.algo.nextStep());
 
-        const ui = {
+        window.ui = {
             updateStatus: (t) => document.getElementById('explanation-text').innerText = t,
             drawBuckets: (step) => {
                 const ctx = bucketCanvas.getContext('2d');
@@ -191,8 +193,9 @@
                 });
             }
         };
-
-        const algo = new AdvancedSortAlgo(arrayEngine, playback, ui);
+        const ui = window.ui;
+        window.algo = new AdvancedSortAlgo(window.engine, playback, ui);
+        const algo = window.algo;
         let currentMode = 'radix';
         let currentArray = [170, 45, 75, 90, 802, 24, 2, 66];
 
@@ -201,7 +204,7 @@
             mainCanvas.height = mainCanvas.offsetHeight;
             bucketCanvas.width = bucketCanvas.offsetWidth;
             bucketCanvas.height = bucketCanvas.offsetHeight;
-            arrayEngine.drawFullArray(currentArray);
+            window.engine.drawFullArray(currentArray);
         };
         window.onresize = resize;
         resize();
@@ -212,8 +215,8 @@
             document.getElementById('bucket-btn').classList.remove('active');
             document.getElementById('strategy-info').innerHTML = `<strong>Radix Sort:</strong> Sorts numbers digit by digit starting from the least significant digit (LSD). It uses 10 buckets (0-9).`;
             playback.stop();
-            algo.reset();
-            arrayEngine.drawFullArray(currentArray);
+            window.algo.reset();
+            window.engine.drawFullArray(currentArray);
         };
 
         document.getElementById('bucket-btn').onclick = () => {
@@ -222,30 +225,30 @@
             document.getElementById('radix-btn').classList.remove('active');
             document.getElementById('strategy-info').innerHTML = `<strong>Bucket Sort:</strong> Divides elements into several "buckets", sorts each bucket individually (usually with another algorithm), and then combines them.`;
             playback.stop();
-            algo.reset();
-            arrayEngine.drawFullArray(currentArray);
+            window.algo.reset();
+            window.engine.drawFullArray(currentArray);
         };
 
         document.getElementById('play-btn').onclick = () => {
             playback.stop();
-            algo.reset();
-            if (currentMode === 'radix') algo.generateRadixSteps(currentArray);
-            else algo.generateBucketSteps(currentArray);
+            window.algo.reset();
+            if (currentMode === 'radix') window.algo.generateRadixSteps(currentArray);
+            else window.algo.generateBucketSteps(currentArray);
             playback.play();
         };
 
-        document.getElementById('next-btn').onclick = () => algo.nextStep();
+        document.getElementById('next-btn').onclick = () => window.algo.nextStep();
 
         document.getElementById('random-btn').onclick = () => {
             playback.stop();
             currentArray = Array.from({ length: 8 }, () => Math.floor(Math.random() * 900) + 1);
-            arrayEngine.drawFullArray(currentArray);
-            algo.reset();
+            window.engine.drawFullArray(currentArray);
+            window.algo.reset();
         };
 
         window.onload = () => {
             resize();
-            arrayEngine.drawFullArray(currentArray);
+            window.engine.drawFullArray(currentArray);
         };
     </script>
 

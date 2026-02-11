@@ -64,7 +64,7 @@
             <p>Toggle between Stack (LIFO) and Queue (FIFO) to see how elements are managed.</p>
         </header>
 
-        <div class="glass-card" style="padding: 30px; margin-top: 30px;">
+        <div class="glass-card" id="visualizer-container" style="padding: 30px; margin-top: 30px;">
             <div class="mode-toggle">
                 <button id="stack-btn" class="btn active-btn" onclick="setMode('stack')">Stack Mode</button>
                 <button id="queue-btn" class="btn" onclick="setMode('queue')"
@@ -77,6 +77,8 @@
                 <button class="btn btn-primary" id="push-btn" onclick="push()">Push</button>
                 <button class="btn" id="pop-btn" onclick="pop()"
                     style="border: 1px solid var(--accent); color: var(--accent);">Pop</button>
+                <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'Stack/Queue')">📸
+                    Share</button>
             </div>
         </div>
 

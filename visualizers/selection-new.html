@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-algo="selection">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selection Sort Visualizer - AlgoVisual Hub</title>
+    <meta name="description" content="Interactive selection sort visualization showing minimum element selection.">
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+
+<body>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <a href="../index.html" class="logo">AlgoVisual Hub</a>
+                <div class="nav-links">
+                    <a href="../algorithms.html">Algorithms</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main></main>
+
+    <script src="../assets/js/core/complete-algo-content.js"></script>
+    <script src="../assets/js/core/ui-extras.js"></script>
+    <script>
+
+        let array = [64, 25, 12, 22, 11];
+        let minIndex = -1;
+        let currentIndex = -1;
+        let sortedBoundary = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const visualizerContainer = document.getElementById('visualizer-container');
+                if (visualizerContainer) {
+                    visualizerContainer.innerHTML = `
+                        <div id="array-container" style="display: flex; justify-content: center; align-items: end; height: 300px; gap: 4px; margin: 20px 0;"></div>
+                        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 12px;">
+                            <button class="btn btn-primary" onclick="startSelectionSort()">Start Sort</button>
+                            <button class="btn btn-secondary" onclick="generateArray()">New Array</button>
+                            <button class="btn btn-secondary" onclick="resetArray()">Reset</button>
+                            <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'Selection Sort')">📸 Share</button>
+                        </div>
+                    `;
+                    drawArray();
+                    logStep('Selection sort visualizer ready', 'info');
+                }
+            }, 100);
+        });
+
+        function drawArray() {
+            const container = document.getElementById('array-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            const maxVal = Math.max(...array);
+
+            array.forEach((val, idx) => {
+                const bar = document.createElement('div');
+                let color = 'var(--primary)';
+
+                if (idx < sortedBoundary) color = 'var(--success)';
+                else if (idx === minIndex) color = 'var(--accent)';
+                else if (idx === currentIndex) color = 'var(--warning)';
+
+                bar.style.cssText = `
+                    width: 50px;
+                    height: ${(val / maxVal) * 250}px;
+                    background: ${color};
+                    display: flex;
+                    align-items: end;
+                    justify-content: center;
+                    color: white;
+                    font-weight: bold;
+                    border-radius: 4px 4px 0 0;
+                    transition: all 0.3s ease;
+                `;
+                bar.textContent = val;
+                container.appendChild(bar);
+            });
+        }
+
+        async function startSelectionSort() {
+            logStep('Starting selection sort algorithm', 'info');
+
+            for (let i = 0; i < array.length - 1; i++) {
+                minIndex = i;
+                logStep(`Finding minimum in unsorted portion starting at index ${i}`, 'info');
+                drawArray();
+                await sleep(800);
+
+                for (let j = i + 1; j < array.length; j++) {
+                    currentIndex = j;
+                    logStep(`Comparing ${array[j]} with current minimum ${array[minIndex]}`, 'info');
+                    drawArray();
+                    await sleep(400);
+
+                    if (array[j] < array[minIndex]) {
+                        minIndex = j;
+                        logStep(`New minimum found: ${array[j]} at index ${j}`, 'warning');
+                        drawArray();
+                        await sleep(400);
+                    }
+                }
+
+                if (minIndex !== i) {
+                    logStep(`Swapping ${array[i]} with minimum ${array[minIndex]}`, 'success');
+                    [array[i], array[minIndex]] = [array[minIndex], array[i]];
+                }
+
+                sortedBoundary = i + 1;
+                currentIndex = -1;
+                minIndex = -1;
+                drawArray();
+                await sleep(600);
+            }
+
+            sortedBoundary = array.length;
+            drawArray();
+            logStep('Selection sort complete!', 'success');
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function generateArray() {
+            array = Array.from({ length: 5 }, () => Math.floor(Math.random() * 80) + 10);
+            minIndex = -1;
+            currentIndex = -1;
+            sortedBoundary = 0;
+            drawArray();
+            logStep('New random array generated', 'info');
+        }
+
+        function resetArray() {
+            array = [64, 25, 12, 22, 11];
+            minIndex = -1;
+            currentIndex = -1;
+            sortedBoundary = 0;
+            drawArray();
+            logStep('Array reset to original values', 'info');
+        }
+    </script>
+</body>
+
+</html>

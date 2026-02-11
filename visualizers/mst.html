@@ -38,7 +38,7 @@
 
         .stat-card {
             padding: 15px;
-            /* /* background: #f8f9fa; removed */ removed for glass-card compatibility */
+            /* background: #f8f9fa; removed for glass-card compatibility */
             border-radius: 10px;
             text-align: center;
         }
@@ -77,7 +77,7 @@
         </header>
 
         <div class="visualizer-layout">
-            <div class="glass-card" style="padding: 30px;">
+            <div class="glass-card" id="visualizer-container" style="padding: 30px;">
                 <canvas id="graph-canvas"></canvas>
 
                 <div style="margin-top: 25px; display: flex; justify-content: space-between;">
@@ -87,6 +87,8 @@
                             Step</button>
                         <button class="btn" id="reset-btn"
                             style="border: 1px solid var(--accent); color: var(--accent);">Reset</button>
+                        <button class="btn btn-secondary"
+                            onclick="shareScreenshot('visualizer-container', 'MST - Prims')">📸 Share</button>
                     </div>
                 </div>
                 <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">Click to add nodes, drag from node to node
@@ -135,17 +137,21 @@
     <script src="../assets/js/core/playback.js"></script>
     <script src="../assets/js/algos/prims.js"></script>
     <script>
-        const engine = new GraphEngine('graph-canvas', { isDirected: false });
-        const ui = {
+        window.engine = new GraphEngine('graph-canvas', { isDirected: false });
+        window.ui = {
             updateStatus: (t) => { document.getElementById('explanation-text').innerText = t; },
             updateStats: (w) => { document.getElementById('total-weight').innerText = w; }
         };
-        const playback = new Playback(() => algo.nextStep());
-        const algo = new PrimsAlgo(engine, playback, ui);
+        const ui = window.ui;
+        const playback = new Playback(() => window.algo.nextStep());
+        window.playback = playback;
+        const engine = window.engine;
+        window.algo = new PrimsAlgo(window.engine, playback, ui);
+        const algo = window.algo;
 
-        engine.onNodeClick = (nodeId) => {
-            if (!algo.complete && algo.visited.size === 0) {
-                algo.start(nodeId);
+        window.engine.onNodeClick = (nodeId) => {
+            if (!window.algo.complete && window.algo.visited.size === 0) {
+                window.algo.start(nodeId);
                 playback.play();
             }
         };

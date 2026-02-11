@@ -103,8 +103,8 @@
             background: white;
             height: 100%;
             border-radius: 10px;
-            width: 100%;
-            /* Updated Progress */
+            width: 25%;
+            transition: width 0.6s ease;
         }
     </style>
 </head>
@@ -112,7 +112,10 @@
 <body>
     <nav>
         <div class="container nav-content">
-            <a href="index.html" class="logo">AlgoVisual Hub</a>
+            <a href="index.html" class="logo">
+                <img src="assets/img/logo.png" alt="AlgoVisual Hub" style="height: 48px; width: 48px;">
+                <span>AlgoVisual Hub</span>
+            </a>
             <div class="nav-links">
                 <a href="index.html">Home</a>
                 <a href="dsa.html">DSA</a>
@@ -132,23 +135,27 @@
             <div class="progress-bar-container">
                 <div class="progress-fill"></div>
             </div>
-            <small>Current Completion: <strong>~100%</strong></small>
+            <small>Current Completion: <strong>~25%</strong></small>
         </div>
 
         <!-- DSA SECTION -->
         <div class="category-section">
             <h2 class="category-title"><i class="fas fa-sitemap"></i> 1. Data Structures</h2>
             <div class="skill-list">
-                <div class="skill-item"><span>Linked List</span> <span class="status-pill status-done">Done</span></div>
-                <div class="skill-item"><span>Stack & Queue</span> <span class="status-pill status-done">Done</span>
+                <div class="skill-item"><span>Linked List</span> <span class="status-pill status-planned">Planned</span>
+                </div>
+                <div class="skill-item"><span>Stack & Queue</span> <span
+                        class="status-pill status-planned">Planned</span>
                 </div>
                 <div class="skill-item"><span>Binary Search Tree</span> <span
-                        class="status-pill status-done">Done</span></div>
-                <div class="skill-item"><span>AVL Trees</span> <span class="status-pill status-done">Done</span>
+                        class="status-pill status-planned">Planned</span></div>
+                <div class="skill-item"><span>AVL Trees</span> <span class="status-pill status-planned">Planned</span>
                 </div>
-                <div class="skill-item"><span>Binary Heaps</span> <span class="status-pill status-done">Done</span>
+                <div class="skill-item"><span>Binary Heaps</span> <span
+                        class="status-pill status-planned">Planned</span>
                 </div>
-                <div class="skill-item"><span>Trie Structure</span> <span class="status-pill status-done">Done</span>
+                <div class="skill-item"><span>Trie Structure</span> <span
+                        class="status-pill status-planned">Planned</span>
                 </div>
             </div>
         </div>
@@ -157,24 +164,32 @@
         <div class="category-section">
             <h2 class="category-title"><i class="fas fa-project-diagram"></i> 2. Algorithms</h2>
             <div class="skill-list">
-                <div class="skill-item"><span>Searching Suite</span> <span class="status-pill status-done">Done</span>
+                <div class="skill-item"><span>Bubble Sort</span> <span class="status-pill status-done">Done</span>
                 </div>
-                <div class="skill-item"><span>Sorting Suite</span> <span class="status-pill status-done">Done</span>
+                <div class="skill-item"><span>Selection Sort</span> <span class="status-pill status-done">Done</span>
                 </div>
-                <div class="skill-item"><span>BFS & DFS</span> <span class="status-pill status-done">Done</span></div>
-                <div class="skill-item"><span>Dijkstra's Path</span> <span class="status-pill status-done">Done</span>
+                <div class="skill-item"><span>Insertion Sort</span> <span class="status-pill status-done">Done</span>
                 </div>
-                <div class="skill-item"><span>A* Search</span> <span class="status-pill status-done">Done</span></div>
-                <div class="skill-item"><span>Bellman-Ford</span> <span class="status-pill status-done">Done</span>
+                <div class="skill-item"><span>Merge Sort</span> <span class="status-pill status-planned">Planned</span>
                 </div>
-                <div class="skill-item"><span>Prim's MST</span> <span class="status-pill status-done">Done</span></div>
-                <div class="skill-item"><span>Topo Sort</span> <span class="status-pill status-done">Done</span></div>
-                <div class="skill-item"><span>Cycle Detection</span> <span class="status-pill status-done">Done</span>
+                <div class="skill-item"><span>Quick Sort</span> <span class="status-pill status-planned">Planned</span>
                 </div>
-                <div class="skill-item"><span>Recursion Tree</span> <span class="status-pill status-done">Done</span>
+                <div class="skill-item"><span>BFS & DFS</span> <span class="status-pill status-planned">Planned</span>
+                </div>
+                <div class="skill-item"><span>Dijkstra's Path</span> <span
+                        class="status-pill status-planned">Planned</span>
+                </div>
+                <div class="skill-item"><span>A* Search</span> <span class="status-pill status-soon">Soon</span></div>
+                <div class="skill-item"><span>Bellman-Ford</span> <span class="status-pill status-soon">Soon</span>
+                </div>
+                <div class="skill-item"><span>Prim's MST</span> <span class="status-pill status-soon">Soon</span></div>
+                <div class="skill-item"><span>Topo Sort</span> <span class="status-pill status-soon">Soon</span></div>
+                <div class="skill-item"><span>Cycle Detection</span> <span class="status-pill status-soon">Soon</span>
+                </div>
+                <div class="skill-item"><span>Recursion Tree</span> <span class="status-pill status-soon">Soon</span>
                 </div>
                 <div class="skill-item"><span>Dynamic Programming</span> <span
-                        class="status-pill status-done">Done</span></div>
+                        class="status-pill status-soon">Soon</span></div>
             </div>
         </div>
 
@@ -199,15 +214,18 @@
         <div class="category-section">
             <h2 class="category-title"><i class="fas fa-brain"></i> 4. Artificial Intelligence</h2>
             <div class="skill-list">
-                <div class="skill-item"><span>Minimax Theory</span> <span class="status-pill status-done">Done</span>
+                <div class="skill-item"><span>Minimax Theory</span> <span
+                        class="status-pill status-planned">Planned</span>
                 </div>
                 <div class="skill-item"><span>Alpha-Beta Pruning</span> <span
-                        class="status-pill status-done">Done</span></div>
+                        class="status-pill status-planned">Planned</span></div>
                 <div class="skill-item"><span>K-Means Clustering</span> <span
-                        class="status-pill status-done">Done</span></div>
-                <div class="skill-item"><span>Linear Regression</span> <span class="status-pill status-done">Done</span>
+                        class="status-pill status-planned">Planned</span></div>
+                <div class="skill-item"><span>Linear Regression</span> <span
+                        class="status-pill status-planned">Planned</span>
                 </div>
-                <div class="skill-item"><span>KNN / ML Basics</span> <span class="status-pill status-done">Done</span>
+                <div class="skill-item"><span>KNN / ML Basics</span> <span
+                        class="status-pill status-planned">Planned</span>
                 </div>
                 <div class="skill-item"><span>Neural Networks</span> <span
                         class="status-pill status-planned">Planned</span></div>
@@ -224,7 +242,38 @@
 
     <footer style="margin-top: 100px;">
         <div class="container">
-            <p>&copy; 2025 AlgoVisual Hub — CTO Approved Roadmap 👑</p>
+            <div class="grid grid-3" style="gap: 40px; margin-bottom: 20px;">
+                <div>
+                    <h4 style="font-weight: 700; margin-bottom: 16px;">Quick Links</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 8px;"><a href="index.html" style="color: var(--text-muted);">Home</a>
+                        </li>
+                        <li style="margin-bottom: 8px;"><a href="os.html" style="color: var(--text-muted);">OS
+                                Algorithms</a></li>
+                        <li style="margin-bottom: 8px;"><a href="algorithms.html"
+                                style="color: var(--text-muted);">Sorting</a></li>
+                        <li style="margin-bottom: 8px;"><a href="roadmap.html"
+                                style="color: var(--text-muted);">Roadmap</a></li>
+                        <li style="margin-bottom: 8px;"><a href="guide.html" style="color: var(--text-muted);">Guide</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="font-weight: 700; margin-bottom: 16px;">Resources</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 8px;"><a href="support.html"
+                                style="color: var(--text-muted);">Support</a></li>
+                        <li style="margin-bottom: 8px;"><a href="privacy.html" style="color: var(--text-muted);">Privacy
+                                Policy</a></li>
+                        <li style="margin-bottom: 8px;"><a href="terms.html" style="color: var(--text-muted);">Terms of
+                                Use</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom"
+                style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.1);">
+                <p>&copy; 2025 by Meelo 💙</p>
+            </div>
         </div>
     </footer>
 

@@ -54,7 +54,7 @@
         </header>
 
         <div class="visualizer-layout">
-            <div class="glass-card" style="padding: 30px; margin-top: 30px;">
+            <div class="glass-card" id="visualizer-container" style="padding: 30px; margin-top: 30px;">
                 <canvas id="dsa-canvas"></canvas>
                 <div class="controls">
                     <input type="number" id="node-val" placeholder="Val" value="10" style="width:70px">
@@ -69,6 +69,8 @@
                         Rev</button>
                     <button class="btn" id="grid-toggle-btn" title="Toggle Grid"><i
                             class="fas fa-border-all"></i></button>
+                    <button class="btn btn-secondary"
+                        onclick="shareScreenshot('visualizer-container', 'Linked List')">📸 Share</button>
                 </div>
             </div>
 

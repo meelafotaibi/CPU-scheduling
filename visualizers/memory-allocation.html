@@ -83,9 +83,7 @@
             color: #721c24;
         }
     </style>
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
-        crossorigin="anonymous"></script>
+    <!-- Ads handled centrally -->
 </head>
 
 <body>
@@ -111,7 +109,7 @@
         </header>
 
         <div class="visualizer-layout">
-            <div class="glass-card" style="padding: 30px;">
+            <div class="glass-card" id="visualizer-container" style="padding: 30px;">
                 <canvas id="memory-canvas"></canvas>
 
                 <div style="margin-top: 30px;">
@@ -127,6 +125,8 @@
                         <button class="btn" id="reset-btn"
                             style="border: 1px solid var(--accent); color: var(--accent);"><i class="fas fa-undo"></i>
                             Reset</button>
+                        <button class="btn btn-secondary"
+                            onclick="shareScreenshot('visualizer-container', 'Memory Allocation')">📸 Share</button>
                     </div>
 
                     <div style="display: flex; gap: 10px; margin-bottom: 20px;">
@@ -159,17 +159,8 @@
             </div>
         </div>
 
-        <div style="margin: 60px 0; text-align: center;">
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
-                data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
-            <script>
-                window.onload = () => {
-                    setTimeout(() => {
-                        try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { }
-                    }, 1000);
-                };
-            </script>
-        </div>
+        <!-- Ad Slot handled by ui-extras -->
+        <div class="adsbygoogle-container"></div>
     </main>
 
     <script src="../assets/js/core/memory-engine.js"></script>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-algo="insertion">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insertion Sort Visualizer - AlgoVisual Hub</title>
+    <meta name="description" content="Interactive insertion sort visualization showing element insertion process.">
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+
+<body>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <a href="../index.html" class="logo">AlgoVisual Hub</a>
+                <div class="nav-links">
+                    <a href="../algorithms.html">Algorithms</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main></main>
+
+    <script src="../assets/js/core/complete-algo-content.js"></script>
+    <script src="../assets/js/core/ui-extras.js"></script>
+    <script>
+
+        let array = [5, 2, 4, 6, 1, 3];
+        let currentIndex = -1;
+        let sortedIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const visualizerContainer = document.getElementById('visualizer-container');
+                if (visualizerContainer) {
+                    visualizerContainer.innerHTML = `
+                        <div id="array-container" style="display: flex; justify-content: center; align-items: end; height: 300px; gap: 4px; margin: 20px 0;"></div>
+                        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 12px;">
+                            <button class="btn btn-primary" onclick="startInsertionSort()">Start Sort</button>
+                            <button class="btn btn-secondary" onclick="generateArray()">New Array</button>
+                            <button class="btn btn-secondary" onclick="resetArray()">Reset</button>
+                            <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'Insertion Sort')">📸 Share</button>
+                        </div>
+                    `;
+                    drawArray();
+                    logStep('Insertion sort visualizer ready', 'info');
+                }
+            }, 100);
+        });
+
+        function drawArray() {
+            const container = document.getElementById('array-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            const maxVal = Math.max(...array);
+
+            array.forEach((val, idx) => {
+                const bar = document.createElement('div');
+                let color = 'var(--primary)';
+
+                if (idx < sortedIndex) color = 'var(--success)';
+                else if (idx === currentIndex) color = 'var(--accent)';
+
+                bar.style.cssText = `
+                    width: 50px;
+                    height: ${(val / maxVal) * 250}px;
+                    background: ${color};
+                    display: flex;
+                    align-items: end;
+                    justify-content: center;
+                    color: white;
+                    font-weight: bold;
+                    border-radius: 4px 4px 0 0;
+                    transition: all 0.3s ease;
+                `;
+                bar.textContent = val;
+                container.appendChild(bar);
+            });
+        }
+
+        async function startInsertionSort() {
+            logStep('Starting insertion sort algorithm', 'info');
+
+            for (let i = 1; i < array.length; i++) {
+                currentIndex = i;
+                const key = array[i];
+                logStep(`Inserting element ${key} at position ${i}`, 'info');
+                drawArray();
+                await sleep(800);
+
+                let j = i - 1;
+                while (j >= 0 && array[j] > key) {
+                    logStep(`Moving ${array[j]} one position ahead`, 'warning');
+                    array[j + 1] = array[j];
+                    j--;
+                    drawArray();
+                    await sleep(500);
+                }
+
+                array[j + 1] = key;
+                sortedIndex = i + 1;
+                logStep(`Placed ${key} at correct position ${j + 1}`, 'success');
+                drawArray();
+                await sleep(600);
+            }
+
+            currentIndex = -1;
+            sortedIndex = array.length;
+            drawArray();
+            logStep('Insertion sort complete!', 'success');
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function generateArray() {
+            array = Array.from({ length: 6 }, () => Math.floor(Math.random() * 20) + 1);
+            currentIndex = -1;
+            sortedIndex = 0;
+            drawArray();
+            logStep('New random array generated', 'info');
+        }
+
+        function resetArray() {
+            array = [5, 2, 4, 6, 1, 3];
+            currentIndex = -1;
+            sortedIndex = 0;
+            drawArray();
+            logStep('Array reset to original values', 'info');
+        }
+    </script>
+</body>
+
+</html>

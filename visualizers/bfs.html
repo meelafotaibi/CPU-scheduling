@@ -115,13 +115,15 @@
     <script>
         window.engine = new GraphEngine('graph-canvas');
         const playback = new Playback(() => window.algo.nextStep());
-        const ui = {
+        window.ui = {
             updateStatus: (txt) => { document.getElementById('explanation-text').innerText = txt; },
             updateQueue: (q) => {
                 const container = document.getElementById('queue-container');
                 container.innerHTML = q.length === 0 ? '<span style="color: #999;">Queue is empty</span>' : q.map(id => `<div class="queue-item">${id}</div>`).join('');
             }
         };
+        const ui = window.ui;
+        const engine = window.engine;
         window.algo = new BFSAlgo(window.engine, playback, ui);
         const nodes = [{ id: 1, x: 100, y: 100 }, { id: 2, x: 250, y: 50 }, { id: 3, x: 400, y: 100 }, { id: 4, x: 100, y: 300 }, { id: 5, x: 250, y: 400 }, { id: 6, x: 400, y: 300 }, { id: 7, x: 250, y: 200 }];
         const edges = [[1, 2], [1, 4], [1, 7], [2, 3], [3, 6], [4, 5], [5, 6], [7, 5], [7, 2]];

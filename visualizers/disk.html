@@ -8,98 +8,40 @@
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        [data-theme="dark"] nav {
-            background: rgba(15, 23, 42, 0.95) !important;
-        }
-
-        [data-theme="dark"] input,
-        [data-theme="dark"] select {
-            background: rgba(15, 23, 42, 0.8) !important;
-            color: #f1f5f9 !important;
-            border: 1px solid rgba(148, 163, 184, 0.3) !important;
-        }
-
-        [data-theme="dark"] canvas {
-            background: rgba(15, 23, 42, 0.5) !important;
-        }
-    </style>
-    <style>
         .visualizer-layout {
             display: grid;
-            grid-template-columns: 1fr 350px;
+            grid-template-columns: 1fr 300px;
             gap: 30px;
             margin-top: 30px;
         }
 
         #disk-canvas {
             width: 100%;
-            height: 500px;
-            /* background: #fff; removed */
-            border: 2px solid #eee;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 12px;
-        }
-
-        .side-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
+            border: 2px solid var(--glass-border);
         }
 
         .input-group label {
             display: block;
-            font-size: 0.8rem;
             margin-bottom: 5px;
             font-weight: 600;
         }
 
-        .stat-card {
-            /* background: #f8f9fa; removed */
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-        }
-
-        .stat-val {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--primary);
-        }
-
-        .algo-tabs {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 20px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-        }
-
-        .tab-btn {
-            padding: 8px 15px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            background: white;
-            cursor: pointer;
-            font-size: 0.8rem;
-            white-space: nowrap;
-        }
-
-        .tab-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+            background: var(--card-bg);
+            color: var(--text);
         }
     </style>
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
-        crossorigin="anonymous"></script>
 </head>
 
 <body>
-
     <nav>
         <div class="container nav-content">
             <a href="../index.html" class="logo">AlgoVisual Hub</a>
@@ -113,128 +55,94 @@
     <main class="container">
         <header style="margin-top: 40px;">
             <span class="btn-primary"
-                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">I/O
-                Management</span>
+                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Operating
+                Systems</span>
             <h1>Disk Scheduling Visualizer</h1>
-            <p>Visualize how Operating Systems optimize disk head movement to reduce seek time.</p>
+            <p>Visualize Seek Time optimization algorithms.</p>
         </header>
 
         <div class="visualizer-layout">
-            <div class="glass-card" style="padding: 30px;">
-                <div class="algo-tabs" id="algo-tabs">
-                    <button class="tab-btn active" data-algo="FCFS">FCFS</button>
-                    <button class="tab-btn" data-algo="SSTF">SSTF</button>
-                    <button class="tab-btn" data-algo="SCAN">SCAN</button>
-                    <button class="tab-btn" data-algo="C-SCAN">C-SCAN</button>
-                    <button class="tab-btn" data-algo="LOOK">LOOK</button>
-                </div>
-
-                <canvas id="disk-canvas"></canvas>
-
-                <div style="margin-top: 25px; display: flex; gap: 15px; align-items: flex-end;">
-                    <div class="input-group" style="flex: 1;">
-                        <label>Request Queue (0-199):</label>
-                        <input type="text" id="requests-input" value="98, 183, 37, 122, 14, 124, 65, 67"
-                            style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd;">
+            <div class="main-panel">
+                <div class="glass-card" id="visualizer-container" style="padding: 30px;">
+                    <!-- Controls -->
+                    <div class="controls" style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;">
+                        <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Run</button>
+                        <button class="btn btn-secondary"
+                            onclick="shareScreenshot('visualizer-container', 'Disk Scheduling')">📸 Share</button>
                     </div>
-                    <div class="input-group" style="width: 100px;">
-                        <label>Initial Head:</label>
-                        <input type="number" id="head-input" value="53"
-                            style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd;">
-                    </div>
-                    <button class="btn btn-primary" id="run-btn"
-                        style="height: 48px; margin-bottom: 15px;">Simulate</button>
+
+                    <canvas id="disk-canvas"></canvas>
                 </div>
             </div>
 
             <div class="side-panel">
                 <div class="glass-card" style="padding: 20px;">
-                    <h4>📊 Performance Stats</h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
-                        <div class="stat-card">
-                            <div class="stat-val" id="seek-count">-</div>
-                            <small>Total Seek</small>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-val" id="avg-seek">-</div>
-                            <small>Avg Seek</small>
-                        </div>
+                    <h3>Configuration</h3>
+                    <div class="input-group">
+                        <label>Algorithm</label>
+                        <select id="algo-select"
+                            style="width:100%; padding:8px; margin-bottom:15px; border-radius:6px;">
+                            <option value="FCFS">FCFS</option>
+                            <option value="SSTF">SSTF</option>
+                            <option value="SCAN">SCAN</option>
+                            <option value="C-SCAN">C-SCAN</option>
+                            <option value="LOOK">LOOK</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Initial Head Position</label>
+                        <input type="number" id="head-input" value="50" min="0" max="199">
+                    </div>
+                    <div class="input-group">
+                        <label>Request Queue (0-199)</label>
+                        <input type="text" id="requests-input" value="82,170,43,140,24,16,190">
                     </div>
                 </div>
 
-                <div class="glass-card" style="padding: 20px;">
-                    <h4>💡 Algorithm Info</h4>
-                    <div id="algo-info" style="font-size: 0.85rem; color: #666; line-height: 1.5;">
-                        <strong>FCFS:</strong> Serves requests in the order they arrive. Simple but can result in high
-                        seek times.
+                <div class="glass-card" style="padding: 20px; margin-top:20px;">
+                    <h3>Performance</h3>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Total Seek:</span>
+                        <strong id="seek-count">0</strong>
+                    </div>
+                    <div id="status-text" style="font-size: 0.9rem; font-style: italic; color:#888;">
+                        Ready.
                     </div>
                 </div>
-
-                <!-- Ad Slot -->
-                <div style="text-align: center;">
-                    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
-                        data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
-                    <script>
-                        window.onload = () => {
-                            setTimeout(() => {
-                                try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { }
-                            }, 1000);
-                        };
-                    </script>
-                </div>
+                <!-- Ad container handled by ui-extras -->
+                <div class="adsbygoogle-container"></div>
             </div>
         </div>
     </main>
 
     <script src="../assets/js/core/disk-engine.js"></script>
+    <script src="../assets/js/core/playback.js"></script>
     <script src="../assets/js/algos/disk-algo.js"></script>
     <script>
-        const engine = new DiskEngine('disk-canvas');
+        window.engine = new DiskEngine('disk-canvas');
+
         const ui = {
-            updateStats: (total, count) => {
-                document.getElementById('seek-count').innerText = total;
-                document.getElementById('avg-seek').innerText = (total / count).toFixed(1);
+            updateStatus: (t) => document.getElementById('status-text').innerText = t,
+            updateStats: (seek, stepCount) => document.getElementById('seek-count').innerText = seek
+        };
+
+        const playback = new Playback(() => window.algo.nextStep());
+        window.playback = playback;
+
+        window.algo = new DiskAlgo(window.engine, playback, ui);
+
+        document.getElementById('play-btn').onclick = () => {
+            if (playback.isRunning) return;
+            if (window.algo.currentIndex === 0) {
+                const algo = document.getElementById('algo-select').value;
+                const head = parseInt(document.getElementById('head-input').value);
+                const reqs = document.getElementById('requests-input').value.split(',').map(Number).filter(n => !isNaN(n));
+                window.algo.init(algo, reqs, head);
             }
-        };
-        const algo = new DiskAlgo(engine, ui);
-
-        const algoData = {
-            'FCFS': 'Serves requests in the order they arrive. Simple but can result in high seek times.',
-            'SSTF': 'Selects the request with the minimum seek time from the current head position.',
-            'SCAN': 'The head moves in one direction until it hits the end, then reverses.',
-            'C-SCAN': 'The head moves in one direction, then immediately jumps back to the start.',
-            'LOOK': 'Similar to SCAN, but doesn\'t go all the way to the disk edge if no requests are there.'
-        };
-
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.onclick = () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                document.getElementById('algo-info').innerHTML = `<strong>${btn.dataset.algo}:</strong> ${algoData[btn.dataset.algo]}`;
-                runSimulation();
-            };
-        });
-
-        const runSimulation = () => {
-            const reqStr = document.getElementById('requests-input').value;
-            const requests = reqStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
-            const initialHead = parseInt(document.getElementById('head-input').value);
-            const activeAlgo = document.querySelector('.tab-btn.active').dataset.algo;
-
-            algo.setParams(requests, initialHead);
-            algo.calculate(activeAlgo);
-        };
-
-        document.getElementById('run-btn').onclick = runSimulation;
-
-        window.onload = () => {
-            runSimulation();
+            playback.play();
         };
     </script>
-
-    <script src="../assets/js/core/algo-content.js"></script>
     <script src='../assets/js/core/ui-extras.js'></script>
 </body>
 
 </html>
-Riverside

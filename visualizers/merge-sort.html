@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-algo="merge-sort">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge Sort Visualizer - AlgoVisual Hub</title>
+    <meta name="description" content="Interactive merge sort visualization showing divide and conquer approach.">
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+
+<body>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <a href="../index.html" class="logo">AlgoVisual Hub</a>
+                <div class="nav-links">
+                    <a href="../algorithms.html">Algorithms</a>
+                    <a href="../dsa.html">DSA</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main></main>
+
+    <script src="../assets/js/core/algo-content.js"></script>
+    <script src="../assets/js/core/merge-sort-content.js"></script>
+    <script src="../assets/js/core/ui-extras.js"></script>
+    <script>
+
+        let array = [38, 27, 43, 3, 9, 82, 10];
+        let animationSpeed = 1000;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const visualizerContainer = document.getElementById('visualizer-container');
+                if (visualizerContainer) {
+                    visualizerContainer.innerHTML = `
+                        <div id="merge-tree" style="height: 400px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 20px;"></div>
+                        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 12px;">
+                            <button class="btn btn-primary" onclick="startMergeSort()">Start Merge Sort</button>
+                            <button class="btn btn-secondary" onclick="generateArray()">New Array</button>
+                            <button class="btn btn-secondary" onclick="reset()">Reset</button>
+                            <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'Merge Sort')">📸 Share</button>
+                        </div>
+                    `;
+                    drawArray();
+                    logStep('Merge sort visualizer ready', 'info');
+                }
+            }, 100);
+        });
+
+        function drawArray() {
+            const container = document.getElementById('merge-tree');
+            if (!container) return;
+
+            container.innerHTML = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h4>Original Array</h4>
+                    <div style="display: flex; justify-content: center; gap: 4px;">
+                        ${array.map(val => `<div style="width: 40px; height: 40px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold;">${val}</div>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        async function startMergeSort() {
+            logStep('Starting merge sort - divide and conquer approach', 'info');
+            const container = document.getElementById('merge-tree');
+            container.innerHTML = '';
+            await visualizeMergeSort([...array], 0, container);
+            logStep('Merge sort complete!', 'success');
+        }
+
+        async function visualizeMergeSort(arr, level, container) {
+            if (arr.length <= 1) return arr;
+
+            const mid = Math.floor(arr.length / 2);
+            const left = arr.slice(0, mid);
+            const right = arr.slice(mid);
+
+            // Show division
+            const divisionEl = document.createElement('div');
+            divisionEl.style.cssText = `
+                margin: 10px 0;
+                padding: 10px;
+                border-left: 3px solid var(--primary);
+                margin-left: ${level * 20}px;
+            `;
+            divisionEl.innerHTML = `
+                <div style="font-weight: bold; margin-bottom: 8px;">Level ${level}: Divide [${arr.join(', ')}]</div>
+                <div style="display: flex; gap: 20px;">
+                    <div>Left: [${left.join(', ')}]</div>
+                    <div>Right: [${right.join(', ')}]</div>
+                </div>
+            `;
+            container.appendChild(divisionEl);
+
+            await sleep(animationSpeed);
+            logStep(`Divided [${arr.join(', ')}] into [${left.join(', ')}] and [${right.join(', ')}]`, 'info');
+
+            const sortedLeft = await visualizeMergeSort(left, level + 1, container);
+            const sortedRight = await visualizeMergeSort(right, level + 1, container);
+
+            const merged = await visualizeMerge(sortedLeft, sortedRight, level, container);
+            return merged;
+        }
+
+        async function visualizeMerge(left, right, level, container) {
+            const result = [];
+            let i = 0, j = 0;
+
+            const mergeEl = document.createElement('div');
+            mergeEl.style.cssText = `
+                margin: 10px 0;
+                padding: 10px;
+                border-left: 3px solid var(--success);
+                margin-left: ${level * 20}px;
+                background: rgba(16, 185, 129, 0.05);
+            `;
+            mergeEl.innerHTML = `
+                <div style="font-weight: bold; margin-bottom: 8px;">Level ${level}: Merge [${left.join(', ')}] + [${right.join(', ')}]</div>
+                <div id="merge-progress-${level}-${Date.now()}"></div>
+            `;
+            container.appendChild(mergeEl);
+
+            const progressEl = mergeEl.querySelector('[id^="merge-progress"]');
+
+            while (i < left.length && j < right.length) {
+                if (left[i] <= right[j]) {
+                    result.push(left[i]);
+                    logStep(`Compare ${left[i]} ≤ ${right[j]}, take ${left[i]}`, 'info');
+                    i++;
+                } else {
+                    result.push(right[j]);
+                    logStep(`Compare ${left[i]} > ${right[j]}, take ${right[j]}`, 'info');
+                    j++;
+                }
+
+                progressEl.innerHTML = `Result so far: [${result.join(', ')}]`;
+                await sleep(animationSpeed / 2);
+            }
+
+            while (i < left.length) {
+                result.push(left[i]);
+                i++;
+            }
+            while (j < right.length) {
+                result.push(right[j]);
+                j++;
+            }
+
+            progressEl.innerHTML = `<strong>Merged: [${result.join(', ')}]</strong>`;
+            logStep(`Merged result: [${result.join(', ')}]`, 'success');
+            await sleep(animationSpeed);
+
+            return result;
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function generateArray() {
+            array = Array.from({ length: 7 }, () => Math.floor(Math.random() * 90) + 10);
+            drawArray();
+            logStep('New random array generated', 'info');
+        }
+
+        function resetArray() {
+            array = [38, 27, 43, 3, 9, 82, 10];
+            drawArray();
+            logStep('Array reset to original values', 'info');
+        }
+    </script>
+</body>
+
+</html>

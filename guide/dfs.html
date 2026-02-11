@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Depth-First Search (DFS) Guide - AlgoVisual Hub</title>
+    <meta name="description" content="Complete guide to Depth-First Search algorithm with examples and implementation.">
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <a href="../index.html" class="logo">AlgoVisual Hub</a>
+                <div class="nav-links">
+                    <a href="../algorithms.html">Algorithms</a>
+                    <a href="../visualizers/dfs.html">DFS Visualizer</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container" style="padding: 60px 24px;">
+            <article>
+                <header style="text-align: center; margin-bottom: 60px;">
+                    <span class="section-tag">Graph Algorithms</span>
+                    <h1 style="font-size: 3rem; font-weight: 900; margin: 20px 0; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                        Depth-First Search (DFS)
+                    </h1>
+                    <p style="font-size: 1.3rem; color: var(--text-muted); max-width: 800px; margin: 0 auto;">
+                        Master the depth-first approach to graph traversal
+                    </p>
+                </header>
+
+                <div class="grid grid-2" style="margin-bottom: 60px;">
+                    <div class="glass-card">
+                        <h2>What is DFS?</h2>
+                        <p>Depth-First Search explores as far as possible along each branch before backtracking. It uses a <strong>stack</strong> (or recursion) to remember vertices to visit.</p>
+                        
+                        <h3>Key Features:</h3>
+                        <ul>
+                            <li>Goes deep before going wide</li>
+                            <li>Uses stack or recursion</li>
+                            <li>Memory efficient for deep graphs</li>
+                            <li>Great for cycle detection</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card">
+                        <h2>Complexity</h2>
+                        <div class="complexity-table">
+                            <div class="complexity-row">
+                                <span class="complexity-label">Time:</span>
+                                <span class="complexity-value">O(V + E)</span>
+                            </div>
+                            <div class="complexity-row">
+                                <span class="complexity-label">Space:</span>
+                                <span class="complexity-value">O(V)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px;">
+                    <h2>Algorithm Steps</h2>
+                    <ol style="line-height: 1.8; padding-left: 20px;">
+                        <li>Start at root vertex, mark as visited</li>
+                        <li>Explore first unvisited neighbor</li>
+                        <li>Recursively apply DFS to neighbor</li>
+                        <li>Backtrack when no unvisited neighbors</li>
+                        <li>Continue until all reachable vertices visited</li>
+                    </ol>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px;">
+                    <h2>Applications</h2>
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>🔍 Pathfinding</h3>
+                            <p>Maze solving, finding any path between vertices</p>
+                        </div>
+                        <div>
+                            <h3>🔄 Cycle Detection</h3>
+                            <p>Detecting cycles in directed and undirected graphs</p>
+                        </div>
+                        <div>
+                            <h3>📊 Topological Sort</h3>
+                            <p>Ordering vertices in directed acyclic graphs</p>
+                        </div>
+                        <div>
+                            <h3>🌐 Connected Components</h3>
+                            <p>Finding strongly connected components</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h2>DFS vs BFS</h2>
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>Use DFS when:</h3>
+                            <ul>
+                                <li>Memory is limited</li>
+                                <li>Solution is deep in tree</li>
+                                <li>Need to detect cycles</li>
+                                <li>Topological sorting needed</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Use BFS when:</h3>
+                            <ul>
+                                <li>Need shortest path</li>
+                                <li>Solution is shallow</li>
+                                <li>Level-order traversal needed</li>
+                                <li>Exploring by levels</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 60px 0;">
+                    <a href="../visualizers/dfs.html" class="btn btn-primary">Try DFS Visualizer →</a>
+                </div>
+            </article>
+        </div>
+    </main>
+</body>
+</html>

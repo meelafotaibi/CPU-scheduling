@@ -18,7 +18,7 @@
         #knn-canvas {
             width: 100%;
             height: 550px;
-            
+
             border: 2px solid #eee;
             border-radius: 12px;
             cursor: crosshair;
@@ -134,7 +134,7 @@
         </header>
 
         <div class="visualizer-layout">
-            <div class="glass-card" style="padding: 30px;">
+            <div class="glass-card" id="visualizer-container" style="padding: 30px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div class="class-selector">
                         <button class="class-btn active" id="btn-a" data-mode="A">Class A</button>
@@ -154,6 +154,8 @@
                     <button class="btn" id="clear-btn" style="border: 1px solid #ddd;"><i class="fas fa-trash"></i>
                         Clear All</button>
                     <button class="btn btn-primary" id="preset-btn">Load Demo Data</button>
+                    <button class="btn btn-secondary"
+                        onclick="shareScreenshot('visualizer-container', 'KNN Classification')">📸 Share</button>
                     <p style="font-size: 0.8rem; color: #666; margin-left: auto;">Click on the plot to add points!</p>
                 </div>
             </div>
@@ -206,7 +208,7 @@
     <script src="../assets/js/algos/knn-algo.js"></script>
     <script>
         let currentMode = 'A';
-        const ui = {
+        window.ui = {
             updateResult: (label, votes) => {
                 const res = document.getElementById('classification-result');
                 res.innerText = label ? `Class ${label}` : '--';
@@ -216,8 +218,10 @@
                 document.getElementById('votes-b').innerText = votes['B'] || 0;
             }
         };
+        const ui = window.ui;
 
-        const algo = new KNNAlgo('knn-canvas', ui);
+        window.algo = new KNNAlgo('knn-canvas', ui);
+        const algo = window.algo;
 
         document.querySelectorAll('.class-btn').forEach(btn => {
             btn.onclick = () => {
@@ -233,15 +237,15 @@
             const y = e.clientY - rect.top;
 
             if (currentMode === 'Q') {
-                algo.setQuery(x, y);
+                window.algo.setQuery(x, y);
             } else {
-                algo.addPoint(x, y, currentMode);
+                window.algo.addPoint(x, y, currentMode);
             }
         };
 
         document.getElementById('k-val').onchange = (e) => {
-            algo.k = parseInt(e.target.value);
-            algo.classify();
+            window.algo.k = parseInt(e.target.value);
+            window.algo.classify();
         };
 
         document.getElementById('clear-btn').onclick = () => algo.clear();

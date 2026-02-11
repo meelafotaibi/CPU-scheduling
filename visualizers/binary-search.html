@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-algo="binary-search">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Search Visualizer - AlgoVisual Hub</title>
+    <meta name="description" content="Interactive binary search visualization showing divide and conquer search.">
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+
+<body>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <a href="../index.html" class="logo">AlgoVisual Hub</a>
+                <div class="nav-links">
+                    <a href="../algorithms.html">Algorithms</a>
+
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main></main>
+
+    <script src="../assets/js/core/complete-algo-content.js"></script>
+    <script src="../assets/js/core/ui-extras.js"></script>
+    <script>
+
+
+        let array = [2, 5, 8, 12, 16, 23, 38, 45, 56, 67, 78];
+        let left = -1, right = -1, mid = -1;
+        let target = -1;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const visualizerContainer = document.getElementById('visualizer-container');
+                if (visualizerContainer) {
+                    visualizerContainer.innerHTML = `
+                        <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px;">
+                            <div>
+                                <div id="array-container" style="display: flex; justify-content: center; align-items: center; height: 200px; gap: 4px; margin: 20px 0;"></div>
+                                <div style="text-align: center; margin: 20px 0;">
+                                    <input type="number" id="target-input" placeholder="Enter target value" style="padding: 8px; border: 1px solid var(--border); border-radius: 6px; margin-right: 12px;">
+                                    <button class="btn btn-secondary" onclick="resetSearch()">Reset</button>
+                                    <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'Binary Search')">📸 Share</button>
+                                </div>
+                            </div>
+                            <div class="glass-card" style="padding: 20px;">
+                                <h4>Search Info</h4>
+                                <div id="search-info" style="font-family: monospace; font-size: 0.9rem; line-height: 1.6;">
+                                    <div>Array: [${array.join(', ')}]</div>
+                                    <div>Target: -</div>
+                                    <div>Left: -</div>
+                                    <div>Right: -</div>
+                                    <div>Mid: -</div>
+                                </div>
+                                <button class="btn btn-secondary" onclick="generateArray()" style="width: 100%; margin-top: 16px;">New Array</button>
+                            </div>
+                        </div>
+                    `;
+                    drawArray();
+                    logStep('Binary search visualizer ready', 'info');
+                }
+            }, 100);
+        });
+
+        function drawArray() {
+            const container = document.getElementById('array-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            array.forEach((val, idx) => {
+                const element = document.createElement('div');
+                let color = 'var(--primary)';
+                let borderColor = 'transparent';
+
+                if (idx === mid) {
+                    color = 'var(--accent)';
+                    borderColor = 'var(--accent)';
+                } else if (idx === left || idx === right) {
+                    color = 'var(--warning)';
+                    borderColor = 'var(--warning)';
+                } else if (left !== -1 && right !== -1 && idx >= left && idx <= right) {
+                    color = 'rgba(99, 102, 241, 0.3)';
+                }
+
+                element.style.cssText = `
+                    width: 50px;
+                    height: 50px;
+                    background: ${color};
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: bold;
+                    border-radius: 8px;
+                    border: 2px solid ${borderColor};
+                    transition: all 0.3s ease;
+                `;
+                element.textContent = val;
+                container.appendChild(element);
+            });
+
+            updateSearchInfo();
+        }
+
+        function updateSearchInfo() {
+            const info = document.getElementById('search-info');
+            if (info) {
+                info.innerHTML = `
+                    <div>Array: [${array.join(', ')}]</div>
+                    <div>Target: ${target === -1 ? '-' : target}</div>
+                    <div>Left: ${left === -1 ? '-' : left}</div>
+                    <div>Right: ${right === -1 ? '-' : right}</div>
+                    <div>Mid: ${mid === -1 ? '-' : mid}</div>
+                `;
+            }
+        }
+
+        async function startBinarySearch() {
+            const input = document.getElementById('target-input');
+            target = parseInt(input.value);
+
+            if (isNaN(target)) {
+                logStep('Please enter a valid target number', 'warning');
+                return;
+            }
+
+            logStep(`Starting binary search for target: ${target}`, 'info');
+
+            left = 0;
+            right = array.length - 1;
+
+            while (left <= right) {
+                mid = Math.floor((left + right) / 2);
+
+                logStep(`Searching in range [${left}, ${right}], checking middle element at index ${mid}`, 'info');
+                drawArray();
+                await sleep(1000);
+
+                if (array[mid] === target) {
+                    logStep(`Target ${target} found at index ${mid}!`, 'success');
+                    return;
+                } else if (array[mid] < target) {
+                    logStep(`${array[mid]} < ${target}, search right half`, 'warning');
+                    left = mid + 1;
+                } else {
+                    logStep(`${array[mid]} > ${target}, search left half`, 'warning');
+                    right = mid - 1;
+                }
+
+                await sleep(800);
+            }
+
+            logStep(`Target ${target} not found in array`, 'warning');
+            left = right = mid = -1;
+            drawArray();
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function generateArray() {
+            const size = 8 + Math.floor(Math.random() * 5);
+            array = Array.from({ length: size }, (_, i) => (i + 1) * (3 + Math.floor(Math.random() * 7)));
+            array.sort((a, b) => a - b);
+
+            left = right = mid = -1;
+            target = -1;
+            drawArray();
+            logStep('New sorted array generated', 'info');
+        }
+    </script>
+</body>
+
+</html>

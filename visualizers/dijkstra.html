@@ -18,7 +18,7 @@
         #graph-canvas {
             width: 100%;
             height: 500px;
-            
+
             border: 2px solid #eee;
             border-radius: 12px;
             cursor: crosshair;
@@ -193,7 +193,7 @@
         window.engine = new GraphEngine('graph-canvas');
         const playback = new Playback(() => window.algo.nextStep());
 
-        const ui = {
+        window.ui = {
             updateStatus: (t) => { document.getElementById('explanation-text').innerText = t; },
             updateTable: (dist, visited) => {
                 const body = document.getElementById('dist-body');
@@ -217,6 +217,8 @@
                 }
             }
         };
+        const ui = window.ui;
+        const engine = window.engine;
 
         window.algo = new DijkstraAlgo(window.engine, playback, ui);
         const nodes = [{ id: 1, x: 100, y: 100 }, { id: 2, x: 250, y: 50 }, { id: 3, x: 400, y: 100 }, { id: 4, x: 100, y: 300 }, { id: 5, x: 250, y: 400 }, { id: 6, x: 400, y: 300 }, { id: 7, x: 250, y: 200 }];

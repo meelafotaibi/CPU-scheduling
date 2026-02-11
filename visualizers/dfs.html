@@ -18,7 +18,7 @@
         #graph-canvas {
             width: 100%;
             height: 500px;
-            
+
             border: 2px solid #eee;
             border-radius: 12px;
         }
@@ -202,10 +202,10 @@
         crossorigin="anonymous"></script>
 
     <script>
-        const engine = new GraphEngine('graph-canvas');
-        const playback = new Playback(() => algo.nextStep());
+        window.engine = new GraphEngine('graph-canvas');
+        const playback = new Playback(() => window.algo.nextStep());
 
-        const ui = {
+        window.ui = {
             updateStatus: (txt) => { document.getElementById('explanation-text').innerText = txt; },
             updateStack: (stack) => {
                 const container = document.getElementById('stack-container');
@@ -216,8 +216,10 @@
                 }
             }
         };
+        const ui = window.ui;
+        const engine = window.engine;
 
-        const algo = new DFSAlgo(engine, playback, ui);
+        window.algo = new DFSAlgo(window.engine, playback, ui);
 
         // Initial Data
         const initialNodes = [
@@ -239,7 +241,7 @@
         document.getElementById('step-btn').onclick = () => playback.step();
         document.getElementById('reset-btn').onclick = () => {
             playback.reset();
-            algo.reset();
+            window.algo.reset();
             document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Play';
         };
         document.getElementById('speed-slider').oninput = (e) => playback.setSpeed(e.target.value);

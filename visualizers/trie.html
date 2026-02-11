@@ -63,7 +63,7 @@
         </header>
 
         <div class="visualizer-layout">
-            <div class="glass-card" style="padding: 30px;">
+            <div class="glass-card" id="visualizer-container" style="padding: 30px;">
                 <canvas id="trie-canvas"></canvas>
 
                 <div class="trie-controls">
@@ -74,7 +74,11 @@
                     </div>
                     <button class="btn" id="next-btn"
                         style="border: 1px solid var(--accent); color: var(--accent);">Next Step</button>
+                    <button class="btn" id="next-btn"
+                        style="border: 1px solid var(--accent); color: var(--accent);">Next Step</button>
                     <button class="btn" id="reset-btn" style="border: 1px solid #ddd;">Clear Trie</button>
+                    <button class="btn btn-secondary"
+                        onclick="shareScreenshot('visualizer-container', 'Trie Visualizer')">📸 Share</button>
                 </div>
             </div>
 
@@ -138,11 +142,12 @@
         window.addEventListener('resize', resize);
         resize();
 
-        const ui = {
+        window.ui = {
             updateStatus: (t) => document.getElementById('explanation-text').innerText = t
         };
-
+        const ui = window.ui;
         const playback = new Playback(() => window.algo.nextStep());
+        window.playback = playback;
         window.algo = new TrieAlgo(engine, playback, ui);
 
         document.getElementById('insert-btn').onclick = () => {

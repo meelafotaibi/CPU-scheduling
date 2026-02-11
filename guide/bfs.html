@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breadth-First Search (BFS) Guide - AlgoVisual Hub</title>
+    <meta name="description"
+        content="Complete guide to Breadth-First Search algorithm with examples, complexity analysis, and implementation details.">
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+
+<body>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <a href="../index.html" class="logo">AlgoVisual Hub</a>
+                <div class="nav-links">
+                    <a href="../algorithms.html">Algorithms</a>
+                    <a href="../visualizers/bfs.html">BFS Visualizer</a>
+                    <a href="../contact.html">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container" style="padding: 60px 24px;">
+            <article>
+                <header style="text-align: center; margin-bottom: 60px;">
+                    <span class="section-tag">Graph Algorithms</span>
+                    <h1
+                        style="font-size: 3rem; font-weight: 900; margin: 20px 0; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                        Breadth-First Search (BFS)
+                    </h1>
+                    <p
+                        style="font-size: 1.3rem; color: var(--text-muted); max-width: 800px; margin: 0 auto; line-height: 1.6;">
+                        A comprehensive guide to understanding and implementing the Breadth-First Search algorithm
+                    </p>
+                </header>
+
+                <div class="grid grid-2" style="margin-bottom: 60px;">
+                    <div class="glass-card">
+                        <h2>What is BFS?</h2>
+                        <p>Breadth-First Search (BFS) is a graph traversal algorithm that explores vertices in a
+                            breadth-ward motion. It visits all vertices at the current depth level before moving to
+                            vertices at the next depth level.</p>
+
+                        <p>BFS uses a <strong>queue</strong> data structure to keep track of vertices to visit next,
+                            following the First-In-First-Out (FIFO) principle.</p>
+
+                        <h3>Key Characteristics:</h3>
+                        <ul>
+                            <li>Explores nodes level by level</li>
+                            <li>Uses a queue for vertex management</li>
+                            <li>Guarantees shortest path in unweighted graphs</li>
+                            <li>Complete algorithm (finds solution if it exists)</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card">
+                        <h2>Complexity Analysis</h2>
+                        <div class="complexity-table">
+                            <div class="complexity-row">
+                                <span class="complexity-label">Time Complexity:</span>
+                                <span class="complexity-value">O(V + E)</span>
+                            </div>
+                            <div class="complexity-row">
+                                <span class="complexity-label">Space Complexity:</span>
+                                <span class="complexity-value">O(V)</span>
+                            </div>
+                            <div class="complexity-row">
+                                <span class="complexity-label">Best Case:</span>
+                                <span class="complexity-value">O(1)</span>
+                            </div>
+                            <div class="complexity-row">
+                                <span class="complexity-label">Worst Case:</span>
+                                <span class="complexity-value">O(V + E)</span>
+                            </div>
+                        </div>
+
+                        <p style="margin-top: 20px; font-size: 0.9rem; color: var(--text-muted);">
+                            Where V is the number of vertices and E is the number of edges in the graph.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px;">
+                    <h2>How BFS Works</h2>
+                    <p>The BFS algorithm follows these steps:</p>
+
+                    <ol style="margin: 20px 0; padding-left: 20px; line-height: 1.8;">
+                        <li><strong>Initialize:</strong> Create a queue and add the starting vertex</li>
+                        <li><strong>Mark as visited:</strong> Mark the starting vertex as visited</li>
+                        <li><strong>Process queue:</strong> While the queue is not empty:
+                            <ul style="margin: 10px 0 10px 20px;">
+                                <li>Dequeue a vertex from the front</li>
+                                <li>Process the current vertex</li>
+                                <li>Add all unvisited neighbors to the queue</li>
+                                <li>Mark neighbors as visited</li>
+                            </ul>
+                        </li>
+                        <li><strong>Repeat:</strong> Continue until queue is empty</li>
+                    </ol>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px;">
+                    <h2>Pseudocode</h2>
+                    <div class="code-card">
+                        <div class="code-viewer">
+                            <pre><code>BFS(graph, start_vertex):
+    create empty queue Q
+    create empty set visited
+    
+    Q.enqueue(start_vertex)
+    visited.add(start_vertex)
+    
+    while Q is not empty:
+        current = Q.dequeue()
+        process(current)
+        
+        for each neighbor of current:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                Q.enqueue(neighbor)
+                
+    return visited</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px;">
+                    <h2>Worked Example</h2>
+                    <p>Let's trace through BFS on a simple graph:</p>
+
+                    <div
+                        style="background: rgba(99, 102, 241, 0.05); padding: 20px; border-radius: 12px; margin: 20px 0;">
+                        <p><strong>Graph:</strong> A connected to B and C, B connected to D, C connected to E</p>
+                        <p><strong>Starting vertex:</strong> A</p>
+                    </div>
+
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; line-height: 1.6;">
+                        <p><strong>Step 1:</strong> Queue: [A], Visited: {A}</p>
+                        <p><strong>Step 2:</strong> Process A, add neighbors B, C</p>
+                        <p><strong>Step 3:</strong> Queue: [B, C], Visited: {A, B, C}</p>
+                        <p><strong>Step 4:</strong> Process B, add neighbor D</p>
+                        <p><strong>Step 5:</strong> Queue: [C, D], Visited: {A, B, C, D}</p>
+                        <p><strong>Step 6:</strong> Process C, add neighbor E</p>
+                        <p><strong>Step 7:</strong> Queue: [D, E], Visited: {A, B, C, D, E}</p>
+                        <p><strong>Step 8:</strong> Process D and E, no new neighbors</p>
+                        <p><strong>Result:</strong> Traversal order: A → B → C → D → E</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-2" style="margin-bottom: 60px;">
+                    <div class="glass-card">
+                        <h2>✅ Advantages</h2>
+                        <ul style="line-height: 1.8;">
+                            <li><strong>Optimal for shortest path:</strong> Guarantees shortest path in unweighted
+                                graphs</li>
+                            <li><strong>Complete algorithm:</strong> Will find a solution if one exists</li>
+                            <li><strong>Level-order traversal:</strong> Perfect for exploring by levels</li>
+                            <li><strong>Memory efficient:</strong> Only stores vertices at current and next level</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card">
+                        <h2>⚠️ Disadvantages</h2>
+                        <ul style="line-height: 1.8;">
+                            <li><strong>Memory intensive:</strong> Can use significant memory for wide graphs</li>
+                            <li><strong>Not suitable for deep graphs:</strong> May be slower than DFS for very deep
+                                graphs</li>
+                            <li><strong>No path information:</strong> Basic BFS doesn't store path information</li>
+                            <li><strong>Infinite graphs:</strong> Cannot handle infinite or very large graphs</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px;">
+                    <h2>Common Applications</h2>
+                    <div class="grid grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h3>🗺️ Pathfinding</h3>
+                            <p>Finding shortest path in unweighted graphs, GPS navigation systems, maze solving.</p>
+                        </div>
+                        <div>
+                            <h3>🌐 Social Networks</h3>
+                            <p>Finding connections, friend suggestions, analyzing social network structures.</p>
+                        </div>
+                        <div>
+                            <h3>🔍 Web Crawling</h3>
+                            <p>Systematic exploration of web pages, search engine indexing.</p>
+                        </div>
+                        <div>
+                            <h3>🎮 Game Development</h3>
+                            <p>AI pathfinding, level generation, game state exploration.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px;">
+                    <h2>Common Mistakes to Avoid</h2>
+                    <div
+                        style="background: rgba(239, 68, 68, 0.05); border-left: 4px solid #ef4444; padding: 20px; margin: 20px 0;">
+                        <h3>❌ Forgetting to mark vertices as visited</h3>
+                        <p>This leads to infinite loops and incorrect results. Always mark vertices as visited when
+                            adding them to the queue.</p>
+                    </div>
+
+                    <div
+                        style="background: rgba(239, 68, 68, 0.05); border-left: 4px solid #ef4444; padding: 20px; margin: 20px 0;">
+                        <h3>❌ Using a stack instead of a queue</h3>
+                        <p>This would result in Depth-First Search, not Breadth-First Search. Remember: BFS uses a queue
+                            (FIFO).</p>
+                    </div>
+
+                    <div
+                        style="background: rgba(239, 68, 68, 0.05); border-left: 4px solid #ef4444; padding: 20px; margin: 20px 0;">
+                        <h3>❌ Not handling disconnected graphs</h3>
+                        <p>BFS only explores connected components. For disconnected graphs, you need to run BFS from
+                            multiple starting points.</p>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h2>Frequently Asked Questions</h2>
+
+                    <div style="margin: 30px 0;">
+                        <h3>Q: When should I use BFS over DFS?</h3>
+                        <p><strong>A:</strong> Use BFS when you need the shortest path in unweighted graphs, want to
+                            explore nodes level by level, or when the solution is likely to be found at a shallow depth.
+                        </p>
+                    </div>
+
+                    <div style="margin: 30px 0;">
+                        <h3>Q: Can BFS handle weighted graphs?</h3>
+                        <p><strong>A:</strong> Basic BFS treats all edges as having equal weight. For weighted graphs,
+                            use Dijkstra's algorithm or other shortest-path algorithms.</p>
+                    </div>
+
+                    <div style="margin: 30px 0;">
+                        <h3>Q: What's the difference between BFS and Dijkstra's algorithm?</h3>
+                        <p><strong>A:</strong> BFS finds shortest paths in unweighted graphs, while Dijkstra's algorithm
+                            handles weighted graphs with non-negative weights.</p>
+                    </div>
+
+                    <div style="margin: 30px 0;">
+                        <h3>Q: How much memory does BFS use?</h3>
+                        <p><strong>A:</strong> BFS uses O(V) space in the worst case, where V is the number of vertices.
+                            The queue can contain up to all vertices in the worst case.</p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 60px 0;">
+                    <a href="../visualizers/bfs.html" class="btn btn-primary"
+                        style="font-size: 1.1rem; padding: 16px 32px;">
+                        Try BFS Visualizer →
+                    </a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Algorithm Guides</h4>
+                    <ul>
+                        <li><a href="bfs.html">BFS Guide</a></li>
+                        <li><a href="dfs.html">DFS Guide</a></li>
+                        <li><a href="dijkstra.html">Dijkstra Guide</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Visualizers</h4>
+                    <ul>
+                        <li><a href="../visualizers/bfs.html">BFS Visualizer</a></li>
+                        <li><a href="../visualizers/dfs.html">DFS Visualizer</a></li>
+                        <li><a href="../visualizers/dijkstra.html">Dijkstra Visualizer</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 AlgoVisual Hub. Educational content for computer science students.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Theme toggle removed for now
+    </script>
+</body>
+
+</html>

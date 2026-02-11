@@ -59,14 +59,13 @@
                 <button class="btn btn-primary" onclick="insert()">Insert Node</button>
                 <button class="btn" onclick="showModal('input-modal')" style="background: var(--dark); color: white;"><i
                         class="fas fa-edit"></i> Batch Input</button>
-                <button class="btn" onclick="location.reload()" style="/* background: #eee; removed */">Clear Tree</button>
+                <button class="btn" onclick="location.reload()" style="/* background: #eee; removed */">Clear
+                    Tree</button>
             </div>
         </div>
 
-        <div style="margin: 60px 0; text-align: center;">
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
-                data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
-        </div>
+        <!-- Ad Slot handled by ui-extras -->
+        <div class="adsbygoogle-container"></div>
     </main>
 
     <script src="../assets/js/core/dsa-engine.js"></script>
@@ -75,6 +74,13 @@
     <script src="../assets/js/algos/bst.js"></script>
     <script>
         window.engine = new DSAEngine('dsa-canvas');
+
+        // Define Playback for controls
+        const playback = {
+            setSpeed: (s) => console.log("Speed set: " + s) // BST is instant, dummy playback for slider
+        };
+        window.playback = playback;
+
         window.algo = new BSTAlgo(window.engine);
 
         window.engine.draw = () => window.algo.draw();
