@@ -2,15 +2,24 @@
 <html lang="en" data-theme="light">
 
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K85JGEX1BV"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-K85JGEX1BV');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlgoVisual Hub - Master Algorithms Visually | Free Interactive CS Education</title>
+    <title>AlgoVisual Hub – Interactive Algorithm & Data Structure Visualizer</title>
 
     <!-- SEO Meta Tags -->
     <meta name="description"
         content="Master algorithms through interactive visualizations. Free platform for computer science students featuring CPU scheduling, sorting algorithms, memory management, and more. Step-by-step animations make complex concepts easy to understand.">
     <meta name="keywords"
-        content="algorithm visualization, CPU scheduling, sorting algorithms, operating systems, computer science, interactive learning, data structures, OS algorithms, educational programming, coding tutorial, algorithm animation">
+        content="algorithm visualization, CPU scheduling, sorting algorithms, operating systems, computer science, interactive learning, data structures, OS algorithms, educational programming, coding tutorial, algorithm animation, AlgoVisual Hub">
     <meta name="author" content="Meelo">
     <meta name="robots" content="index, follow">
     <meta name="language" content="English">
@@ -19,7 +28,7 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cpuos-ae329.web.app/">
-    <meta property="og:title" content="AlgoVisual Hub - Master Algorithms Visually">
+    <meta property="og:title" content="AlgoVisual Hub – Interactive Algorithm & Data Structure Visualizer">
     <meta property="og:description"
         content="Free interactive algorithm visualizations for computer science students. Learn CPU scheduling, sorting, memory management and more through step-by-step animations.">
     <meta property="og:image" content="https://cpuos-ae329.web.app/assets/img/logo.png">
@@ -27,7 +36,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://cpuos-ae329.web.app/">
-    <meta name="twitter:title" content="AlgoVisual Hub - Master Algorithms Visually">
+    <meta name="twitter:title" content="AlgoVisual Hub – Interactive Algorithm & Data Structure Visualizer">
     <meta name="twitter:description"
         content="Free interactive algorithm visualizations for computer science students. Learn CPU scheduling, sorting, memory management and more.">
     <meta name="twitter:image" content="https://cpuos-ae329.web.app/assets/img/logo.png">
@@ -36,6 +45,7 @@
     <link rel="canonical" href="https://cpuos-ae329.web.app/">
 
     <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/responsive.css?v=mobile_fix_1">
     <link rel="icon" href="assets/img/logo.png" type="image/png">
 
     <!-- AdSense -->
@@ -47,24 +57,20 @@
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
-        "@type": "EducationalOrganization",
+        "@type": "SoftwareApplication",
         "name": "AlgoVisual Hub",
-        "description": "Interactive algorithm visualization platform for computer science education",
-        "url": "https://cpuos-ae329.web.app",
-        "logo": "https://cpuos-ae329.web.app/assets/img/logo.png",
-        "sameAs": [
-            "https://github.com/yourprofile"
-        ],
-        "educationalLevel": "University",
-        "educationalUse": "Interactive Learning",
-        "audience": {
-            "@type": "EducationalAudience",
-            "educationalRole": "student"
-        },
+        "url": "https://cpuos-ae329.web.app/",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web",
+        "description": "Interactive visualizer for algorithms, data structures, and operating systems.",
         "offers": {
             "@type": "Offer",
             "price": "0",
             "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Meelo"
         }
     }
     </script>
@@ -85,6 +91,7 @@
                 </a>
                 <div class="nav-links">
                     <a href="#categories">Categories</a>
+                    <a href="cg.html">Graphics</a>
                     <a href="roadmap.html">Roadmap</a>
                     <a href="#about">About</a>
                 </div>
@@ -95,7 +102,7 @@
     <main>
         <section class="hero">
             <div class="container">
-                <h1>Visualize the Inner Workings of Code</h1>
+                <h1>AlgoVisual Hub</h1>
                 <p>Master complex algorithms through interactive, step-by-step visualizations designed for computer
                     science students and developers.</p>
                 <a href="#categories" class="btn btn-primary">Explore Categories →</a>
@@ -170,6 +177,21 @@
                         <a href="#" class="btn btn-secondary" style="pointer-events: none; opacity: 0.6;">View
                             AI</a>
                     </div>
+
+                    <!-- CG Category -->
+                    <div class="glass-card category-card interactive-element"
+                        style="text-align: center; padding: 48px 32px;">
+                        <div class="category-icon" style="font-size: 4rem; margin-bottom: 24px;">🎨</div>
+                        <h3 style="font-size: 1.8rem; margin-bottom: 16px;">Computer Graphics</h3>
+                        <p style="margin-bottom: 24px; color: var(--text-muted);">
+                            OpenGL, Transformations, Shading & Ray Tracing
+                        </p>
+                        <span class="status-pill status-planned"
+                            style="display: inline-block; margin-bottom: 16px;">Coming Soon</span>
+                        <br>
+                        <a href="cg.html" class="btn btn-secondary">View
+                            Graphics</a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -177,10 +199,16 @@
         <!-- AdSense Section -->
         <section style="padding: 40px 0;">
             <div class="container">
-                <div class="glass-card" style="padding: 40px; text-align: center;">
-                    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6906580768177940"
-                        data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
-                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+                <div class="adsbygoogle-container" style="margin: 40px 0; text-align: center;">
+                    <script async
+                        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
+                        crossorigin="anonymous"></script>
+                    <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed"
+                        data-ad-client="ca-pub-6906580768177940" data-ad-slot="9009736994"></ins>
+                    <script>
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
                 </div>
             </div>
         </section>
@@ -188,37 +216,62 @@
         <!-- About Section -->
         <section id="about" style="padding: 80px 0; background: rgba(99, 102, 241, 0.03);">
             <div class="container">
-                <div class="grid grid-2" style="align-items: center; gap: 60px;">
+                <div class="grid grid-2" style="align-items: start; gap: 60px;">
                     <div>
-                        <span class="section-tag">Why AlgoVisual Hub?</span>
-                        <h2 style="font-size: 2.2rem; font-weight: 800; margin: 16px 0 24px;">Learn by Seeing</h2>
+                        <span class="section-tag">About Platform</span>
+                        <h2 style="font-size: 2.2rem; font-weight: 800; margin: 16px 0 24px;">What is AlgoVisual Hub?
+                        </h2>
                         <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 24px;">
-                            Static textbooks make algorithms hard to grasp. AlgoVisual Hub brings code to life with
-                            interactive, step-by-step animations that make complex concepts click.
+                            <strong>AlgoVisual Hub</strong> is an interactive educational platform designed to help
+                            Computer Science students, developers, and enthusiasts master complex algorithms through
+                            visual learning. Unlike traditional static textbooks or code-only tutorials, our platform
+                            brings abstract concepts to life with real-time, step-by-step animations.
                         </p>
+                        <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 24px;">
+                            We cover a wide range of essential topics including <strong>Data Structures (DSA)</strong>,
+                            <strong>sorting and searching algorithms</strong>, <strong>Operating Systems (CPU
+                                Scheduling, Memory Management)</strong>, <strong>Artificial Intelligence</strong>, and
+                            <strong>Computer Graphics</strong>. Each visualizer is built to be responsive, intuitive,
+                            and educational, allowing you to input your own data and watch exactly how the algorithm
+                            processes it.
+                        </p>
+                        <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 24px;">
+                            Built by passionate developers for the community, AlgoVisual Hub is completely free and
+                            open-source. Our mission is to make computer science education accessible, engaging, and
+                            effective for everyone, from university students preparing for exams to software engineers
+                            brushing up for technical interviews.
+                        </p>
+
+                        <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; margin-top: 32px;">Why
+                            Choose AlgoVisual Hub?</h3>
                         <ul style="list-style: none; padding: 0;">
                             <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
                                 <span style="color: var(--success); font-size: 1.2rem;">✓</span>
-                                <span>Real-time step-by-step execution</span>
+                                <span><strong>Visual Clarity:</strong> See every step of the execution logic.</span>
                             </li>
                             <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
                                 <span style="color: var(--success); font-size: 1.2rem;">✓</span>
-                                <span>Custom input for personalized learning</span>
+                                <span><strong>Interactive Learning:</strong> Don't just watch—experiment with custom
+                                    inputs.</span>
                             </li>
                             <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
                                 <span style="color: var(--success); font-size: 1.2rem;">✓</span>
-                                <span>Interview prep for top tech companies</span>
+                                <span><strong>Comprehensive Coverage:</strong> From Bubble Sort to Bankers
+                                    Algorithm.</span>
                             </li>
                             <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
                                 <span style="color: var(--success); font-size: 1.2rem;">✓</span>
-                                <span>Free forever - no paywalls, ever</span>
+                                <span><strong>Exam & Interview Ready:</strong> Focus on concepts asked in CS curricula
+                                    and FAANG interviews.</span>
                             </li>
                         </ul>
                     </div>
-                    <div class="glass-card" style="padding: 40px; text-align: center;">
+                    <div class="glass-card" style="padding: 40px; text-align: center; position: sticky; top: 100px;">
                         <div style="font-size: 10rem; margin-bottom: 16px;">🧠</div>
                         <h3 style="font-size: 1.5rem; font-weight: 700;">Built for Students</h3>
-                        <p style="color: var(--text-muted);">Created by a CS student, for CS students worldwide</p>
+                        <p style="color: var(--text-muted); margin-bottom: 20px;">Created by a CS student, for CS
+                            students worldwide</p>
+                        <a href="#categories" class="btn btn-primary" style="width: 100%;">Start Learning &uarr;</a>
                     </div>
                 </div>
             </div>

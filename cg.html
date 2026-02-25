@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K85JGEX1BV"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-K85JGEX1BV');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Graphics | AlgoVisual Hub</title>
+    <meta name="description"
+        content="Explore Computer Graphics concepts with interactive visualizers. Learn Transformations, Shading, Ray Tracing, and Rasterization step-by-step.">
+    <meta name="keywords"
+        content="computer graphics, cg visualization, 3d transformations, ray tracing, shading, texture mapping, opengl tutorial">
+    <meta property="og:title" content="Computer Graphics - AlgoVisual Hub">
+    <meta property="og:description"
+        content="Interactive visualizations for Computer Graphics. Master Transformations, Shading, and Ray Tracing visually.">
+    <meta property="og:image" content="https://cpuos-ae329.web.app/assets/img/logo1.png">
+    <meta property="og:url" content="https://cpuos-ae329.web.app/cg.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="https://cpuos-ae329.web.app/cg.html">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/responsive.css?v=mobile_fix_1">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Course",
+      "name": "Computer Graphics",
+      "description": "Explore Computer Graphics concepts with interactive visualizers.",
+      "provider": {
+        "@type": "Organization",
+        "name": "AlgoVisual Hub",
+        "sameAs": "https://cpuos-ae329.web.app"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://cpuos-ae329.web.app"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Computer Graphics",
+        "item": "https://cpuos-ae329.web.app/cg.html"
+      }]
+    }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="assets/img/logo.png" type="image/png">
+</head>
+
+<body>
+    <nav>
+        <div class="container nav-content">
+            <a href="index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dsa.html">DSA</a>
+                <a href="algorithms.html">Algorithms</a>
+                <a href="os.html">OS</a>
+                <a href="ai.html">AI</a>
+                <a href="cg.html" class="active" style="color: var(--primary);">Graphics</a>
+                <a href="roadmap.html">Roadmap</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="gradient-bg" style="padding: 60px 0; text-align: center;">
+        <div class="container">
+            <h1>Computer Graphics</h1>
+            <p>Master OpenGL, Transformations, and Rendering techniques.</p>
+        </div>
+    </header>
+
+    <main class="container" style="margin-top: 50px;">
+        <div class="view-controls">
+            <button class="toggle-btn active" id="grid-view-btn" title="Grid View"><i
+                    class="fas fa-th-large"></i></button>
+            <button class="toggle-btn" id="list-view-btn" title="List View"><i class="fas fa-list"></i></button>
+        </div>
+
+        <div id="algo-grid" class="grid grid-3">
+            <!-- Basic Primitives -->
+            <div class="glass-card" style="padding: 40px;">
+                <span class="btn-primary"
+                    style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 20px; display: inline-block;">Fundamentals</span>
+                <h2>Basic Primitives</h2>
+                <p>Visualize points, lines, circles and polygon rasterization.</p>
+                <div style="margin-top: 30px;">
+                    <a href="#" class="btn btn-secondary" style="opacity: 0.7; pointer-events: none;">Coming Soon</a>
+                </div>
+            </div>
+
+            <!-- Transformations -->
+            <div class="glass-card" style="padding: 40px;">
+                <span class="btn-primary"
+                    style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 20px; display: inline-block;">Math</span>
+                <h2>2D/3D Transformations</h2>
+                <p>Translation, Rotation, and Scaling matrices in action.</p>
+                <div style="margin-top: 30px;">
+                    <a href="#" class="btn btn-secondary" style="opacity: 0.7; pointer-events: none;">Coming Soon</a>
+                </div>
+            </div>
+
+            <!-- Lighting -->
+            <div class="glass-card" style="padding: 40px;">
+                <span class="btn-primary"
+                    style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 20px; display: inline-block;">Rendering</span>
+                <h2>Lighting & Shading</h2>
+                <p>Phong, Gouraud, and Flat shading models.</p>
+                <div style="margin-top: 30px;">
+                    <a href="#" class="btn btn-secondary" style="opacity: 0.7; pointer-events: none;">Coming Soon</a>
+                </div>
+            </div>
+
+            <!-- Texture Mapping -->
+            <div class="glass-card" style="padding: 40px;">
+                <span class="btn-primary"
+                    style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 20px; display: inline-block;">Texturing</span>
+                <h2>Texture Mapping</h2>
+                <p>Applying 2D images to 3D surfaces with UV mapping.</p>
+                <div style="margin-top: 30px;">
+                    <a href="#" class="btn btn-secondary" style="opacity: 0.7; pointer-events: none;">Coming Soon</a>
+                </div>
+            </div>
+
+            <!-- Camera -->
+            <div class="glass-card" style="padding: 40px;">
+                <span class="btn-primary"
+                    style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 20px; display: inline-block;">View</span>
+                <h2>Camera & Projections</h2>
+                <p>Orthographic and Perspective projections explained.</p>
+                <div style="margin-top: 30px;">
+                    <a href="#" class="btn btn-secondary" style="opacity: 0.7; pointer-events: none;">Coming Soon</a>
+                </div>
+            </div>
+
+            <!-- Ray Tracing -->
+            <div class="glass-card" style="padding: 40px;">
+                <span class="btn-primary"
+                    style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 20px; display: inline-block;">Advanced</span>
+                <h2>Ray Tracing</h2>
+                <p>Simulate light paths for realistic image synthesis.</p>
+                <div style="margin-top: 30px;">
+                    <a href="#" class="btn btn-secondary" style="opacity: 0.7; pointer-events: none;">Coming Soon</a>
+                </div>
+            </div>
+        </div>
+
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="grid grid-3" style="gap: 40px; margin-bottom: 20px;">
+                <div>
+                    <h4 style="font-weight: 700; margin-bottom: 16px;">Quick Links</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><a href="index.html" style="color: var(--text-muted);">Home</a></li>
+                        <li><a href="os.html" style="color: var(--text-muted);">OS Algorithms</a></li>
+                        <li><a href="algorithms.html" style="color: var(--text-muted);">Sorting</a></li>
+                        <li><a href="cg.html" style="color: var(--text-muted);">Graphics</a></li>
+                        <li><a href="roadmap.html" style="color: var(--text-muted);">Roadmap</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="font-weight: 700; margin-bottom: 16px;">Resources</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><a href="support.html" style="color: var(--text-muted);">Support</a></li>
+                        <li><a href="privacy.html" style="color: var(--text-muted);">Privacy Policy</a></li>
+                        <li><a href="terms.html" style="color: var(--text-muted);">Terms of Use</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom"
+                style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.1);">
+                <p>&copy; 2025 by Meelo 💙</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const grid = document.getElementById('algo-grid');
+        const gridBtn = document.getElementById('grid-view-btn');
+        const listBtn = document.getElementById('list-view-btn');
+
+        if (grid && gridBtn && listBtn) {
+            gridBtn.onclick = () => {
+                grid.classList.remove('list-view');
+                gridBtn.classList.add('active');
+                listBtn.classList.remove('active');
+            };
+            listBtn.onclick = () => {
+                grid.classList.add('list-view');
+                listBtn.classList.add('active');
+                gridBtn.classList.remove('active');
+            };
+        }
+    </script>
+    <script src='assets/js/core/ui-extras.js'></script>
+
+</body>
+
+</html>
