@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -9,98 +9,39 @@
     <link rel="stylesheet" href="../assets/css/responsive.css?v=mobile_fix_1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <!-- Ads handled centrally -->
-    <style>
-        [data-theme="dark"] input,
-        [data-theme="dark"] select {
-            background: rgba(15, 23, 42, 0.8) !important;
-            color: #f1f5f9 !important;
-            border: 1px solid rgba(148, 163, 184, 0.3) !important;
-        }
-
-        [data-theme="dark"] table th {
-            background: rgba(167, 139, 250, 0.3) !important;
-        }
-
-        [data-theme="dark"] canvas {
-            background: rgba(15, 23, 42, 0.3) !important;
-        }
-    </style>
     <style>
         .visualizer-card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: var(--shadow);
             margin-bottom: 40px;
         }
 
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .charts-container {
-            margin-top: 40px;
-        }
-
         .chart-wrapper {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
             padding: 25px;
-            border-radius: 15px;
             margin-bottom: 30px;
-            border: 1px solid #eee;
-        }
-
-        .results-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        .results-table th,
-        .results-table td {
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #ddd;
-        }
-
-        .results-table th {
-            background: var(--primary);
-            color: white;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
         }
 
         .gantt-container {
             overflow-x: auto;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            padding: 20px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
         }
 
         .gantt-timeline {
             display: flex;
             align-items: center;
-            height: 60px;
+            height: 70px;
             position: relative;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            background: white;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
         }
 
         .gantt-block {
@@ -109,30 +50,40 @@
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: bold;
-            border-right: 1px solid rgba(255, 255, 255, 0.3);
-            font-size: 0.9rem;
+            font-weight: 800;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .gantt-block:hover {
+            filter: brightness(1.2);
+            z-index: 5;
+            box-shadow: 0 0 20px currentColor;
         }
 
         .gantt-axis {
             display: flex;
-            margin-top: 5px;
-            font-size: 0.8rem;
-            color: #666;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
         }
 
         .gantt-tick {
             text-align: center;
+            border-left: 1px solid var(--glass-border);
         }
     </style>
 
     <!-- AdSense Auto -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
-     crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script>
     <link rel="icon" href="../assets/img/logo.png" type="image/png">
 </head>
 
-<body>
+<body><canvas id="brain-canvas"></canvas>
 
     <nav>
         <div class="container nav-content">
@@ -154,7 +105,7 @@
         </section>
 
         <div class="grid grid-2">
-            <div class="visualizer-card">
+            <div class="glass-card visualizer-card">
                 <h3>Process Configuration</h3>
                 <div class="input-section" style="margin-top: 20px;">
                     <table id="process-table" style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
@@ -196,25 +147,24 @@
                 <h3>📜 Quick Instructions</h3>
                 <ul style="margin-top: 15px; padding-left: 20px;">
                     <li>Use the <strong>process table</strong> to add/edit jobs.</li>
-                    <li><strong>Arrival:</strong> When the process enters the ready queue.</li>
-                    <li><strong>Burst:</strong> CPU time required.</li>
-                    <li><strong>Priority:</strong> Lower value = Higher priority.</li>
+                    <li>Select an algorithm from the dropdown (FCFS, SJF, Priority, Round Robin).</li>
+                    <li>Add processes with their Arrival Time, Burst Time, and Priority (if applicable).</li>
+                    <li>Click <strong>Start Simulation</strong> to see the Gantt chart and step-by-step execution.</li>
                     <li>Refer to the <a href="../guides/cpu-scheduling.html" style="color: var(--primary);">Full
-                            Guide</a> for algorithm details.</li>
+                            Guide</a> for detailed explanations of each algorithm.</li>
                 </ul>
                 <!-- Ad Slot handled by ui-extras -->
-                
-<div class="adsbygoogle-container" style="margin: 40px 0; text-align: center;">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940" crossorigin="anonymous"></script>
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-format="autorelaxed"
-         data-ad-client="ca-pub-6906580768177940"
-         data-ad-slot="9009736994"></ins>
-    <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-</div>
+
+                <div class="adsbygoogle-container" style="margin: 40px 0; text-align: center;">
+                    <script async
+                        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
+                        crossorigin="anonymous"></script>
+                    <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed"
+                        data-ad-client="ca-pub-6906580768177940" data-ad-slot="9009736994"></ins>
+                    <script>
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
             </div>
         </div>
 
@@ -336,7 +286,7 @@
             const container = document.getElementById('chartsContainer');
             container.innerHTML = '';
 
-            container.innerHTML += `<div class="visualizer-card"><h3>📊 Algorithm Performance Comparison</h3><table class="results-table"><tr><th>Algorithm</th><th>Avg Wait</th><th>Avg TAT</th></tr>${Object.keys(res).map(algo => {
+            container.innerHTML += `<div class="visualizer-card"><h3>📊 Algorithm Performance Comparison</h3><table class="table-premium"><tr><th>Algorithm</th><th>Avg Wait</th><th>Avg TAT</th></tr>${Object.keys(res).map(algo => {
                 const ps = res[algo].processes || res[algo];
                 const aw = (ps.reduce((s, p) => s + p.wt, 0) / ps.length).toFixed(2);
                 const atat = (ps.reduce((s, p) => s + p.tat, 0) / ps.length).toFixed(2);
@@ -433,6 +383,7 @@
 
     <script src="../assets/js/core/algo-content.js"></script>
     <script src='../assets/js/core/ui-extras.js'></script>
+    <script src="../assets/js/brain-animation.js"></script>
 </body>
 
 </html>

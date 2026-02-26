@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlgoVisual Hub Ad Preview</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --dark: #0f172a;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--dark);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .ad-container {
+            position: relative;
+            width: 800px;
+            height: 450px;
+            background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .bg-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            filter: blur(100px);
+            opacity: 0.2;
+            z-index: 0;
+            animation: move 10s infinite alternate;
+        }
+
+        @keyframes move {
+            from {
+                transform: translate(-50%, -50%);
+            }
+
+            to {
+                transform: translate(50%, 50%);
+            }
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeIn 1.5s ease;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            max-width: 500px;
+            margin: 20px auto;
+            animation: fadeIn 2s ease;
+        }
+
+        .mock-visualizer {
+            width: 400px;
+            height: 100px;
+            background: var(--glass);
+            border-radius: 12px;
+            margin-top: 30px;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .bar {
+            flex: 1;
+            background: var(--primary);
+            border-radius: 4px 4px 0 0;
+            animation: grow 2s infinite ease-in-out;
+        }
+
+        @keyframes grow {
+
+            0%,
+            100% {
+                height: 20%;
+            }
+
+            50% {
+                height: 80%;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cta {
+            margin-top: 40px;
+            padding: 12px 32px;
+            background: white;
+            color: var(--dark);
+            border-radius: 100px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.3s;
+        }
+
+        .cta:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body><canvas id="brain-canvas"></canvas>
+    <div class="bg-glow"></div>
+    <div class="ad-container">
+        <div class="content">
+            <h1>AlgoVisual Hub</h1>
+            <p>Master Algorithms. Step by Step. Interactive & Free.</p>
+            <div class="mock-visualizer">
+                <div class="bar" style="animation-delay: 0s"></div>
+                <div class="bar" style="animation-delay: 0.2s"></div>
+                <div class="bar" style="animation-delay: 0.4s"></div>
+                <div class="bar" style="animation-delay: 0.6s"></div>
+                <div class="bar" style="animation-delay: 0.8s"></div>
+            </div>
+            <br><br>
+            <a href="index.html" class="cta">Launch Site →</a>
+        </div>
+    </div>
+<script src="assets/js/brain-animation.js"></script></body>
+
+</html>
+

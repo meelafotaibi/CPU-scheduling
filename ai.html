@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <!-- Google tag (gtag.js) -->
@@ -61,7 +61,7 @@
     <link rel="icon" href="assets/img/logo.png" type="image/png">
 </head>
 
-<body>
+<body><canvas id="brain-canvas"></canvas>
 
     <nav>
         <div class="container nav-content">
@@ -78,14 +78,14 @@
         </div>
     </nav>
 
-    <header class="gradient-bg" style="padding: 60px 0; text-align: center;">
+    <header class="premium-header">
         <div class="container">
             <h1>Artificial Intelligence</h1>
             <p>Master the searching strategies behind game AI and decision trees.</p>
         </div>
     </header>
 
-    <main class="container" style="margin-top: 50px;">
+    <main class="container">
         <div class="view-controls">
             <button class="toggle-btn active" id="grid-view-btn" title="Grid View"><i
                     class="fas fa-th-large"></i></button>
@@ -247,6 +247,7 @@
     </script>
 
     <script src='assets/js/core/ui-extras.js'></script>
+    <script src="assets/js/brain-animation.js"></script>
 </body>
 
 </html>
