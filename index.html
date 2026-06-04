@@ -1,16 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+<title>AlgoVisual Hub – Interactive Algorithm & Data Structure Visualizer</title>
 
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K85JGEX1BV"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'G-K85JGEX1BV');
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AlgoVisual Hub – Interactive Algorithm & Data Structure Visualizer</title>
@@ -48,11 +40,6 @@
     <link rel="stylesheet" href="assets/css/responsive.css?v=mobile_fix_1">
     <link rel="icon" href="assets/img/logo.png" type="image/png">
 
-    <!-- AdSense -->
-    <meta name="google-adsense-account" content="ca-pub-6906580768177940">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
-        crossorigin="anonymous"></script>
-
     <!-- Structured Data for Google -->
     <script type="application/ld+json">
     {
@@ -72,6 +59,14 @@
             "@type": "Person",
             "name": "Meelo"
         }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "AlgoVisual Hub",
+        "url": "https://cpuos-ae329.web.app/"
     }
     </script>
 </head>
@@ -95,6 +90,7 @@
                     <a href="cg.html">Graphics</a>
                     <a href="roadmap.html">Roadmap</a>
                     <a href="#about">About</a>
+                    <a href="support.html" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;">💙 Support</a>
                 </div>
             </div>
         </div>
@@ -103,97 +99,103 @@
     <main>
         <section class="hero">
             <div class="container">
-                <span class="section-tag" style="animation: fadeInUp 0.8s ease-out;">Future of CS Learning</span>
+                <span class="section-tag" style="animation: fadeInUp 0.8s ease-out; display: inline-flex; margin-bottom: 20px;">Interactive CS Learning Platform</span>
                 <h1>AlgoVisual Hub</h1>
-                <p>Master complex algorithms through interactive, step-by-step visualizations designed for computer
-                    science students and developers.</p>
-                <div
-                    style="display: flex; gap: 20px; justify-content: center; animation: fadeInUp 0.8s ease-out 0.4s both;">
-                    <a href="#categories" class="btn btn-primary">Get Started Now &darr;</a>
-                    <a href="roadmap.html" class="btn btn-secondary" style="border-radius: 16px;">System Roadmap</a>
+                <p>A completely free, interactive Computer Science learning platform. Master algorithms, data structures, OS concepts, and AI through step-by-step visual simulations — no ads, no subscriptions, forever free.</p>
+                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; animation: fadeInUp 0.8s ease-out 0.4s both;">
+                    <a href="#categories" class="btn btn-primary">Start Learning &darr;</a>
+                    <a href="roadmap.html" class="btn btn-secondary" style="border-radius: 16px;">Platform Roadmap</a>
+                    <a href="support.html" class="btn btn-secondary" style="border-radius: 16px;">💙 Support Us</a>
+                </div>
+                <div style="display: flex; gap: 40px; justify-content: center; margin-top: 48px; flex-wrap: wrap; animation: fadeInUp 0.8s ease-out 0.6s both;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: 900; color: #818cf8;">30+</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Visualizers</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: 900; color: #a78bfa;">5</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Categories</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: 900; color: #f472b6;">100%</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Free Forever</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: 900; color: #34d399;">0</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Ads</div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section id="categories" style="padding: 80px 0;">
             <div class="container">
-                <div class="text-center" style="margin-bottom: 60px;">
+                <div style="text-align: center; margin-bottom: 60px;">
+                    <div style="display: inline-flex; align-items: center; gap: 14px; margin-bottom: 16px;">
                     <span class="section-tag">Algorithm Categories</span>
-                    <h2 style="font-size: 2.5rem; font-weight: 800; margin: 16px 0;">What Would You Like to Learn?</h2>
+                    </div>
+                    <h2 style="font-size: 2.5rem; font-weight: 800; margin: 0 0 16px; display: block;">What Would You Like to Learn?</h2>
                     <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 600px; margin: 0 auto;">
                         Choose from our collection of interactive algorithm visualizations
                     </p>
                 </div>
 
-                <div class="grid grid-2" style="gap: 30px;">
-                    <!-- DSA Category -->
+                <!-- Row 1: 3 cards -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 24px;">
                     <div class="category-card" style="animation: fadeInUp 0.8s ease-out 0.2s both;">
-                        <div class="category-icon">🌲</div>
+                        <div class="category-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="url(#g1)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                        </div>
                         <h3>Data Structures</h3>
-                        <p style="margin-bottom: 24px;">Linked Lists, Stacks, Queues, Trees, and Graphs</p>
-                        <span class="status-pill status-planned">Coming Soon</span>
-                        <br><br>
-                        <a href="#" class="btn btn-secondary" style="pointer-events: none; opacity: 0.6;">View
-                            Structures</a>
+                        <p style="margin-bottom: 28px;">Linked Lists, Stacks, Queues, Trees, and Graphs</p>
+                        <a href="dsa.html" class="btn btn-primary">Explore DSA &rarr;</a>
                     </div>
 
-                    <!-- Algorithms Category -->
                     <div class="category-card" style="animation: fadeInUp 0.8s ease-out 0.3s both;">
-                        <div class="category-icon">⚡</div>
-                        <h3>Sorting & Searching</h3>
-                        <p style="margin-bottom: 24px;">Bubble, Selection, Insertion Sort & More</p>
-                        <span class="status-pill status-done">3 Live</span>
-                        <br><br>
+                        <div class="category-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="url(#g2)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><circle cx="18" cy="8" r="2" fill="url(#g2)" stroke="none"/><circle cx="12" cy="2" r="2" fill="url(#g2)" stroke="none"/><circle cx="6" cy="12" r="2" fill="url(#g2)" stroke="none"/></svg>
+                        </div>
+                        <h3>Sorting &amp; Searching</h3>
+                        <p style="margin-bottom: 28px;">Bubble, Selection, Insertion Sort &amp; More</p>
                         <a href="algorithms.html" class="btn btn-primary">Explore Algorithms &rarr;</a>
                     </div>
 
-                    <!-- OS Category -->
                     <div class="category-card" style="animation: fadeInUp 0.8s ease-out 0.4s both;">
-                        <div class="category-icon">🖥️</div>
+                        <div class="category-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="url(#g3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><rect x="6" y="7" width="3" height="6" rx="1" fill="url(#g3)" stroke="none" opacity="0.8"/><rect x="10.5" y="9" width="3" height="4" rx="1" fill="url(#g3)" stroke="none" opacity="0.8"/><rect x="15" y="8" width="3" height="5" rx="1" fill="url(#g3)" stroke="none" opacity="0.8"/></svg>
+                        </div>
                         <h3>Operating Systems</h3>
-                        <p style="margin-bottom: 24px;">CPU Scheduling, Memory, Paging, Disk & Deadlock</p>
-                        <span class="status-pill status-done">5 Live</span>
-                        <br><br>
+                        <p style="margin-bottom: 28px;">CPU Scheduling, Memory, Paging, Disk &amp; Deadlock</p>
                         <a href="os.html" class="btn btn-primary">Explore OS &rarr;</a>
                     </div>
-
-                    <!-- AI Category -->
-                    <div class="category-card" style="animation: fadeInUp 0.8s ease-out 0.5s both;">
-                        <div class="category-icon">🧠</div>
-                        <h3>AI & Machine Learning</h3>
-                        <p style="margin-bottom: 24px;">Search Algorithms, Clustering, and Neural Networks</p>
-                        <span class="status-pill status-planned">Coming Soon</span>
-                        <br><br>
-                        <a href="#" class="btn btn-secondary" style="pointer-events: none; opacity: 0.6;">View AI</a>
                     </div>
 
-                    <!-- CG Category -->
+                <!-- Row 2: 2 cards centered -->
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; max-width: 780px; margin: 0 auto;">
+                    <div class="category-card" style="animation: fadeInUp 0.8s ease-out 0.5s both;">
+                        <div class="category-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="url(#g4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs><circle cx="12" cy="7" r="4"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/><circle cx="7" cy="16" r="1.5" fill="url(#g4)" stroke="none"/><circle cx="17" cy="16" r="1.5" fill="url(#g4)" stroke="none"/><line x1="7" y1="16" x2="12" y2="11"/><line x1="17" y1="16" x2="12" y2="11"/></svg>
+                        </div>
+                        <h3>AI &amp; Machine Learning</h3>
+                        <p style="margin-bottom: 28px;">Search Algorithms, Clustering, and Neural Networks</p>
+                        <a href="ai.html" class="btn btn-primary">Explore AI &rarr;</a>
+                    </div>
+
                     <div class="category-card" style="animation: fadeInUp 0.8s ease-out 0.6s both;">
-                        <div class="category-icon">🎨</div>
+                        <div class="category-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="url(#g5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="g5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="url(#g5)" stroke="none"/><polyline points="21 15 16 10 5 21"/></svg>
+                        </div>
                         <h3>Computer Graphics</h3>
-                        <p style="margin-bottom: 24px;">OpenGL, Transformations, Shading & Ray Tracing</p>
-                        <span class="status-pill status-planned">Coming Soon</span>
-                        <br><br>
-                        <a href="cg.html" class="btn btn-secondary">View Graphics</a>
+                        <p style="margin-bottom: 28px;">OpenGL, Transformations, Shading &amp; Ray Tracing</p>
+                        <a href="cg.html" class="btn btn-primary">Explore Graphics &rarr;</a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- AdSense Section -->
         <section style="padding: 40px 0;">
             <div class="container">
 
-                <div class="adsbygoogle-container" style="margin: 40px 0; text-align: center;">
-                    <script async
-                        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
-                        crossorigin="anonymous"></script>
-                    <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed"
-                        data-ad-client="ca-pub-6906580768177940" data-ad-slot="9009736994"></ins>
-                    <script>
-                        (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
-                </div>
             </div>
         </section>
 
@@ -202,9 +204,10 @@
             <div class="container">
                 <div class="grid grid-2" style="align-items: start; gap: 60px;">
                     <div>
+                        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px;">
                         <span class="section-tag">About Platform</span>
-                        <h2 style="font-size: 2.2rem; font-weight: 800; margin: 16px 0 24px;">What is AlgoVisual Hub?
-                        </h2>
+                        </div>
+                        <h2 style="font-size: 2.2rem; font-weight: 800; margin: 0 0 24px; display: block;">What is AlgoVisual Hub?</h2>
                         <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 24px;">
                             <strong>AlgoVisual Hub</strong> is an interactive educational platform designed to help
                             Computer Science students, developers, and enthusiasts master complex algorithms through
@@ -220,10 +223,7 @@
                             processes it.
                         </p>
                         <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 24px;">
-                            Built by passionate developers for the community, AlgoVisual Hub is completely free and
-                            open-source. Our mission is to make computer science education accessible, engaging, and
-                            effective for everyone, from university students preparing for exams to software engineers
-                            brushing up for technical interviews.
+                            Built by a CS student for the community, AlgoVisual Hub is completely free — no ads, no subscriptions, no locked content. Our mission is to make computer science education accessible, engaging, and effective for everyone, from university students preparing for exams to engineers brushing up for technical interviews.
                         </p>
 
                         <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; margin-top: 32px;">Why
@@ -251,11 +251,11 @@
                         </ul>
                     </div>
                     <div class="glass-card" style="padding: 40px; text-align: center; position: sticky; top: 100px;">
-                        <div style="font-size: 10rem; margin-bottom: 16px;">🧠</div>
-                        <h3 style="font-size: 1.5rem; font-weight: 700;">Built for Students</h3>
-                        <p style="color: var(--text-muted); margin-bottom: 20px;">Created by a CS student, for CS
-                            students worldwide</p>
-                        <a href="#categories" class="btn btn-primary" style="width: 100%;">Start Learning &uarr;</a>
+                        <div style="font-size: 6rem; margin-bottom: 16px;">🧠</div>
+                        <h3 style="font-size: 1.5rem; font-weight: 700; display: block; margin-bottom: 12px;">Built for Students</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 24px;">Created by a CS student, for CS students worldwide — and always free.</p>
+                        <a href="#categories" class="btn btn-primary" style="width: 100%; margin-bottom: 12px; box-sizing: border-box;">Start Learning ↑</a>
+                        <a href="support.html" class="btn btn-secondary" style="width: 100%; box-sizing: border-box;">💙 Support the Project</a>
                     </div>
                 </div>
             </div>
@@ -322,8 +322,10 @@
     </footer>
 
     <script src="assets/js/loader.js"></script>
+    <script src="assets/js/core/features.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/brain-animation.js"></script>
+
 </body>
 
 </html>

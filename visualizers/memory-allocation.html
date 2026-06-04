@@ -84,11 +84,7 @@
             color: #721c24;
         }
     </style>
-    <!-- Ads handled centrally -->
 
-    <!-- AdSense Auto -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
-     crossorigin="anonymous"></script>
     <link rel="icon" href="../assets/img/logo.png" type="image/png">
 </head>
 
@@ -121,7 +117,7 @@
                 <div style="margin-top: 30px;">
                     <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px;">
                         <label>Allocation Strategy:</label>
-                        <select id="strategy-select" class="btn" style="background: white; border: 1px solid #ddd;">
+                        <select id="strategy-select" class="btn" style="background: rgba(15,23,42,0.6); border: 1px solid var(--glass-border); color: var(--text);">
                             <option value="first">First Fit</option>
                             <option value="best">Best Fit</option>
                             <option value="worst">Worst Fit</option>
@@ -165,19 +161,6 @@
             </div>
         </div>
 
-        <!-- Ad Slot handled by ui-extras -->
-        
-<div class="adsbygoogle-container" style="margin: 40px 0; text-align: center;">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940" crossorigin="anonymous"></script>
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-format="autorelaxed"
-         data-ad-client="ca-pub-6906580768177940"
-         data-ad-slot="9009736994"></ins>
-    <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-</div>
     </main>
 
     <script src="../assets/js/core/memory-engine.js"></script>
@@ -318,7 +301,7 @@
             renderPartitions();
             // engine.setBlocks(partitions); // Called inside renderPartitions
             updateUI();
-            setTimeout(() => { try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { } }, 1000);
+            setTimeout(() => { }, 1000);
         };
     </script>
 

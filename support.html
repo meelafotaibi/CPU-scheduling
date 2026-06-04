@@ -1,19 +1,249 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support - AlgoVisual Hub</title>
+    <title>Support AlgoVisual Hub - Free Forever</title>
+    <meta name="description" content="AlgoVisual Hub is free forever. Optional community support helps keep the platform running and growing.">
     <link rel="icon" href="assets/img/logo.png" type="image/png">
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/responsive.css?v=mobile_fix_1">
-    <!-- AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
-        crossorigin="anonymous"></script>
+    <style>
+        .support-hero {
+            text-align: center;
+            padding: 100px 0 60px;
+        }
+
+        /* Header CTA: gradient on hover only (no static hover) */
+        .support-header-cta{
+            display:inline-flex;
+            align-items:center;
+            padding:10px 18px;
+            border-radius:12px;
+            font-weight:700;
+            font-size:0.9rem;
+            text-decoration:none;
+            color: #c7d2fe;
+            border: 1px solid rgba(129, 140, 248, 0.46);
+            background: rgba(255,255,255,0.045);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+            backdrop-filter: blur(14px) saturate(145%);
+            -webkit-backdrop-filter: blur(14px) saturate(145%);
+            transition: all 0.2s ease;
+        }
+        .support-header-cta:hover{
+            background: rgba(99, 102, 241, 0.16);
+            color:#fff;
+            border-color: rgba(167, 139, 250, 0.78);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.24), 0 0 22px rgba(168, 85, 247, 0.18), inset 0 1px 0 rgba(255,255,255,0.2);
+            transform: translateY(-1px);
+        }
+
+        .support-hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .support-emoji,
+        .promise-icon {
+            font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+            background: none !important;
+            -webkit-background-clip: border-box !important;
+            background-clip: border-box !important;
+            -webkit-text-fill-color: initial !important;
+            color: initial !important;
+            filter: drop-shadow(0 0 12px rgba(129, 140, 248, 0.35));
+        }
+
+        .support-emoji {
+            display: inline-block;
+            margin-right: 0.12em;
+            vertical-align: -0.05em;
+        }
+
+        .support-hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 680px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .free-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(99, 102, 241, 0.35);
+            color: var(--text);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 32px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .free-badge{ background-image: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(168,85,247,0.18)); }
+
+        .amount-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 28px 0;
+        }
+
+        .amount-card {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 20px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .amount-card:hover,
+        .amount-card.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.12);
+        }
+
+        .amount-card .amount-value {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--text);
+            -webkit-text-fill-color: var(--text);
+        }
+
+        .amount-card.selected .amount-value {
+            color: #818cf8;
+            -webkit-text-fill-color: #818cf8;
+        }
+
+        .amount-card .amount-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .amount-card.custom-card input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+            outline: none;
+            padding: 0;
+        }
+
+        .amount-card.custom-card input::placeholder {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .paypal-section {
+            margin-top: 32px;
+            padding-top: 28px;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .paypal-section h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        #paypal-container-JWZWSZ7JRYMPE {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .paytabs-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 16px 24px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            border: 1px solid rgba(129, 140, 248, 0.46);
+            background: rgba(255,255,255,0.045);
+            color: #ffffff;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.24), inset 0 1px 0 rgba(255,255,255,0.14);
+            backdrop-filter: blur(18px) saturate(150%);
+            -webkit-backdrop-filter: blur(18px) saturate(150%);
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
+        }
+
+.paytabs-btn:hover {
+            background: rgba(99, 102, 241, 0.16);
+            border-color: rgba(167, 139, 250, 0.78);
+            box-shadow: 0 14px 34px rgba(99, 102, 241, 0.26), 0 0 26px rgba(168, 85, 247, 0.18), inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+
+        .promise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 48px;
+        }
+
+        .promise-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 24px 20px;
+            text-align: center;
+        }
+
+        .promise-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .promise-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .promise-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 600px) {
+            .amount-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
 </head>
 
-<body><canvas id="brain-canvas"></canvas>
+<body>
+    <canvas id="brain-canvas"></canvas>
+
     <nav>
         <div class="container">
             <div class="nav-content">
@@ -23,153 +253,177 @@
                 </a>
                 <div class="nav-links">
                     <a href="index.html">Home</a>
-                    <a href="#categories">Categories</a>
                     <a href="roadmap.html">Roadmap</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="index.html" class="support-header-cta">💙 Support</a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="container" style="padding: 80px 0; max-width: 900px;">
-        <div class="glass-card" style="padding: 60px;">
-            <h1 style="font-size: 2.5rem; margin-bottom: 24px;">Support Center</h1>
-            <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 40px;">
-                Get help and answers to your questions
-            </p>
-
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 1.8rem; margin-bottom: 16px;">📧 Contact Us</h2>
-                <p style="color: var(--text-muted); margin-bottom: 16px;">
-                    Have questions, feedback, or found a bug? We'd love to hear from you!
+    <main>
+        <section class="support-hero">
+            <div class="container">
+                <div class="free-badge">✅ Free Forever — No Subscriptions, No Ads</div>
+                <h1><span class="support-emoji">💙</span>Support AlgoVisual Hub</h1>
+                <p>
+                    AlgoVisual Hub is completely free and will always remain free.
+                    If it has helped you learn, your support is optional but deeply appreciated —
+                    it helps keep the platform running and growing.
                 </p>
-                <div class="glass-card" style="padding: 24px; background: rgba(99, 102, 241, 0.05);">
-                    <p style="margin-bottom: 8px;"><strong>Email:</strong></p>
-                    <a href="mailto:devmeelo4@gmail.com"
-                        style="color: var(--primary); font-size: 1.2rem; text-decoration: underline;">
-                        devmeelo4@gmail.com
-                    </a>
-                </div>
-            </section>
+            </div>
+        </section>
 
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 1.8rem; margin-bottom: 16px;">❓ Frequently Asked Questions</h2>
+        <div class="container" style="max-width: 680px; padding-bottom: 100px;">
 
-                <div style="margin-bottom: 24px;">
-                    <h3 style="color: var(--primary); margin-bottom: 8px;">What is AlgoVisual Hub?</h3>
-                    <p style="color: var(--text-muted);">
-                        AlgoVisual Hub is a free educational platform that helps computer science students master
-                        algorithms through interactive visualizations. We focus on making complex concepts easy to
-                        understand through step-by-step animations.
-                    </p>
-                </div>
+            <div class="glass-card" style="padding: 40px;">
+                <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 6px;">Choose an Amount</h2>
+                <p style="color: var(--text-muted); margin-bottom: 4px; font-size: 0.9rem;">One-time. No recurring billing. No account required.</p>
 
-                <div style="margin-bottom: 24px;">
-                    <h3 style="color: var(--primary); margin-bottom: 8px;">Is it really free?</h3>
-                    <p style="color: var(--text-muted);">
-                        Yes! AlgoVisual Hub is completely free to use. We're supported by ads to keep the platform
-                        running and accessible to everyone.
-                    </p>
-                </div>
-
-                <div style="margin-bottom: 24px;">
-                    <h3 style="color: var(--primary); margin-bottom: 8px;">Which algorithms are available?</h3>
-                    <p style="color: var(--text-muted);">
-                        Currently, we have 8 working visualizers: 3 sorting algorithms (Bubble, Selection, Insertion)
-                        and 5 operating system algorithms (CPU Scheduling, Memory Allocation, Page Replacement, Banker's
-                        Algorithm, Disk Scheduling). Check our <a href="roadmap.html"
-                            style="color: var(--primary);">Roadmap</a> for upcoming features!
-                    </p>
+                <div class="amount-grid">
+                    <div class="amount-card selected" onclick="selectAmount(this, 5)">
+                        <div class="amount-value">5 SAR</div>
+                        <div class="amount-label">~$1.3</div>
+                    </div>
+                    <div class="amount-card" onclick="selectAmount(this, 10)">
+                        <div class="amount-value">10 SAR</div>
+                        <div class="amount-label">~$2.7</div>
+                    </div>
+                    <div class="amount-card" onclick="selectAmount(this, 20)">
+                        <div class="amount-value">20 SAR</div>
+                        <div class="amount-label">~$5.3</div>
+                    </div>
+                    <div class="amount-card custom-card" onclick="this.querySelector('input').focus()">
+                        <input type="number" id="custom-amount" placeholder="Custom" min="1" oninput="selectCustom(this)">
+                        <div class="amount-label">SAR</div>
+                    </div>
                 </div>
 
-                <div style="margin-bottom: 24px;">
-                    <h3 style="color: var(--primary); margin-bottom: 8px;">Can I use custom inputs?</h3>
-                    <p style="color: var(--text-muted);">
-                        Yes! Most visualizers allow you to input your own data to see how the algorithm behaves with
-                        different scenarios.
-                    </p>
+                <!-- PayTabs: full payment gateway with Apple Pay, Google Pay, Mada, Visa, Mastercard -->
+                <button class="paytabs-btn" onclick="handlePayTabs()">
+                    <span style="font-size: 1.3rem;">💳</span>
+                    <span>Pay Securely <span style="font-size: 0.8rem; opacity: 0.6;">(Visa · Mada · Apple Pay · Google Pay — Coming Soon)</span></span>
+                </button>
+
+                <!-- PayPal Hosted Button -->
+                <div class="paypal-section">
+                    <h3>or pay with PayPal</h3>
+                    <div id="paypal-container-JWZWSZ7JRYMPE"></div>
                 </div>
 
-                <div style="margin-bottom: 24px;">
-                    <h3 style="color: var(--primary); margin-bottom: 8px;">How do I report a bug?</h3>
-                    <p style="color: var(--text-muted);">
-                        Please email us at <a href="mailto:devmeelo4@gmail.com"
-                            style="color: var(--primary);">devmeelo4@gmail.com</a> with details about the issue,
-                        including which algorithm you were using and what went wrong.
-                    </p>
+                <p style="text-align: center; color: var(--text-muted); font-size: 0.82rem; margin-top: 20px;">
+                    🔒 Secure payment. No subscription created.
+                </p>
+            </div>
+
+            <!-- Promises -->
+            <div class="promise-grid">
+                <div class="promise-card">
+                    <div class="promise-icon">🚫</div>
+                    <h3>No Ads. Ever.</h3>
+                    <p>The platform will never show ads of any kind.</p>
                 </div>
-
-                <div style="margin-bottom: 24px;">
-                    <h3 style="color: var(--primary); margin-bottom: 8px;">Can I contribute or suggest features?</h3>
-                    <p style="color: var(--text-muted);">
-                        Absolutely! We welcome feedback and feature requests. Send us an email with your ideas!
-                    </p>
+                <div class="promise-card">
+                    <div class="promise-icon">🔓</div>
+                    <h3>No Locked Content</h3>
+                    <p>Every visualizer and guide is free for everyone.</p>
                 </div>
-            </section>
+                <div class="promise-card">
+                    <div class="promise-icon">♾️</div>
+                    <h3>Free Forever</h3>
+                    <p>No premium tiers. No paywalls. No subscriptions.</p>
+                </div>
+                <div class="promise-card">
+                    <div class="promise-icon">💙</div>
+                    <h3>Community First</h3>
+                    <p>Built by a student, for students. Support is voluntary.</p>
+                </div>
+            </div>
 
-            <section>
-                <h2 style="font-size: 1.8rem; margin-bottom: 16px;">📖 Additional Resources</h2>
-                <ul style="line-height: 2; color: var(--text-muted);">
-                    <li><a href="guide.html" style="color: var(--primary);">How to Use AlgoVisual Hub</a> - Complete
-                        usage guide</li>
-                    <li><a href="privacy.html" style="color: var(--primary);">Privacy Policy</a> - How we protect your
-                        data</li>
-                    <li><a href="terms.html" style="color: var(--primary);">Terms of Use</a> - Usage guidelines</li>
-                </ul>
-            </section>
-        </div>
+            <!-- What support enables -->
+            <div class="glass-card" style="padding: 36px; margin-top: 32px;">
+                <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 20px; text-align: center;">What Your Support Enables</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                        <span style="color: var(--success);">✓</span>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">Hosting & infrastructure</span>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                        <span style="color: var(--success);">✓</span>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">New algorithm visualizers</span>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                        <span style="color: var(--success);">✓</span>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">Mobile & PWA improvements</span>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                        <span style="color: var(--success);">✓</span>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">More guides & content</span>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                        <span style="color: var(--success);">✓</span>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">Accessibility improvements</span>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                        <span style="color: var(--success);">✓</span>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">Keeping it ad-free forever</span>
+                    </div>
+                </div>
+            </div>
 
-        <div class="adsbygoogle-container" style="margin: 40px 0; text-align: center;">
-            <script async
-                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
-                crossorigin="anonymous"></script>
-            <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed"
-                data-ad-client="ca-pub-6906580768177940" data-ad-slot="9009736994"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+            <div style="text-align: center; margin-top: 40px;">
+                <p style="color: var(--text-muted); font-size: 0.9rem;">
+                    Not in a position to support? That's completely fine. 💙<br>
+                    Sharing the platform with a classmate helps just as much.
+                </p>
+                <a href="index.html" class="btn btn-secondary" style="margin-top: 20px; display: inline-flex;">← Back to Learning</a>
+            </div>
         </div>
     </main>
 
-    <footer style="padding: 60px 0; background: rgba(0,0,0,0.02); margin-top: 80px;">
+    <footer style="padding: 40px 0; margin-top: 40px;">
         <div class="container">
-            <div class="grid grid-3" style="gap: 40px; margin-bottom: 20px;">
-                <div>
-                    <h4 style="font-weight: 700; margin-bottom: 16px;">Quick Links</h4>
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 8px;"><a href="index.html" style="color: var(--text-muted);">Home</a>
-                        </li>
-                        <li style="margin-bottom: 8px;"><a href="os.html" style="color: var(--text-muted);">OS
-                                Algorithms</a></li>
-                        <li style="margin-bottom: 8px;"><a href="algorithms.html"
-                                style="color: var(--text-muted);">Sorting</a></li>
-                        <li style="margin-bottom: 8px;"><a href="roadmap.html"
-                                style="color: var(--text-muted);">Roadmap</a></li>
-                        <li style="margin-bottom: 8px;"><a href="guide.html" style="color: var(--text-muted);">Guide</a>
-                        </li>
-                    </ul>
+            <div style="text-align: center; color: var(--text-muted);">
+                <p>&copy; 2025 AlgoVisual Hub — Free forever, built with 💙 by Meelo</p>
+                <div style="display: flex; gap: 24px; justify-content: center; margin-top: 12px; flex-wrap: wrap;">
+                    <a href="index.html" style="color: var(--text-muted);">Home</a>
+                    <a href="privacy.html" style="color: var(--text-muted);">Privacy</a>
+                    <a href="terms.html" style="color: var(--text-muted);">Terms</a>
+                    <a href="contact.html" style="color: var(--text-muted);">Contact</a>
                 </div>
-                <div>
-                    <h4 style="font-weight: 700; margin-bottom: 16px;">Resources</h4>
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 8px;"><a href="support.html"
-                                style="color: var(--text-muted);">Support</a></li>
-                        <li style="margin-bottom: 8px;"><a href="privacy.html" style="color: var(--text-muted);">Privacy
-                                Policy</a></li>
-                        <li style="margin-bottom: 8px;"><a href="terms.html" style="color: var(--text-muted);">Terms of
-                                Use</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom"
-                style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.1);">
-                <p>&copy; 2025 by Meelo 💙</p>
             </div>
         </div>
     </footer>
 
     <script src="assets/js/loader.js"></script>
-    <script src="assets/js/main.js"></script>
     <script src="assets/js/brain-animation.js"></script>
+
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=BAAMaTWFlA4yDCFfQ6fdB7MsJwfaNmHSq8PfqVYIXiG0IKGza_SqzUyCjMz-D5gvMyyDYgLk_9yVsiXFS4&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
+    <script>
+        paypal.HostedButtons({
+            hostedButtonId: "JWZWSZ7JRYMPE",
+        }).render("#paypal-container-JWZWSZ7JRYMPE");
+
+        let selectedAmount = 5;
+
+        function selectAmount(card, amount) {
+            document.querySelectorAll('.amount-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedAmount = amount;
+            document.getElementById('custom-amount').value = '';
+        }
+
+        function selectCustom(input) {
+            document.querySelectorAll('.amount-card').forEach(c => c.classList.remove('selected'));
+            input.closest('.amount-card').classList.add('selected');
+            selectedAmount = parseFloat(input.value) || 0;
+        }
+
+        function handlePayTabs() {
+            alert('PayTabs integration coming soon. Please use PayPal for now. 💙');
+        }
+    </script>
 </body>
 
 </html>

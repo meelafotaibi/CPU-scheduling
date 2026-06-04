@@ -4,6 +4,7 @@ class UIExtrasSystem {
         this.contentSystem = new AlgoContentSystem();
         this.currentAlgo = null;
         this.init();
+        this.injectGlobalFeatures();
     }
 
     init() {
@@ -11,6 +12,77 @@ class UIExtrasSystem {
         this.currentAlgo = document.documentElement.getAttribute('data-algo');
         if (this.currentAlgo) {
             this.injectStandardLayout();
+        }
+    }
+
+    injectGlobalFeatures() {
+        // 1. Dynamically load features.js if not present
+        if (typeof SharingSystem === 'undefined') {
+            const script = document.createElement('script');
+            const prefix = window.location.pathname.includes('/visualizers/') || window.location.pathname.includes('/guide/') || window.location.pathname.includes('/guides/') ? '../' : '';
+            script.src = prefix + 'assets/js/core/features.js';
+            script.onload = () => {
+                if (window.ProgressSystem) window.ProgressSystem.updateDOMProgress();
+            };
+            document.head.appendChild(script);
+        }
+
+        // 2. Inject sleek progress tracker and Support Development button in Navigation Bar
+        const injectNav = () => {
+            const navLinks = document.querySelector('.nav-links');
+            if (navLinks && !document.getElementById('nav-support-btn')) {
+                const prefix = window.location.pathname.includes('/visualizers/') || window.location.pathname.includes('/guide/') || window.location.pathname.includes('/guides/') ? '../' : '';
+                
+                // A. Progress Tracker container
+                const progressDiv = document.createElement('div');
+                progressDiv.id = 'global-progress-indicator';
+                progressDiv.style.marginRight = '10px';
+                progressDiv.style.display = 'inline-flex';
+                progressDiv.style.alignItems = 'center';
+                navLinks.insertBefore(progressDiv, navLinks.firstChild);
+
+                // B. Support Development Button
+                const supportBtn = document.createElement('a');
+                supportBtn.id = 'nav-support-btn';
+                supportBtn.href = prefix + 'support.html';
+                supportBtn.className = 'btn';
+                supportBtn.style.cssText = `
+                    padding: 8px 16px;
+                    border-radius: 12px;
+                    font-size: 0.85rem;
+                    border: 1px solid var(--accent) !important;
+                    color: var(--accent) !important;
+                    background: transparent !important;
+                    margin-left: 10px;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-weight: 700;
+                    box-shadow: 0 0 10px rgba(236, 72, 153, 0.15);
+                    animation: none !important;
+                    margin-bottom: 0 !important;
+                    text-decoration: none;
+                    transition: all 0.3s ease;
+                `;
+                supportBtn.innerHTML = `<i class="fas fa-heart" style="color: var(--accent);"></i> Support`;
+                supportBtn.onmouseover = () => {
+                    supportBtn.style.background = 'var(--accent)';
+                    supportBtn.style.color = '#fff';
+                    supportBtn.style.boxShadow = '0 0 20px rgba(236, 72, 153, 0.5)';
+                };
+                supportBtn.onmouseout = () => {
+                    supportBtn.style.background = 'transparent';
+                    supportBtn.style.color = 'var(--accent)';
+                    supportBtn.style.boxShadow = '0 0 10px rgba(236, 72, 153, 0.15)';
+                };
+                navLinks.appendChild(supportBtn);
+            }
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', injectNav);
+        } else {
+            injectNav();
         }
     }
 

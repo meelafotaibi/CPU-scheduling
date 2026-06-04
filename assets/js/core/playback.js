@@ -7,6 +7,7 @@ class Playback {
         this.isRunning = false;
         this.isPaused = false;
         this.onStep = onStep; // Async function to execute one step
+        this.isExecuting = false; // Lock flag to prevent concurrency desyncs
     }
 
     setSpeed(val) {
@@ -20,7 +21,14 @@ class Playback {
         this.isPaused = false;
 
         while (this.isRunning && !this.isPaused) {
+            if (this.isExecuting) {
+                await new Promise(r => setTimeout(r, 50));
+                continue;
+            }
+            this.isExecuting = true;
             const hasMore = await this.onStep();
+            this.isExecuting = false;
+            
             if (!hasMore) {
                 this.isRunning = false;
                 break;
@@ -37,11 +45,15 @@ class Playback {
     reset() {
         this.isRunning = false;
         this.isPaused = false;
+        this.isExecuting = false;
     }
 
     async step() {
+        if (this.isExecuting) return;
+        this.isExecuting = true;
         this.isRunning = false;
         this.isPaused = true;
         await this.onStep();
+        this.isExecuting = false;
     }
 }

@@ -19,13 +19,13 @@
         .dp-display {
             width: 100%;
             height: 450px;
-
-            border: 2px solid #eee;
+            border: 2px solid var(--glass-border);
             border-radius: 12px;
             padding: 30px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            background: rgba(255,255,255,0.02);
         }
 
         .dp-table {
@@ -38,14 +38,15 @@
         .dp-cell {
             width: 70px;
             height: 70px;
-            border: 2px solid #ddd;
+            border: 2px solid var(--glass-border);
             border-radius: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             transition: all 0.3s;
-            background: white;
+            background: rgba(255,255,255,0.04);
+            color: var(--text);
             position: relative;
         }
 
@@ -56,18 +57,18 @@
         }
 
         .dp-cell.filled {
-            /* background: #e6ffed; removed */
-            border-color: #28a745;
+            border-color: #22c55e;
+            background: rgba(34,197,94,0.1);
         }
 
         .dp-cell.highlight {
-            background: #fff3cd;
-            border-color: #f39c12;
+            background: rgba(245, 158, 11, 0.15);
+            border-color: #f59e0b;
         }
 
         .cell-index {
             font-size: 0.7rem;
-            color: #999;
+            color: var(--text-muted);
             position: absolute;
             top: 5px;
             left: 8px;
@@ -104,14 +105,12 @@
         }
 
         .mode-btn.active {
-            background: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background: rgba(99,102,241,0.2);
+            box-shadow: 0 0 12px rgba(99,102,241,0.3);
             color: var(--primary);
         }
     </style>
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
-        crossorigin="anonymous"></script>
+    
     <link rel="icon" href="../assets/img/logo.png" type="image/png">
 </head>
 
@@ -157,7 +156,7 @@
 
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <label>Target N:</label>
-                        <select id="n-val" style="padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                        <select id="n-val" style="padding: 10px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(15,23,42,0.6); color: var(--text);">
                             <option value="5">5</option>
                             <option value="7">7</option>
                             <option value="8" selected>8</option>
@@ -192,19 +191,6 @@
             </div>
         </div>
 
-        <!-- Ad Slot -->
-        
-<div class="adsbygoogle-container" style="margin: 40px 0; text-align: center;">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940" crossorigin="anonymous"></script>
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-format="autorelaxed"
-         data-ad-client="ca-pub-6906580768177940"
-         data-ad-slot="9009736994"></ins>
-    <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-</div>
     </main>
 
     <script src="../assets/js/core/playback.js"></script>

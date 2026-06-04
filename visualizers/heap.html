@@ -19,9 +19,9 @@
         #heap-canvas {
             width: 100%;
             height: 550px;
-
-            border: 2px solid #eee;
+            border: 2px solid var(--glass-border);
             border-radius: 12px;
+            background: rgba(255,255,255,0.02);
         }
 
         .side-panel {
@@ -63,11 +63,7 @@
             color: var(--primary);
         }
     </style>
-    <!-- Ads handled centrally -->
 
-    <!-- AdSense Auto -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
-     crossorigin="anonymous"></script>
     <link rel="icon" href="../assets/img/logo.png" type="image/png">
 </head>
 
@@ -101,21 +97,19 @@
 
                 <canvas id="heap-canvas"></canvas>
 
-                <div class="heap-controls">
+                    <div class="heap-controls">
                     <div style="display: flex; gap: 10px;">
                         <input type="number" id="heap-input" value="10"
-                            style="width: 70px; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                            style="width: 70px; padding: 10px; border-radius: 8px;">
                         <button class="btn btn-primary" id="insert-btn"><i class="fas fa-plus"></i> Insert</button>
                     </div>
                     <button class="btn" id="extract-btn" style="background: var(--dark); color: white;"><i
                             class="fas fa-minus"></i> Extract Root</button>
                     <button class="btn" id="next-btn"
                         style="border: 1px solid var(--accent); color: var(--accent);">Next Step</button>
-                    <button class="btn" id="next-btn"
-                        style="border: 1px solid var(--accent); color: var(--accent);">Next Step</button>
-                    <button class="btn" id="reset-btn" style="border: 1px solid #ddd;">Clear</button>
+                    <button class="btn" id="reset-btn" style="border: 1px solid var(--glass-border);">Clear</button>
                     <button class="btn btn-secondary"
-                        onclick="shareScreenshot('visualizer-container', 'Binart Heap')">📸 Share</button>
+                        onclick="shareScreenshot('visualizer-container', 'Binary Heap')">📸 Share</button>
                 </div>
             </div>
 
@@ -138,7 +132,7 @@
 
                 <div class="glass-card" style="padding: 20px;">
                     <h4>💡 Complexity</h4>
-                    <ul style="font-size: 0.85rem; color: #333; padding-left: 20px;">
+                    <ul style="font-size: 0.85rem; color: var(--text-muted); padding-left: 20px;">
                         <li><strong>Insert:</strong> O(log n)</li>
                         <li><strong>Delete:</strong> O(log n)</li>
                         <li><strong>Get Top:</strong> O(1)</li>
@@ -148,20 +142,6 @@
             </div>
         </div>
 
-        <!-- Ad Slot -->
-        <!-- Ad Slot handled by ui-extras -->
-        
-<div class="adsbygoogle-container" style="margin: 40px 0; text-align: center;">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940" crossorigin="anonymous"></script>
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-format="autorelaxed"
-         data-ad-client="ca-pub-6906580768177940"
-         data-ad-slot="9009736994"></ins>
-    <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-</div>
     </main>
 
     <script src="../assets/js/core/heap-engine.js"></script>

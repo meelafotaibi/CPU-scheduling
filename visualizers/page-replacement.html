@@ -94,16 +94,13 @@
             width: 100%;
             padding: 8px;
             border-radius: 6px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--glass-border);
             margin-bottom: 15px;
-            background: var(--card-bg);
+            background: rgba(15, 23, 42, 0.6);
             color: var(--text);
         }
     </style>
 
-    <!-- AdSense Auto -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
-     crossorigin="anonymous"></script>
     <link rel="icon" href="../assets/img/logo.png" type="image/png">
 </head>
 
@@ -132,8 +129,14 @@
             <div class="main-panel">
                 <div class="glass-card" style="padding: 30px;">
                     <!-- Controls will be injected here by ui-extras or we can add manual placeholder if needed -->
-                    <div class="controls" style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;">
+                    <div class="controls" style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center; flex-wrap: wrap;">
                         <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Run</button>
+                        <button class="btn btn-secondary" id="step-btn" style="border: 1px solid var(--primary); color: var(--primary); background: transparent;"><i class="fas fa-step-forward"></i> Step</button>
+                        <button class="btn" id="reset-btn" style="border: 1px solid var(--accent); color: var(--accent); background: transparent;"><i class="fas fa-undo"></i> Reset</button>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-left: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;"><i class="fas fa-gauge-high"></i> Speed</span>
+                            <input type="range" id="speed-slider" min="1" max="100" value="50" style="width: 80px; height: 6px; cursor: pointer; padding: 0; border: none; margin-bottom: 0;">
+                        </div>
                         <button class="btn btn-secondary"
                             onclick="shareScreenshot('visualizer-layout', 'Page Replacement')">📸 Share</button>
                         <!-- Standard buttons will be appended here -->
@@ -190,19 +193,7 @@
         </div>
 
         <div style="margin: 60px 0; text-align: center;">
-            <!-- Ad container handled by ui-extras -->
-            
-<div class="adsbygoogle-container" style="margin: 40px 0; text-align: center;">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940" crossorigin="anonymous"></script>
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-format="autorelaxed"
-         data-ad-client="ca-pub-6906580768177940"
-         data-ad-slot="9009736994"></ins>
-    <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-</div>
+
         </div>
     </main>
 
@@ -254,20 +245,56 @@
 
         window.algo = new PageReplacementAlgo(playback, ui);
 
-        // Standard Play Button Logic
+        function initAlgo() {
+            const type = document.getElementById('algo-select').value;
+            const caps = parseInt(document.getElementById('frame-size').value);
+            const refs = document.getElementById('ref-string').value;
+            ui.clearDisplay();
+            ui.updateStats(0, 0, 0);
+            ui.updateStatus('Initialized. Press Run or Step.');
+            window.algo.init(type, caps, refs);
+        }
+
+        // Play / Pause
         document.getElementById('play-btn').onclick = () => {
-            if (playback.isRunning) return; // Already running logic handled by playback control usually
-
-            // If just starting
-            if (window.algo.currentIndex === 0) {
-                const type = document.getElementById('algo-select').value;
-                const caps = parseInt(document.getElementById('frame-size').value);
-                const refs = document.getElementById('ref-string').value;
-                window.algo.init(type, caps, refs);
+            if (playback.isRunning) {
+                playback.pause();
+                document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Run';
+                return;
             }
-
-            playback.play();
+            if (window.algo.currentIndex === 0) initAlgo();
+            document.getElementById('play-btn').innerHTML = '<i class="fas fa-pause"></i> Pause';
+            playback.play().then(() => {
+                document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Run';
+            });
         };
+
+        // Step
+        document.getElementById('step-btn').onclick = async () => {
+            playback.pause();
+            document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Run';
+            if (window.algo.currentIndex === 0) initAlgo();
+            await playback.step();
+        };
+
+        // Reset
+        document.getElementById('reset-btn').onclick = () => {
+            playback.reset();
+            window.algo.currentIndex = 0;
+            ui.clearDisplay();
+            ui.updateStats(0, 0, 0);
+            ui.updateStatus('Reset. Ready.');
+            document.getElementById('frame-display').innerHTML = '<div style="padding: 20px; color: #888;">Configure and run to see simulation.</div>';
+            document.getElementById('total-hits').innerText = '0';
+            document.getElementById('total-faults').innerText = '0';
+            document.getElementById('hit-ratio').innerText = '0%';
+            document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Run';
+        };
+
+        // Speed
+        const speedSlider = document.getElementById('speed-slider');
+        speedSlider.oninput = (e) => { playback.setSpeed(parseInt(e.target.value)); };
+        playback.setSpeed(parseInt(speedSlider.value));
 
     </script>
     <script src='../assets/js/core/ui-extras.js'></script>

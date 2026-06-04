@@ -30,20 +30,18 @@
             font-weight: 600;
         }
 
-        .input-group input {
+        .input-group input,
+        .input-group select {
             width: 100%;
             padding: 8px;
             border-radius: 6px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--glass-border);
             margin-bottom: 15px;
-            background: var(--card-bg);
+            background: rgba(15, 23, 42, 0.6);
             color: var(--text);
         }
     </style>
 
-    <!-- AdSense Auto -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940"
-     crossorigin="anonymous"></script>
     <link rel="icon" href="../assets/img/logo.png" type="image/png">
 </head>
 
@@ -71,8 +69,13 @@
             <div class="main-panel">
                 <div class="glass-card" id="visualizer-container" style="padding: 30px;">
                     <!-- Controls -->
-                    <div class="controls" style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;">
+                    <div class="controls" style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center; flex-wrap: wrap;">
                         <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Run</button>
+                        <button class="btn" id="reset-btn" style="border: 1px solid var(--accent); color: var(--accent); background: transparent;"><i class="fas fa-undo"></i> Reset</button>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-left: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;"><i class="fas fa-gauge-high"></i> Speed</span>
+                            <input type="range" id="speed-slider" min="1" max="100" value="50" style="width: 80px; height: 6px; cursor: pointer; padding: 0; border: none; margin-bottom: 0;">
+                        </div>
                         <button class="btn btn-secondary"
                             onclick="shareScreenshot('visualizer-container', 'Disk Scheduling')">📸 Share</button>
                     </div>
@@ -115,19 +118,7 @@
                         Ready.
                     </div>
                 </div>
-                <!-- Ad container handled by ui-extras -->
-                
-<div class="adsbygoogle-container" style="margin: 40px 0; text-align: center;">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6906580768177940" crossorigin="anonymous"></script>
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-format="autorelaxed"
-         data-ad-client="ca-pub-6906580768177940"
-         data-ad-slot="9009736994"></ins>
-    <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-</div>
+
             </div>
         </div>
     </main>
@@ -149,15 +140,35 @@
         window.algo = new DiskAlgo(window.engine, playback, ui);
 
         document.getElementById('play-btn').onclick = () => {
-            if (playback.isRunning) return;
+            if (playback.isRunning) {
+                playback.pause();
+                document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Run';
+                return;
+            }
             if (window.algo.currentIndex === 0) {
                 const algo = document.getElementById('algo-select').value;
                 const head = parseInt(document.getElementById('head-input').value);
                 const reqs = document.getElementById('requests-input').value.split(',').map(Number).filter(n => !isNaN(n));
                 window.algo.init(algo, reqs, head);
             }
-            playback.play();
+            document.getElementById('play-btn').innerHTML = '<i class="fas fa-pause"></i> Pause';
+            playback.play().then(() => {
+                document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Run';
+            });
         };
+
+        document.getElementById('reset-btn').onclick = () => {
+            playback.reset();
+            window.algo.currentIndex = 0;
+            window.engine.draw();
+            document.getElementById('seek-count').innerText = '0';
+            document.getElementById('status-text').innerText = 'Reset. Configure and run.';
+            document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Run';
+        };
+
+        const speedSlider = document.getElementById('speed-slider');
+        speedSlider.oninput = (e) => { playback.setSpeed(parseInt(e.target.value)); };
+        playback.setSpeed(parseInt(speedSlider.value));
     </script>
     <script src='../assets/js/core/ui-extras.js'></script>
 <script src="../assets/js/brain-animation.js"></script></body>
