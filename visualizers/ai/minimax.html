@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimax & Alpha-Beta Visualizer | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        #dsa-canvas {
+            width: 100%;
+            height: 500px;
+            /* background: #fff; removed */
+            border: 2px solid #eee;
+            border-radius: 12px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            align-items: center;
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .visualizer-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .legend {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 0.8rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid #333;
+        }
+    </style>
+    
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+</head>
+
+<body><canvas id="brain-canvas"></canvas>
+    <nav>
+        <div class="container nav-content">
+            <a href="../../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../ai.html">Back to AI</a>
+            </div>
+        </div>
+    </nav>
+    <main class="container">
+        <header style="margin-top: 40px;">
+            <span class="btn-primary"
+                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; display: inline-block; margin-bottom: 15px;">AI
+                & Game Theory</span>
+            <h1>Minimax & Alpha-Beta Pruning</h1>
+            <p>Visualize how AI makes decisions in games by searching the decision tree and pruning irrelevant branches.
+            </p>
+        </header>
+
+        <div class="visualizer-layout">
+            <div class="glass-card" id="visualizer-container" style="padding: 30px;">
+                <canvas id="dsa-canvas"></canvas>
+                <div class="controls">
+                    <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Run Minimax</button>
+                    <button class="btn" id="ab-btn" style="background: var(--dark); color: white;">Run
+                        Alpha-Beta</button>
+                    <button class="btn" onclick="location.reload()" style="/* background: #eee; removed */">New
+                        Tree</button>
+                    <button class="btn btn-secondary"
+                        onclick="shareScreenshot('visualizer-container', 'Minimax/Alpha-Beta')">📸 Share</button>
+                </div>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="dot" style="/* background: #fff; removed */"></div> Unvisited
+                    </div>
+                    <div class="legend-item">
+                        <div class="dot" style="background: #ff6b6b;"></div> Current
+                    </div>
+                    <div class="legend-item">
+                        <div class="dot" style="background: #ccc;"></div> Pruned
+                    </div>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>📜 Execution Log</h4>
+                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 10px; min-height: 50px;">Ready.
+                        Choose an algorithm to start.</p>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>💡 Concept</h4>
+                    <div style="font-size: 0.8rem; margin-top: 10px;">
+                        <p><strong>Minimax:</strong> Tries to maximize its own score while assuming the opponent will
+                            minimize it.</p>
+                        <p style="margin-top: 8px;"><strong>Alpha-Beta:</strong> An optimization that stops evaluating a
+                            branch once it proves to be worse than a previously seen branch.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../../assets/js/core/dsa-engine.js"></script>
+    <script src="../../assets/js/core/playback.js"></script>
+    <script src="../../assets/js/algos/ai/minimax.js"></script>
+    <script>
+        window.engine = new DSAEngine('dsa-canvas');
+        window.ui = {
+            updateStatus: (t) => { document.getElementById('explanation-text').innerText = t; }
+        };
+        const ui = window.ui;
+        const engine = window.engine;
+
+        // Fix: Use generic ui update if ui-extras didn't override
+        if (!ui.updateStatus) ui.updateStatus = (t) => { if (document.getElementById('explanation-text')) document.getElementById('explanation-text').innerText = t; };
+
+        // Expose Playback
+        const playback = new Playback(() => window.algo.nextStep());
+        window.playback = playback;
+
+        // Pass playback to Algo
+        window.algo = new MinimaxAlgo(window.engine, playback, ui);
+        const algo = window.algo;
+
+        engine.draw = () => algo.draw();
+
+        document.getElementById('play-btn').onclick = () => {
+            algo.generateTree(3, 2);
+            algo.run(false);
+            playback.play();
+        };
+
+        document.getElementById('ab-btn').onclick = () => {
+            algo.generateTree(3, 2);
+            algo.run(true);
+            playback.play();
+        };
+
+        window.onload = () => {
+            algo.generateTree(3, 2);
+        };
+    </script>
+
+    <script src='../../assets/js/core/ui-extras.js'></script>
+<script src="../../assets/js/brain-animation.js"></script></body>
+
+</html>
+

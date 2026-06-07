@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semaphores Visualizer | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+    <style>
+        .vis-layout { display: grid; grid-template-columns: 1fr 300px; gap: 30px; margin-top: 30px; }
+        @media(max-width:900px){ .vis-layout { grid-template-columns:1fr; } }
+
+        /* Dining Table */
+        .dining-table {
+            position: relative; width: 440px; height: 440px;
+            margin: 0 auto;
+        }
+        .table-circle {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 160px; height: 160px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(99,102,241,0.15), rgba(99,102,241,0.05));
+            border: 2px solid rgba(99,102,241,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: var(--primary); font-weight: 700;
+        }
+        .philosopher {
+            position: absolute; width: 80px; height: 80px;
+            border-radius: 50%; border: 3px solid var(--glass-border);
+            background: var(--glass);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-size: 1.6rem; transition: all 0.5s ease; cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+        .philosopher.thinking { border-color: var(--primary); box-shadow: 0 0 20px rgba(99,102,241,0.4); }
+        .philosopher.hungry { border-color: #fbbf24; box-shadow: 0 0 20px rgba(251,191,36,0.4); animation: hungry-pulse 1s infinite; }
+        .philosopher.eating { border-color: #4ade80; box-shadow: 0 0 25px rgba(74,222,128,0.5); background: rgba(74,222,128,0.1); }
+        .philosopher.deadlock { border-color: #f87171; box-shadow: 0 0 30px rgba(248,113,113,0.6); animation: deadlock-flash 0.5s infinite; }
+        @keyframes hungry-pulse { 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.05); } }
+        @keyframes deadlock-flash { 0%,100%{ opacity:1; } 50%{ opacity:0.4; } }
+
+        .phil-label { font-size: 0.55rem; font-weight: 800; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; margin-top: 2px; }
+
+        .fork {
+            position: absolute; width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; transition: all 0.4s ease;
+            border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05);
+        }
+        .fork.free { border-color: #4ade80; background: rgba(74,222,128,0.1); }
+        .fork.taken { border-color: #f87171; background: rgba(248,113,113,0.1); opacity: 0.5; }
+
+        .state-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 5px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
+        }
+        .state-thinking { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+        .state-hungry { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+        .state-eating { background: rgba(74,222,128,0.15); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
+        .state-deadlock { background: rgba(248,113,113,0.15); color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
+
+        .sem-panel { padding: 16px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); margin-bottom: 12px; }
+        .sem-name { font-weight: 800; font-size: 0.9rem; margin-bottom: 8px; }
+        .sem-val-display { font-size: 2rem; font-weight: 900; text-align: center; background: var(--gradient-tri-tone); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .wait-queue-dots { display: flex; gap: 4px; margin-top: 6px; justify-content: center; }
+        .wait-dot { width: 10px; height: 10px; border-radius: 50%; background: #f87171; }
+
+        .log-line { padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 3px; }
+        .log-think { background: rgba(99,102,241,0.08); border-left: 3px solid var(--primary); }
+        .log-hungry { background: rgba(251,191,36,0.08); border-left: 3px solid #fbbf24; }
+        .log-eat { background: rgba(74,222,128,0.08); border-left: 3px solid #4ade80; }
+        .log-deadlock { background: rgba(248,113,113,0.12); border-left: 3px solid #f87171; font-weight: 700; }
+
+        .game-panel { display: none; padding: 20px; border: 1px solid var(--primary); border-radius: 16px; background: rgba(255,255,255,0.02); margin-bottom: 20px; }
+    </style>
+</head>
+<body><canvas id="brain-canvas"></canvas>
+    <nav>
+        <div class="container nav-content">
+            <a href="../../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../os.html">Back to OS</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="page-hero" style="margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
+            <div>
+                <span class="btn-primary" style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Concurrency</span>
+                <h1>Semaphores Visualizer</h1>
+                <p>Explore P()/V() operations and the classic Dining Philosophers deadlock problem.</p>
+            </div>
+            <button class="btn" id="game-mode-btn" onclick="toggleGameMode()" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none; padding: 10px 20px; border-radius: 12px; font-weight: bold; margin-top: 10px;">
+                <i class="fas fa-gamepad"></i> Deadlock Avoider Game
+            </button>
+        </div>
+
+        <div class="vis-layout">
+            <div>
+                <!-- Game Panel -->
+                <div class="game-panel glass-card" id="game-panel">
+                    <h4 style="color: var(--primary); margin-bottom: 12px;"><i class="fas fa-gamepad"></i> Deadlock Avoider Game</h4>
+                    <div style="display: flex; justify-content: space-between; background: rgba(0,0,0,0.25); padding: 8px 15px; border-radius: 8px; margin-bottom: 12px; font-size: 0.9rem;">
+                        <div>Score: <span id="g-score" style="color:var(--primary); font-weight:bold;">0</span></div>
+                        <div>Deadlocks: <span id="g-deadlocks" style="color:#f87171; font-weight:bold;">0</span></div>
+                        <div>Meals: <span id="g-meals" style="color:#4ade80; font-weight:bold;">0</span></div>
+                    </div>
+                    <p style="font-size: 0.83rem; color: var(--text-muted); margin-bottom: 10px;">Select a hungry philosopher and click <strong>Give Forks</strong> to let them eat. Prevent deadlock by ensuring at most 4 philosophers hold forks simultaneously!</p>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <select id="game-phil-select" style="padding: 7px 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(15,23,42,0.8); color: var(--text); flex:1;">
+                            <option value="0">Philosopher 0</option>
+                            <option value="1">Philosopher 1</option>
+                            <option value="2">Philosopher 2</option>
+                            <option value="3">Philosopher 3</option>
+                            <option value="4">Philosopher 4</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="gameGiveForks()" style="flex:1;"><i class="fas fa-utensils"></i> Give Forks</button>
+                        <button class="btn" onclick="gameReleaseForks()" style="flex:1; border:1px solid var(--accent); color:var(--accent); background:transparent;"><i class="fas fa-hand-paper"></i> Release Forks</button>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="padding: 30px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; flex-wrap: wrap; gap: 10px;">
+                        <h3>🍽️ Dining Philosophers</h3>
+                        <div id="deadlock-banner" style="display:none; padding: 8px 16px; background: rgba(248,113,113,0.15); border: 1px solid #f87171; border-radius: 10px; color:#f87171; font-weight:800; font-size:0.9rem;">
+                            💀 DEADLOCK DETECTED!
+                        </div>
+                    </div>
+                    <p style="font-size: 0.83rem; color: var(--text-muted); margin-bottom: 20px;">5 philosophers sit around a table. Each needs 2 forks to eat. Each fork is shared between two adjacent philosophers — a classic deadlock scenario!</p>
+
+                    <div class="dining-table" id="dining-table">
+                        <div class="table-circle" id="table-center">🍝<br><span style="font-size:0.6rem; color:var(--text-muted);">SHARED TABLE</span></div>
+                        <!-- Philosophers and forks rendered by JS -->
+                    </div>
+
+                    <!-- States legend row -->
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
+                        <span class="state-badge state-thinking">💭 Thinking</span>
+                        <span class="state-badge state-hungry">😋 Hungry</span>
+                        <span class="state-badge state-eating">🍽️ Eating</span>
+                        <span class="state-badge state-deadlock">💀 Deadlock</span>
+                    </div>
+
+                    <!-- Philosopher states table -->
+                    <div style="margin-top: 20px; overflow-x: auto;">
+                        <table style="width:100%; border-collapse: collapse; font-size: 0.85rem;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--glass-border); color: var(--accent);">
+                                    <th style="padding: 8px; text-align:left;">Philosopher</th>
+                                    <th style="padding: 8px; text-align:center;">State</th>
+                                    <th style="padding: 8px; text-align:center;">Left Fork</th>
+                                    <th style="padding: 8px; text-align:center;">Right Fork</th>
+                                    <th style="padding: 8px; text-align:center;">Meals Eaten</th>
+                                </tr>
+                            </thead>
+                            <tbody id="phil-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Event Log -->
+                <div class="glass-card" style="padding: 20px; margin-top: 20px;">
+                    <h3>📋 Semaphore Operations Log</h3>
+                    <div id="sem-log" style="margin-top:15px; height: 200px; overflow-y: auto; display: flex; flex-direction: column-reverse; gap: 3px;">
+                        <div style="color:var(--text-muted); font-size:0.85rem; font-style:italic;">Events will appear here...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Side Panel -->
+            <div>
+                <div class="glass-card" style="padding: 20px; margin-bottom: 20px;">
+                    <h3>🔧 Controls</h3>
+                    <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
+                        <label style="font-size:0.85rem; font-weight:600; color:var(--text-muted);">Simulation Speed</label>
+                        <input type="range" id="speed-slider" min="300" max="3000" value="1200" style="width:100%; cursor:pointer;">
+                        <label style="font-size:0.85rem; font-weight:600; color:var(--text-muted); margin-top:8px;">Strategy</label>
+                        <select id="strategy" style="width:100%; padding:8px; border-radius:6px; border:1px solid var(--glass-border); background:rgba(15,23,42,0.6); color:var(--text);">
+                            <option value="naive">Naive (Deadlock Possible)</option>
+                            <option value="asymmetric">Asymmetric (One Left-Handed)</option>
+                            <option value="arbitrator">Arbitrator (Token-Based)</option>
+                        </select>
+                        <button class="btn btn-primary" id="play-btn" onclick="togglePlay()" style="margin-top:8px;"><i class="fas fa-play"></i> Start</button>
+                        <button class="btn" onclick="stepOnce()" style="border:1px solid var(--primary); color:var(--primary); background:transparent;"><i class="fas fa-step-forward"></i> Step</button>
+                        <button class="btn" onclick="resetAll()" style="border:1px solid var(--accent); color:var(--accent); background:transparent;"><i class="fas fa-undo"></i> Reset</button>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h3>🔑 Fork Semaphores</h3>
+                    <p style="font-size:0.78rem; color:var(--text-muted); margin: 10px 0 15px;">Each fork is a binary semaphore (0 = taken, 1 = free).</p>
+                    <div id="sem-display"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const N = 5;
+        const names = ['Aristotle', 'Plato', 'Socrates', 'Kant', 'Nietzsche'];
+        const emojis = ['🧠','📚','🏛️','🎓','✍️'];
+        // States: 0=thinking, 1=hungry, 2=eating, 3=deadlock
+        let states = Array(N).fill(0);
+        let forks = Array(N).fill(1); // 1=free, 0=taken
+        let heldLeft = Array(N).fill(false);
+        let heldRight = Array(N).fill(false);
+        let meals = Array(N).fill(0);
+        let tick = 0;
+        let playing = false;
+        let intervalId = null;
+        let deadlockDetected = false;
+        let gameMode = false;
+        let gScore = 0, gDeadlocks = 0, gMeals = 0;
+        let token = 0; // for arbitrator strategy
+
+        const positions = [
+            { top: 10, left: 180 },
+            { top: 100, left: 360 },
+            { top: 310, left: 300 },
+            { top: 310, left: 60 },
+            { top: 100, left: -20 }
+        ];
+        const forkPositions = [
+            { top: 50, left: 290 },
+            { top: 210, left: 360 },
+            { top: 330, left: 200 },
+            { top: 200, left: 30 },
+            { top: 50, left: 100 }
+        ];
+
+        function render() {
+            const table = document.getElementById('dining-table');
+            // Remove old philosophers and forks
+            table.querySelectorAll('.philosopher, .fork').forEach(e => e.remove());
+
+            states.forEach((s, i) => {
+                const el = document.createElement('div');
+                el.className = 'philosopher ' + ['thinking','hungry','eating','deadlock'][s];
+                el.style.top = positions[i].top + 'px';
+                el.style.left = positions[i].left + 'px';
+                el.innerHTML = emojis[i] + '<div class="phil-label">P' + i + '</div>';
+                el.title = names[i] + ': ' + ['Thinking','Hungry','Eating','DEADLOCK'][s];
+                el.onclick = () => { if (!playing && !gameMode) manualToggle(i); };
+                table.appendChild(el);
+            });
+
+            forks.forEach((free, i) => {
+                const el = document.createElement('div');
+                el.className = 'fork ' + (free ? 'free' : 'taken');
+                el.style.top = forkPositions[i].top + 'px';
+                el.style.left = forkPositions[i].left + 'px';
+                el.textContent = '🍴';
+                el.title = 'Fork ' + i + ': ' + (free ? 'FREE' : 'TAKEN');
+                table.appendChild(el);
+            });
+
+            // Semaphore display
+            const semDisplay = document.getElementById('sem-display');
+            semDisplay.innerHTML = '';
+            for (let i = 0; i < N; i++) {
+                semDisplay.innerHTML += `
+                <div class="sem-panel">
+                    <div class="sem-name">Fork ${i} <span style="color:var(--text-muted); font-size:0.75rem;">(between P${i} & P${(i+1)%N})</span></div>
+                    <div class="sem-val-display">${forks[i]}</div>
+                    <div style="font-size:0.75rem; color: ${forks[i] ? '#4ade80' : '#f87171'}; text-align:center; font-weight:700;">${forks[i] ? '🟢 FREE' : '🔴 TAKEN'}</div>
+                </div>`;
+            }
+
+            // Table
+            const tbody = document.getElementById('phil-table');
+            tbody.innerHTML = '';
+            states.forEach((s, i) => {
+                const stateLabels = ['💭 Thinking','😋 Hungry','🍽️ Eating','💀 Deadlock'];
+                const stateColors = ['var(--primary)','#fbbf24','#4ade80','#f87171'];
+                tbody.innerHTML += `
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding:8px;">${emojis[i]} ${names[i]}</td>
+                    <td style="padding:8px; text-align:center; color:${stateColors[s]}; font-weight:700;">${stateLabels[s]}</td>
+                    <td style="padding:8px; text-align:center;">${heldLeft[i] ? '🍴 Held' : '—'}</td>
+                    <td style="padding:8px; text-align:center;">${heldRight[i] ? '🍴 Held' : '—'}</td>
+                    <td style="padding:8px; text-align:center; font-weight:800; color:var(--primary);">${meals[i]}</td>
+                </tr>`;
+            });
+        }
+
+        function addLog(msg, type) {
+            const log = document.getElementById('sem-log');
+            const div = document.createElement('div');
+            div.className = 'log-line log-' + type;
+            div.textContent = '[t=' + tick + '] ' + msg;
+            log.insertBefore(div, log.firstChild);
+            if (log.children.length > 80) log.removeChild(log.lastChild);
+        }
+
+        function left(i) { return i; }
+        function right(i) { return (i + 1) % N; }
+
+        function checkDeadlock() {
+            // Everyone hungry/eating and holding one fork, waiting for another
+            let allBlocked = states.every(s => s === 1 || s === 2) && forks.every(f => f === 0);
+            if (allBlocked && !deadlockDetected) {
+                deadlockDetected = true;
+                states = states.map(s => s === 1 ? 3 : s);
+                document.getElementById('deadlock-banner').style.display = 'block';
+                addLog('💀 DEADLOCK! All philosophers hold one fork, waiting for another. System frozen.', 'deadlock');
+                if (gameMode) {
+                    gDeadlocks++;
+                    document.getElementById('g-deadlocks').textContent = gDeadlocks;
+                    gScore = Math.max(0, gScore - 200);
+                    document.getElementById('g-score').textContent = gScore;
+                }
+                playing = false; clearInterval(intervalId);
+                document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Start';
+                return true;
+            }
+            return false;
+        }
+
+        function simulationStep() {
+            tick++;
+            const strategy = document.getElementById('strategy').value;
+
+            for (let i = 0; i < N; i++) {
+                if (states[i] === 3) continue; // deadlocked
+                
+                if (states[i] === 2) {
+                    // Currently eating — may finish
+                    if (Math.random() < 0.35) {
+                        // Release forks
+                        forks[left(i)] = 1;
+                        forks[right(i)] = 1;
+                        heldLeft[i] = false; heldRight[i] = false;
+                        states[i] = 0; // go to thinking
+                        meals[i]++;
+                        if (gameMode) { gMeals++; gScore += 50; document.getElementById('g-meals').textContent = gMeals; document.getElementById('g-score').textContent = gScore; }
+                        addLog(names[i] + ' finished eating (meal #' + meals[i] + '). V(fork_' + left(i) + '), V(fork_' + right(i) + '). Now thinking.', 'think');
+                    }
+                } else if (states[i] === 0) {
+                    // Thinking — may get hungry
+                    if (Math.random() < 0.3) {
+                        states[i] = 1;
+                        addLog(names[i] + ' is now hungry. Wants fork_' + left(i) + ' and fork_' + right(i) + '.', 'hungry');
+                    }
+                } else if (states[i] === 1) {
+                    // Hungry — try to pick up forks
+                    let canEat = false;
+                    if (strategy === 'asymmetric' && i === 0) {
+                        // Left-handed: picks right first
+                        if (forks[right(i)] && forks[left(i)]) {
+                            forks[right(i)] = 0; forks[left(i)] = 0;
+                            heldLeft[i] = true; heldRight[i] = true;
+                            canEat = true;
+                        }
+                    } else if (strategy === 'arbitrator') {
+                        // Token-based: only token holder can pick up
+                        if (token === i && forks[left(i)] && forks[right(i)]) {
+                            forks[left(i)] = 0; forks[right(i)] = 0;
+                            heldLeft[i] = true; heldRight[i] = true;
+                            canEat = true;
+                            token = (token + 1) % N;
+                        }
+                    } else {
+                        // Naive: pick up left then right
+                        if (!heldLeft[i] && forks[left(i)]) {
+                            forks[left(i)] = 0; heldLeft[i] = true;
+                            addLog(names[i] + ' P(fork_' + left(i) + ') — got left fork.', 'hungry');
+                        }
+                        if (heldLeft[i] && !heldRight[i] && forks[right(i)]) {
+                            forks[right(i)] = 0; heldRight[i] = true;
+                            canEat = true;
+                        }
+                    }
+                    if (canEat) {
+                        states[i] = 2;
+                        if (!heldLeft[i]) heldLeft[i] = true;
+                        if (!heldRight[i]) heldRight[i] = true;
+                        addLog(names[i] + ' acquired both forks → eating!', 'eat');
+                    }
+                }
+            }
+
+            checkDeadlock();
+            render();
+        }
+
+        function togglePlay() {
+            if (deadlockDetected) { resetAll(); return; }
+            playing = !playing;
+            const btn = document.getElementById('play-btn');
+            if (playing) {
+                btn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                const speed = parseInt(document.getElementById('speed-slider').value);
+                intervalId = setInterval(simulationStep, speed);
+            } else {
+                btn.innerHTML = '<i class="fas fa-play"></i> Start';
+                clearInterval(intervalId);
+            }
+        }
+
+        function stepOnce() {
+            if (playing) { clearInterval(intervalId); playing = false; document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Start'; }
+            simulationStep();
+        }
+
+        function resetAll() {
+            clearInterval(intervalId); playing = false;
+            states = Array(N).fill(0); forks = Array(N).fill(1);
+            heldLeft = Array(N).fill(false); heldRight = Array(N).fill(false);
+            meals = Array(N).fill(0); tick = 0; deadlockDetected = false; token = 0;
+            document.getElementById('deadlock-banner').style.display = 'none';
+            document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Start';
+            document.getElementById('sem-log').innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem; font-style:italic;">Events will appear here...</div>';
+            render();
+        }
+
+        function manualToggle(i) {
+            if (states[i] === 0) { states[i] = 1; addLog(names[i] + ' is now hungry (manual).', 'hungry'); }
+            else if (states[i] === 1 && forks[left(i)] && forks[right(i)]) {
+                forks[left(i)] = 0; forks[right(i)] = 0;
+                heldLeft[i] = true; heldRight[i] = true;
+                states[i] = 2;
+                addLog(names[i] + ' acquired forks (manual) → eating!', 'eat');
+            } else if (states[i] === 2) {
+                forks[left(i)] = 1; forks[right(i)] = 1;
+                heldLeft[i] = false; heldRight[i] = false;
+                states[i] = 0; meals[i]++;
+                addLog(names[i] + ' released forks (manual). Meals: ' + meals[i], 'think');
+            }
+            render();
+        }
+
+        function toggleGameMode() {
+            gameMode = !gameMode;
+            const btn = document.getElementById('game-mode-btn');
+            const panel = document.getElementById('game-panel');
+            if (gameMode) {
+                btn.innerHTML = '<i class="fas fa-times"></i> Exit Game';
+                panel.style.display = 'block';
+                gScore = 0; gDeadlocks = 0; gMeals = 0;
+                document.getElementById('g-score').textContent = 0;
+                document.getElementById('g-deadlocks').textContent = 0;
+                document.getElementById('g-meals').textContent = 0;
+                document.getElementById('strategy').value = 'naive';
+                resetAll();
+                // Start auto-hungry
+                playing = true;
+                document.getElementById('play-btn').innerHTML = '<i class="fas fa-pause"></i> Pause';
+                intervalId = setInterval(simulationStep, 1200);
+            } else {
+                btn.innerHTML = '<i class="fas fa-gamepad"></i> Deadlock Avoider Game';
+                panel.style.display = 'none';
+                resetAll();
+            }
+        }
+
+        function gameGiveForks() {
+            const i = parseInt(document.getElementById('game-phil-select').value);
+            if (states[i] !== 1) { addLog('Philosopher ' + i + ' is not hungry yet!', 'hungry'); return; }
+            if (forks[left(i)] && forks[right(i)]) {
+                forks[left(i)] = 0; forks[right(i)] = 0;
+                heldLeft[i] = true; heldRight[i] = true;
+                states[i] = 2;
+                addLog(names[i] + ' → forks granted by player!', 'eat');
+                render();
+            } else {
+                addLog('Cannot give forks to P' + i + ' — one is already taken.', 'hungry');
+            }
+        }
+
+        function gameReleaseForks() {
+            const i = parseInt(document.getElementById('game-phil-select').value);
+            if (states[i] === 2) {
+                forks[left(i)] = 1; forks[right(i)] = 1;
+                heldLeft[i] = false; heldRight[i] = false;
+                states[i] = 0; meals[i]++; gMeals++; gScore += 50;
+                document.getElementById('g-meals').textContent = gMeals;
+                document.getElementById('g-score').textContent = gScore;
+                addLog(names[i] + ' released forks by player. Meal #' + meals[i] + ' complete!', 'eat');
+                render();
+            }
+        }
+
+        window.addEventListener('load', () => { render(); });
+    </script>
+    <script src="../../assets/js/core/algo-content.js"></script>
+    <script src="../../../assets/js/core/ui-extras.js"></script>
+    <script src="../../assets/js/brain-animation.js"></script>
+</body>
+</html>

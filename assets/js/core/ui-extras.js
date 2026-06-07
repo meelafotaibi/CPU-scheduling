@@ -1,10 +1,13 @@
 // UI Extras System - Phase 0 Foundation
 class UIExtrasSystem {
     constructor() {
+        window.UIExtrasInstance = this;
         this.contentSystem = new AlgoContentSystem();
         this.currentAlgo = null;
         this.init();
         this.injectGlobalFeatures();
+        this.injectCSS();
+        this.injectGuideButton();
     }
 
     init() {
@@ -16,10 +19,27 @@ class UIExtrasSystem {
     }
 
     injectGlobalFeatures() {
+        const getPrefix = () => {
+            const path = window.location.pathname;
+            if (path.includes('/visualizers/os/') || 
+                path.includes('/visualizers/algorithms/') || 
+                path.includes('/visualizers/dsa/') || 
+                path.includes('/visualizers/ai/') || 
+                path.includes('/visualizers/cg/')) {
+                return '../../';
+            }
+            if (path.includes('/visualizers/') || 
+                path.includes('/guide/') || 
+                path.includes('/guides/')) {
+                return '../';
+            }
+            return '';
+        };
+        const prefix = getPrefix();
+
         // 1. Dynamically load features.js if not present
         if (typeof SharingSystem === 'undefined') {
             const script = document.createElement('script');
-            const prefix = window.location.pathname.includes('/visualizers/') || window.location.pathname.includes('/guide/') || window.location.pathname.includes('/guides/') ? '../' : '';
             script.src = prefix + 'assets/js/core/features.js';
             script.onload = () => {
                 if (window.ProgressSystem) window.ProgressSystem.updateDOMProgress();
@@ -27,12 +47,17 @@ class UIExtrasSystem {
             document.head.appendChild(script);
         }
 
+        // 1b. Dynamically load guide-content.js if not present
+        if (typeof AlgoGuidesDatabase === 'undefined') {
+            const script = document.createElement('script');
+            script.src = prefix + 'assets/js/core/guide-content.js';
+            document.head.appendChild(script);
+        }
+ 
         // 2. Inject sleek progress tracker and Support Development button in Navigation Bar
         const injectNav = () => {
             const navLinks = document.querySelector('.nav-links');
             if (navLinks && !document.getElementById('nav-support-btn')) {
-                const prefix = window.location.pathname.includes('/visualizers/') || window.location.pathname.includes('/guide/') || window.location.pathname.includes('/guides/') ? '../' : '';
-                
                 // A. Progress Tracker container
                 const progressDiv = document.createElement('div');
                 progressDiv.id = 'global-progress-indicator';
@@ -305,6 +330,295 @@ class UIExtrasSystem {
                 btn.classList.add('btn-secondary');
             }
         });
+    }
+
+    injectCSS() {
+        const styleId = 'algovis-guide-styles';
+        if (document.getElementById(styleId)) return;
+
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = `
+            /* Guide Panel Slide-Over Styling */
+            .algovis-guide-panel {
+                position: fixed;
+                top: 0;
+                right: -480px;
+                width: 450px;
+                height: 100vh;
+                background: rgba(15, 23, 42, 0.95);
+                backdrop-filter: blur(25px);
+                -webkit-backdrop-filter: blur(25px);
+                border-left: 1px solid rgba(255, 255, 255, 0.1);
+                box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+                z-index: 9999;
+                transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                padding: 30px;
+                box-sizing: border-box;
+                overflow-y: auto;
+                color: var(--text);
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+            .algovis-guide-panel.open {
+                right: 0;
+            }
+            .algovis-guide-close {
+                position: absolute;
+                top: 25px;
+                right: 25px;
+                background: transparent;
+                border: none;
+                color: var(--text-muted);
+                font-size: 1.5rem;
+                cursor: pointer;
+                transition: color 0.2s;
+                line-height: 1;
+            }
+            .algovis-guide-close:hover {
+                color: var(--accent);
+            }
+            .algovis-guide-backdrop {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                z-index: 9998;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+            }
+            .algovis-guide-backdrop.open {
+                opacity: 1;
+                pointer-events: auto;
+            }
+            .algovis-guide-btn {
+                border: 1px solid var(--primary) !important;
+                color: var(--primary) !important;
+                background: transparent !important;
+                padding: 10px 20px;
+                border-radius: 12px;
+                font-weight: bold;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.3s ease;
+                font-family: inherit;
+            }
+            .algovis-guide-btn:hover {
+                background: var(--primary) !important;
+                color: #fff !important;
+                box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+            }
+            .guide-sub-heading {
+                color: var(--primary);
+                font-size: 1.1rem;
+                font-weight: 800;
+                margin-top: 15px;
+                margin-bottom: 12px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+                padding-bottom: 6px;
+            }
+            .guide-control-item {
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                border-radius: 8px;
+                padding: 10px;
+                margin-bottom: 8px;
+                font-size: 0.85rem;
+            }
+            .guide-control-name {
+                font-weight: bold;
+                color: var(--accent);
+                margin-bottom: 3px;
+            }
+            @media (max-width: 480px) {
+                .algovis-guide-panel {
+                    width: 100%;
+                    right: -100%;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    injectGuideButton() {
+        const path = window.location.pathname.toLowerCase();
+        if (!path.includes('/visualizers/')) return;
+
+        // Detect algorithm key
+        let algoKey = "";
+        if (path.includes('disk.html')) algoKey = "disk";
+        else if (path.includes('cpu-scheduling.html')) algoKey = "cpu-scheduling";
+        else if (path.includes('semaphores.html')) algoKey = "semaphores";
+        else if (path.includes('bankers.html')) algoKey = "bankers";
+        else if (path.includes('page-replacement.html')) algoKey = "page-replacement";
+        else if (path.includes('memory-allocation.html')) algoKey = "memory-allocation";
+        else if (path.includes('deadlock-detection.html')) algoKey = "deadlock-detection";
+        else if (path.includes('process-sync.html')) algoKey = "process-sync";
+        else if (path.includes('bubble.html')) algoKey = "bubble";
+        else if (path.includes('selection.html')) algoKey = "selection";
+        else if (path.includes('insertion.html')) algoKey = "insertion";
+        else if (path.includes('merge.html')) algoKey = "merge";
+        else if (path.includes('quick.html')) algoKey = "quick";
+        else if (path.includes('advanced-sorting.html') || path.includes('radix')) algoKey = "radix-bucket";
+        else if (path.includes('bfs.html')) algoKey = "bfs";
+        else if (path.includes('dfs.html')) algoKey = "dfs";
+        else if (path.includes('dijkstra.html')) algoKey = "dijkstra";
+        else if (path.includes('astar.html')) algoKey = "astar";
+        else if (path.includes('bellman-ford.html')) algoKey = "bellman-ford";
+        else if (path.includes('mst.html')) algoKey = "mst";
+        else if (path.includes('topo.html')) algoKey = "topo";
+        else if (path.includes('cycle-detection.html')) algoKey = "cycle-detection";
+        else if (path.includes('recursion.html')) algoKey = "recursion";
+        else if (path.includes('dp.html')) algoKey = "dp";
+        else if (path.includes('trie.html')) algoKey = "trie";
+        else if (path.includes('heap.html')) algoKey = "heap";
+        else if (path.includes('avl.html')) algoKey = "avl";
+        else if (path.includes('bst.html')) algoKey = "bst";
+        else if (path.includes('stack-queue.html')) algoKey = "stack-queue";
+        else if (path.includes('linked-list.html')) algoKey = "linked-list";
+        else if (path.includes('minimax.html')) algoKey = "minimax";
+        else if (path.includes('linear-regression.html')) algoKey = "linear-regression";
+        else if (path.includes('knn.html')) algoKey = "knn";
+        else if (path.includes('kmeans.html')) algoKey = "kmeans";
+        else if (path.includes('perceptron.html')) algoKey = "perceptron";
+        else if (path.includes('binary-search.html') || path.includes('search.html')) algoKey = "binary-search";
+
+        if (!algoKey) return;
+
+        const performInjection = () => {
+            const hero = document.querySelector('.page-hero') || document.querySelector('main.container > header') || document.querySelector('header');
+            if (!hero) return;
+
+            if (document.getElementById('open-guide-btn')) return;
+
+            const btn = document.createElement('button');
+            btn.id = 'open-guide-btn';
+            btn.className = 'algovis-guide-btn';
+            btn.innerHTML = `<i class="fas fa-book-open"></i> Read Guide`;
+            btn.onclick = () => this.openGuide(algoKey);
+
+            btn.style.marginTop = '10px';
+            btn.style.marginBottom = '10px';
+
+            const gameBtn = hero.querySelector('#game-mode-btn') || hero.querySelector('.btn') || hero.querySelector('button');
+            if (gameBtn) {
+                gameBtn.parentNode.insertBefore(btn, gameBtn);
+                btn.style.marginRight = '10px';
+            } else {
+                hero.appendChild(btn);
+            }
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', performInjection);
+        } else {
+            performInjection();
+        }
+    }
+
+    injectPanelHTML() {
+        if (document.getElementById('algovis-guide-panel')) return;
+
+        const backdrop = document.createElement('div');
+        backdrop.id = 'algovis-guide-backdrop';
+        backdrop.className = 'algovis-guide-backdrop';
+        backdrop.onclick = () => this.closeGuide();
+        document.body.appendChild(backdrop);
+
+        const panel = document.createElement('div');
+        panel.id = 'algovis-guide-panel';
+        panel.className = 'algovis-guide-panel';
+        panel.innerHTML = `
+            <button class="algovis-guide-close" onclick="window.UIExtrasInstance.closeGuide()">&times;</button>
+            <h2 id="guide-title" style="margin-bottom: 10px; background: var(--gradient-tri-tone); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900;">Algorithm Guide</h2>
+            <div id="guide-content-area" style="display: flex; flex-direction: column; gap: 20px;"></div>
+        `;
+        document.body.appendChild(panel);
+    }
+
+    openGuide(algoKey) {
+        this.injectPanelHTML();
+
+        if (typeof AlgoGuidesDatabase === 'undefined') {
+            console.error("AlgoGuidesDatabase is not loaded yet.");
+            alert("Guide database is still loading, please try again in a second.");
+            return;
+        }
+
+        const guide = AlgoGuidesDatabase[algoKey];
+        if (!guide) {
+            console.error(`No guide content found for key: ${algoKey}`);
+            return;
+        }
+
+        document.getElementById('guide-title').textContent = guide.title;
+
+        let controlsHTML = "";
+        for (const [name, desc] of Object.entries(guide.controls)) {
+            controlsHTML += `
+                <div class="guide-control-item">
+                    <div class="guide-control-name">${name}</div>
+                    <div style="color: var(--text-muted); line-height: 1.4;">${desc}</div>
+                </div>
+            `;
+        }
+
+        let gameHTML = "";
+        if (guide.game) {
+            gameHTML = `
+                <div>
+                    <div class="guide-sub-heading"><i class="fas fa-gamepad"></i> Interactive Challenge Game</div>
+                    <div style="background: rgba(236, 72, 153, 0.08); border: 1px solid rgba(236, 72, 153, 0.15); border-radius: 12px; padding: 15px;">
+                        <h4 style="color: var(--accent); margin-bottom: 8px;"><i class="fas fa-trophy"></i> ${guide.game.name}</h4>
+                        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 8px; line-height: 1.4;"><strong>Objective:</strong> ${guide.game.objective}</p>
+                        <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.4;"><strong>How to Play:</strong> ${guide.game.instructions}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        const contentArea = document.getElementById('guide-content-area');
+        contentArea.innerHTML = `
+            <div>
+                <div class="guide-sub-heading"><i class="fas fa-lightbulb"></i> Algorithm Concept</div>
+                <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">${guide.concept}</p>
+            </div>
+            
+            <div>
+                <div class="guide-sub-heading"><i class="fas fa-sliders-h"></i> Visualizer Controls</div>
+                <div style="max-height: 300px; overflow-y: auto; padding-right: 5px;">
+                    ${controlsHTML}
+                </div>
+            </div>
+            
+            <div>
+                <div class="guide-sub-heading"><i class="fas fa-file-alt"></i> How to Read Simulation Logs</div>
+                <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.5;">${guide.logs}</p>
+            </div>
+            
+            ${gameHTML}
+        `;
+
+        document.getElementById('algovis-guide-panel').classList.add('open');
+        document.getElementById('algovis-guide-backdrop').classList.add('open');
+    }
+
+    closeGuide() {
+        const panel = document.getElementById('algovis-guide-panel');
+        const backdrop = document.getElementById('algovis-guide-backdrop');
+        if (panel) panel.classList.remove('open');
+        if (backdrop) backdrop.classList.remove('open');
     }
 }
 

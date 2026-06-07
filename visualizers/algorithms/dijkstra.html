@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dijkstra's Algorithm Visualizer | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .visualizer-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        #graph-canvas {
+            width: 100%;
+            height: 500px;
+
+            border: 2px solid #eee;
+            border-radius: 12px;
+            cursor: crosshair;
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .distance-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        .distance-table th,
+        .distance-table td {
+            padding: 8px;
+            border: 1px solid #eee;
+            text-align: center;
+        }
+
+        .distance-table th {
+            /* background: #f8f9fa; removed */
+        }
+
+        .finalized {
+            /* background: #e8f5e9; removed */
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 1999;
+        }
+
+        .editor-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255,255,255,0.03);
+            padding: 30px;
+            border-radius: 15px;
+            z-index: 2000;
+            width: 90%;
+            max-width: 500px;
+            display: none;
+        }
+
+        #adj-list-input {
+            width: 100vw;
+            width: 100%;
+            height: 150px;
+            margin-top: 10px;
+            font-family: monospace;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+    </style>
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+</head>
+
+<body><canvas id="brain-canvas"></canvas>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="../../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../algorithms.html">Back to Algorithms</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
+            <div>
+                <span class="btn-primary"
+                    style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Graph Theory</span>
+                <h1>Dijkstra's Algorithm</h1>
+                <p>Find the shortest path between nodes in a weighted graph. This visualizer demonstrates the greedy approach using a priority queue (Min-Heap).</p>
+            </div>
+            <a href="../../guide/dijkstra.html" class="btn" style="border: 2px solid var(--primary); color: var(--primary); font-weight: bold; padding: 10px 20px; border-radius: 12px; margin-top: 10px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
+                <i class="fas fa-book"></i> Read Guide
+            </a>
+        </header>
+
+        <div class="visualizer-layout">
+            <div class="glass-card" style="padding: 30px;">
+                <canvas id="graph-canvas"></canvas>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px;">
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Play</button>
+                        <button class="btn" id="reset-btn"
+                            style="border: 1px solid var(--accent); color: var(--accent);"><i class="fas fa-undo"></i>
+                            Reset</button>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" id="build-btn" onclick="toggleBuildMode()"
+                            style="background: #6c757d; color: white;">🏗️ Build Visually</button>
+                        <button class="btn" onclick="showModal('input-modal')"
+                            style="background: var(--primary); color: white;"><i class="fas fa-edit"></i> Custom
+                            Input</button>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; display: flex; gap: 15px; align-items: center;">
+                    <div class="input-group">
+                        <label>Start Node:</label>
+                        <input type="number" id="start-node" value="1"
+                            style="width: 50px; padding: 5px; border-radius: 5px; border: 1px solid #ddd;">
+                    </div>
+                    <button class="btn" id="dir-toggle" onclick="toggleDirected()"
+                        style="font-size: 0.8rem; padding: 8px 15px;">Undirected</button>
+                    <button class="btn toggle-btn" id="grid-toggle-btn" style="font-size: 0.8rem; padding: 8px 15px;"><i
+                            class="fas fa-border-all"></i> Show Grid</button>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>📜 Live Log</h4>
+                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 10px; min-height: 50px;">Ready to
+                        find shortest paths.</p>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>⚡ Priority Queue (Min-Heap)</h4>
+                    <div id="pq-container" style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px;">
+                        <span style="color: #999; font-size: 0.8rem;">Empty</span>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>📍 distance[] Table</h4>
+                    <table class="distance-table" id="dist-table">
+                        <thead>
+                            <tr>
+                                <th>Node</th>
+                                <th>Dist</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dist-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div style="margin: 60px 0; text-align: center;">
+            
+        </div>
+    </main>
+
+    <script src="../../assets/js/core/graph-engine.js"></script>
+    <script src="../../assets/js/core/playback.js"></script>
+    <script src="../../assets/js/core/ComplexityTracker.js"></script>
+    <script src="../../../assets/js/core/ui-extras.js"></script>
+    <script src="../../assets/js/algos/algorithms/dijkstra.js"></script>
+    <script>
+        window.engine = new GraphEngine('graph-canvas');
+        const playback = new Playback(() => window.algo.nextStep());
+
+        window.ui = {
+            updateStatus: (t) => { document.getElementById('explanation-text').innerText = t; },
+            updateTable: (dist, visited) => {
+                const body = document.getElementById('dist-body');
+                body.innerHTML = Object.keys(dist).map(id => `
+                    <tr class="${visited.has(parseInt(id)) ? 'finalized' : ''}">
+                        <td>${id}</td>
+                        <td>${dist[id] === Infinity ? '∞' : dist[id]}</td>
+                    </tr>
+                `).join('');
+            },
+            updatePQ: (pq) => {
+                const container = document.getElementById('pq-container');
+                if (pq.length === 0) {
+                    container.innerHTML = '<span style="color: #999; font-size: 0.8rem;">Empty</span>';
+                } else {
+                    container.innerHTML = pq.slice(0, 8).map(item => `
+                        <div style="padding: 5px 10px; background: var(--secondary); color: white; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">
+                            ${item.id}:${item.dist}
+                        </div>
+                    `).join('') + (pq.length > 8 ? '...' : '');
+                }
+            }
+        };
+        const ui = window.ui;
+        const engine = window.engine;
+
+        window.algo = new DijkstraAlgo(window.engine, playback, ui);
+        const nodes = [{ id: 1, x: 100, y: 100 }, { id: 2, x: 250, y: 50 }, { id: 3, x: 400, y: 100 }, { id: 4, x: 100, y: 300 }, { id: 5, x: 250, y: 400 }, { id: 6, x: 400, y: 300 }, { id: 7, x: 250, y: 200 }];
+        const edges = [[1, 2, 5], [1, 4, 2], [1, 7, 8], [2, 3, 4], [3, 6, 3], [4, 5, 6], [5, 6, 1], [7, 5, 2], [7, 2, 1]];
+
+        document.getElementById('play-btn').onclick = () => {
+            if (playback.isRunning) { playback.pause(); document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Play'; }
+            else { playback.play(); document.getElementById('play-btn').innerHTML = '<i class="fas fa-pause"></i> Pause'; }
+        };
+        document.getElementById('reset-btn').onclick = () => {
+            playback.reset();
+            window.algo.reset();
+            document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Play';
+            if (window.complexityTracker) window.complexityTracker.reset();
+        };
+
+        function toggleDirected() {
+            window.engine.directed = !window.engine.directed;
+            document.getElementById('dir-toggle').innerText = window.engine.directed ? 'Directed' : 'Undirected';
+            window.engine.draw();
+        }
+
+        function toggleBuildMode() {
+            const btn = document.getElementById('build-btn');
+            const isEditing = btn.style.background === 'rgb(40, 167, 69)';
+            if (isEditing) {
+                window.engine.setEditMode(false);
+                btn.style.background = '#6c757d';
+                btn.innerText = '🏗️ Build Visually';
+                ui.updateStatus("Build mode disabled.");
+            } else {
+                window.engine.setEditMode(true);
+                btn.style.background = '#28a745';
+                btn.innerText = '✅ Finish Building';
+                ui.updateStatus("Build mode active: Click canvas to add nodes, click two nodes to connect.");
+            }
+        }
+
+        document.getElementById('grid-toggle-btn').onclick = () => {
+            window.engine.showGrid = !window.engine.showGrid;
+            document.getElementById('grid-toggle-btn').classList.toggle('active');
+            window.engine.draw();
+        };
+
+        window.onload = () => {
+            window.engine.setGraph(nodes, edges);
+            window.algo.reset();
+            if (window.complexityTracker) {
+                window.complexityTracker.setComplexity("O((V+E) log V)", "O(V+E)");
+            }
+            setTimeout(() => { }, 1000);
+        };
+    </script>
+<script src="../../assets/js/brain-animation.js"></script></body>
+
+</html>

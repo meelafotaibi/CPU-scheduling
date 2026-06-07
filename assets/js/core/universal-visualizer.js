@@ -8,7 +8,7 @@ class UniversalVisualizer {
         ].map(src => `<script src="${src}"></script>`).join('\n    ');
 
         return `<!DOCTYPE html>
-<html lang="en" data-theme="light" data-algo="${algoKey}">
+<html lang="en" data-theme="dark" data-algo="${algoKey}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

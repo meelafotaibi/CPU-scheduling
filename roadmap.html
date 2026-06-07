@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 
 <head>
@@ -258,7 +258,7 @@
                 <a href="ai.html">AI</a>
                 <a href="cg.html">Graphics</a>
                 <a href="roadmap.html" style="color: var(--accent); font-weight: 700;">Roadmap</a>
-                <a href="support.html" style="display: inline-flex; align-items: center; padding: 10px 20px; background: linear-gradient(135deg, #6366f1, #a855f7); color: #fff !important; -webkit-text-fill-color: #fff !important; border-radius: 12px; font-weight: 700; font-size: 0.9rem; text-decoration: none;">💙 Support</a>
+                <a href="support.html" style="display: inline-flex; align-items: center; padding: 10px 20px; background: linear-gradient(135deg, #6366f1, #a855f7); color: #fff !important; border-radius: 12px; font-weight: 700; font-size: 0.9rem; text-decoration: none;">💙 Support</a>
             </div>
         </div>
     </nav>
@@ -276,13 +276,23 @@
             <div class="premium-bar-container">
                 <div class="premium-bar-fill" id="roadmap-progress"></div>
             </div>
-            <div class="progress-percentage">35% COMPLETE</div>
+            <div class="progress-percentage" id="roadmap-percentage-text">Calculating...</div>
 
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
-                    setTimeout(() => {
-                        document.getElementById('roadmap-progress').style.width = '35%';
-                    }, 600);
+                    const totalItems = document.querySelectorAll('.roadmap-grid .roadmap-skill-item').length;
+                    const doneItems = document.querySelectorAll('.roadmap-grid .status-pill.status-done').length;
+                    const percentage = totalItems > 0 ? Math.round((doneItems / totalItems) * 100) : 0;
+                    
+                    const progressFill = document.getElementById('roadmap-progress');
+                    const percentageText = document.getElementById('roadmap-percentage-text');
+                    
+                    if (progressFill && percentageText) {
+                        setTimeout(() => {
+                            progressFill.style.width = percentage + '%';
+                            percentageText.textContent = percentage + '% COMPLETE (' + doneItems + '/' + totalItems + ' Live)';
+                        }, 600);
+                    }
                 });
             </script>
         </section>
@@ -362,10 +372,10 @@
                     <div class="roadmap-skill-item"><span>Memory Allocation</span> <span class="status-pill status-done">Live ✓</span></div>
                     <div class="roadmap-skill-item"><span>Page Replacement</span> <span class="status-pill status-done">Live ✓</span></div>
                     <div class="roadmap-skill-item"><span>Banker's Algorithm</span> <span class="status-pill status-done">Live ✓</span></div>
-                    <div class="roadmap-skill-item"><span>Disk Scheduling</span> <span class="status-pill status-wip">In Dev</span></div>
-                    <div class="roadmap-skill-item"><span>Process Sync</span> <span class="status-pill status-planned">Planned</span></div>
-                    <div class="roadmap-skill-item"><span>Semaphores</span> <span class="status-pill status-planned">Planned</span></div>
-                    <div class="roadmap-skill-item"><span>Deadlock Detection</span> <span class="status-pill status-soon">Soon</span></div>
+                    <div class="roadmap-skill-item"><span>Disk Scheduling</span> <span class="status-pill status-done">Live ✓</span></div>
+                    <div class="roadmap-skill-item"><span>Process Sync</span> <span class="status-pill status-done">Live ✓</span></div>
+                    <div class="roadmap-skill-item"><span>Semaphores</span> <span class="status-pill status-done">Live ✓</span></div>
+                    <div class="roadmap-skill-item"><span>Deadlock Detection</span> <span class="status-pill status-done">Live ✓</span></div>
                 </div>
             </div>
 
@@ -462,7 +472,7 @@
                         <li><a href="algorithms.html" style="color: var(--text-muted);">Sorting</a></li>
                         <li><a href="cg.html" style="color: var(--text-muted);">Computer Graphics</a></li>
                         <li><a href="roadmap.html" style="color: var(--text-muted);">Roadmap</a></li>
-                        <li><a href="guide.html" style="color: var(--text-muted);">Guide</a></li>
+                        <li><a href="faq.html" style="color: var(--text-muted);">FAQ</a></li>
                     </ul>
                 </div>
                 <div>

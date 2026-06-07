@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bellman-Ford Visualizer | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .visualizer-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        #graph-canvas {
+            width: 100%;
+            height: 500px;
+
+            border: 2px solid #eee;
+            border-radius: 12px;
+            cursor: crosshair;
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stats-table {
+            width: 100%;
+            font-size: 0.85rem;
+            border-collapse: collapse;
+        }
+
+        .stats-table th,
+        .stats-table td {
+            border: 1px solid #eee;
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
+    
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+</head>
+
+<body><canvas id="brain-canvas"></canvas>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="../../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../algorithms.html">Back to Algorithms</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 40px;">
+            <span class="btn-primary"
+                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Pathfinding</span>
+            <h1>Bellman-Ford Visualizer</h1>
+            <p>Find the shortest paths from a single source to all other vertices. This algorithm handles negative edge
+                weights and detects negative cycles.</p>
+        </header>
+
+        <div class="visualizer-layout">
+            <div class="glass-card" id="visualizer-container" style="padding: 30px;">
+                <canvas id="graph-canvas"></canvas>
+
+                <div style="margin-top: 25px; display: flex; justify-content: space-between;">
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Run</button>
+                        <button class="btn" id="next-btn" style="background: var(--dark); color: white;">Next
+                            Step</button>
+                        <button class="btn" id="reset-btn"
+                            style="border: 1px solid var(--accent); color: var(--accent);">Reset</button>
+                        <button class="btn" id="grid-toggle-btn" title="Toggle Grid"><i
+                                class="fas fa-border-all"></i></button>
+                        <button class="btn btn-secondary"
+                            onclick="shareScreenshot('visualizer-container', 'Bellman-Ford')">📸 Share</button>
+                    </div>
+                </div>
+                <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">Bellman-Ford relaxes all edges |V|-1 times.
+                    Negative cycles make paths infinitely short!</p>
+            </div>
+
+            <div class="side-panel">
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>📜 Execution Log</h4>
+                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 10px; min-height: 50px;">
+                        Ready.Source Node is 1.</p>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>📊 Distances</h4>
+                    <table class="stats-table">
+                        <thead>
+                            <tr>
+                                <th>Node</th>
+                                <th>Distance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dist-body"></tbody>
+                    </table>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <button class="btn" onclick="loadNegativeCycle()"
+                        style="width: 100%; border: 1px solid #ff4d4d; color: #ff4d4d;">Load Negative Cycle</button>
+                </div>
+            </div>
+        </div>
+
+</main>
+
+    <script src="../../assets/js/core/graph-engine.js"></script>
+    <script src="../../assets/js/core/playback.js"></script>
+    <script src="../../assets/js/algos/algorithms/bellman-ford.js"></script>
+    <script>
+        window.engine = new GraphEngine('graph-canvas');
+        window.engine.directed = true;
+        window.engine.setEditMode(true);
+
+        window.ui = {
+            updateStatus: (t) => document.getElementById('explanation-text').innerText = t,
+            updateTable: (data) => {
+                const body = document.getElementById('dist-body');
+                body.innerHTML = Object.keys(data).map(id => `
+                    <tr><td>${id}</td><td>${data[id] === Infinity ? '∞' : data[id]}</td></tr>
+                `).join('');
+            }
+        };
+        const ui = window.ui;
+        const engine = window.engine;
+
+        const playback = new Playback(() => window.algo.nextStep());
+        window.algo = new BellmanFordAlgo(window.engine, playback, ui);
+        const algo = window.algo;
+
+        document.getElementById('play-btn').onclick = () => {
+            if (window.engine.nodes.length === 0) return alert("Please add nodes first");
+            window.algo.reset();
+            playback.play();
+        };
+
+        document.getElementById('next-btn').onclick = () => {
+            if (engine.nodes.length === 0) return;
+            if (!algo.complete && !algo.iteration) algo.reset();
+            algo.nextStep();
+        };
+
+        document.getElementById('reset-btn').onclick = () => {
+            playback.stop();
+            algo.reset();
+        };
+
+        document.getElementById('grid-toggle-btn').onclick = () => {
+            engine.showGrid = !engine.showGrid;
+            document.getElementById('grid-toggle-btn').classList.toggle('active');
+            engine.draw();
+        };
+
+        function loadNegativeCycle() {
+            engine.nodes = [
+                { id: 1, x: 100, y: 150, status: 'default' },
+                { id: 2, x: 300, y: 150, status: 'default' },
+                { id: 3, x: 200, y: 350, status: 'default' }
+            ];
+            engine.edges = [
+                [1, 2, 4], [2, 3, 2], [3, 2, -10] // Negative cycle between 2 and 3
+            ];
+            algo.reset();
+        }
+
+        window.onload = () => {
+            loadNegativeCycle();
+            engine.edges[2][2] = 2; // Default for normal view
+            algo.reset();
+        };
+    </script>
+
+    <script src='../../assets/js/core/ui-extras.js'></script>
+<script src="../../assets/js/brain-animation.js"></script></body>
+
+</html>
+

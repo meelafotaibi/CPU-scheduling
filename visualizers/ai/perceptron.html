@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perceptron Visualizer | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .visualizer-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        #perceptron-canvas {
+            width: 100%;
+            height: 450px;
+            /* background: #fff; removed */
+            border: 2px solid #eee;
+            border-radius: 12px;
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .neuron-diagram {
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            /* background: #f8f9fa; removed */
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .neuron-node {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.03);
+            border: 3px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            z-index: 2;
+            position: relative;
+        }
+
+        .input-node {
+            width: 40px;
+            height: 40px;
+            border-color: #999;
+            font-size: 0.8rem;
+        }
+
+        .weight-line {
+            position: absolute;
+            height: 2px;
+            background: #ddd;
+            z-index: 1;
+            transform-origin: left center;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+    </style>
+    
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+</head>
+
+<body><canvas id="brain-canvas"></canvas>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="../../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../ai.html">Back to AI</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 40px;">
+            <span class="btn-primary"
+                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Neural
+                Networks</span>
+            <h1>Perceptron Visualizer</h1>
+            <p>Understand the building block of AI. Visualize how weights and bias define a decision boundary to
+                separate classes.</p>
+        </header>
+
+        <div class="visualizer-layout">
+            <div class="glass-card" id="visualizer-container" style="padding: 30px;">
+                <canvas id="perceptron-canvas"></canvas>
+
+                <div style="margin-top: 25px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                    <div class="control-group">
+                        <label>Weight 1 (x₁): <span id="w1-val">0.5</span></label>
+                        <input type="range" id="w1-range" min="-2" max="2" step="0.1" value="0.5">
+                    </div>
+                    <div class="control-group">
+                        <label>Weight 2 (x₂): <span id="w2-val">-0.5</span></label>
+                        <input type="range" id="w2-range" min="-2" max="2" step="0.1" value="-0.5">
+                    </div>
+                    <div class="control-group">
+                        <label>Bias (b): <span id="b-val">0.1</span></label>
+                        <input type="range" id="bias-range" min="-1" max="1" step="0.05" value="0.1">
+                    </div>
+                </div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'Perceptron')">📸
+                        Share</button>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="neuron-diagram">
+                    <!-- Simple CSS Schematic -->
+                    <div style="display: flex; flex-direction: column; gap: 40px; margin-right: 60px;">
+                        <div class="neuron-node input-node">x₁</div>
+                        <div class="neuron-node input-node">x₂</div>
+                    </div>
+                    <div class="neuron-node" style="width: 80px; height: 80px;">Σ</div>
+                    <div style="width: 40px; height: 2px; background: #ddd; margin-left: 10px;"></div>
+                    <div class="neuron-node" style="width: 50px; height: 50px; border-color: var(--accent);">f(z)</div>
+
+                    <!-- SVG lines for better precision -->
+                    <svg style="position: absolute; width: 100%; height: 100%; pointer-events: none;">
+                        <line x1="165" y1="85" x2="215" y2="125" stroke="#ddd" stroke-width="2" />
+                        <line x1="165" y1="165" x2="215" y2="125" stroke="#ddd" stroke-width="2" />
+                    </svg>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>📜 Theory</h4>
+                    <p style="font-size: 0.85rem; color: #666; line-height: 1.5;">
+                        A **Perceptron** computes a weighted sum of inputs: <br>
+                        <code>z = (w₁ * x₁) + (w₂ * x₂) + b</code> <br><br>
+                        It then applies a step function: <br>
+                        <code>y = 1 if z ≥ 0, else -1</code>
+                    </p>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>💡 Goal</h4>
+                    <p style="font-size: 0.85rem; color: #666;">
+                        Adjust the sliders so that all **Blue** points are in the blue region and **Red** points are in
+                        the red region. This is called finding a <b>Linearly Separable</b> solution.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../../assets/js/algos/ai/perceptron-algo.js"></script>
+    <script>
+        window.algo = new PerceptronAlgo('perceptron-canvas', {});
+        const algo = window.algo;
+
+        // Generate some sample points
+        const points = [
+            { x: -0.5, y: -0.5, label: -1 },
+            { x: -0.7, y: -0.2, label: -1 },
+            { x: -0.3, y: -0.8, label: -1 },
+            { x: 0.5, y: 0.5, label: 1 },
+            { x: 0.2, y: 0.7, label: 1 },
+            { x: 0.8, y: 0.3, label: 1 },
+            { x: 0.4, y: -0.4, label: 1 },
+            { x: -0.4, y: 0.4, label: -1 }
+        ];
+        algo.setPoints(points);
+
+        const update = () => {
+            const w1 = parseFloat(document.getElementById('w1-range').value);
+            const w2 = parseFloat(document.getElementById('w2-range').value);
+            const b = parseFloat(document.getElementById('bias-range').value);
+
+            document.getElementById('w1-val').innerText = w1;
+            document.getElementById('w2-val').innerText = w2;
+            document.getElementById('b-val').innerText = b;
+
+            algo.updateParams(w1, w2, b);
+        };
+
+        document.getElementById('w1-range').oninput = update;
+        document.getElementById('w2-range').oninput = update;
+        document.getElementById('bias-range').oninput = update;
+
+        window.onload = () => {
+            update();
+        };
+    </script>
+
+    <script src='../../assets/js/core/ui-extras.js'></script>
+<script src="../../assets/js/brain-animation.js"></script></body>
+
+</html>

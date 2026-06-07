@@ -7,6 +7,12 @@ class BrainAnimation {
         this.canvas = document.getElementById(canvasId);
         if (!this.canvas) return;
 
+        // Disable on mobile/tablet viewports to optimize touch experience and performance
+        if (window.innerWidth < 768) {
+            this.canvas.style.display = 'none';
+            return;
+        }
+
         // Force canvas into visibility overlaying the background
         this.canvas.style.position = 'fixed';
         this.canvas.style.top = '0';

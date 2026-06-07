@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPU Scheduling Visualizer | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        .visualizer-card {
+            margin-bottom: 40px;
+        }
+
+        .chart-wrapper {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .gantt-container {
+            overflow-x: auto;
+            margin-bottom: 40px;
+            padding: 20px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+        }
+
+        .gantt-timeline {
+            display: flex;
+            align-items: center;
+            height: 70px;
+            position: relative;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            min-width: 100%;
+        }
+
+        .gantt-block {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .gantt-block:hover {
+            filter: brightness(1.2);
+            z-index: 5;
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        .gantt-axis {
+            display: flex;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .gantt-tick {
+            text-align: center;
+            border-left: 1px solid var(--glass-border);
+        }
+
+        /* Queue Styling */
+        .queue-row {
+            display: flex;
+            gap: 12px;
+            min-height: 60px;
+            align-items: center;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            margin-top: 10px;
+            overflow-x: auto;
+        }
+
+        .process-block {
+            padding: 10px 18px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: var(--glass-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 65px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .process-block.running {
+            animation: pulse 1.5s infinite;
+            border-color: #fff;
+            box-shadow: 0 0 15px currentColor;
+        }
+
+        .cpu-box {
+            width: 140px;
+            height: 100px;
+            border-radius: 16px;
+            border: 2px dashed var(--primary);
+            background: var(--glass);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+
+        .cpu-box.busy {
+            border-style: solid;
+            border-color: var(--accent);
+            color: white;
+            box-shadow: var(--glow-accent);
+        }
+
+        .btn-group-toggle button.active {
+            background: var(--primary) !important;
+            color: white !important;
+            box-shadow: var(--glow-primary);
+        }
+    </style>
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+</head>
+
+<body><canvas id="brain-canvas"></canvas>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="../../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../os.html">Back to OS</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" style="margin-top: 40px;">
+        <div class="page-hero" style="margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; margin-bottom: 40px;">
+            <div>
+                <span class="btn-primary"
+                    style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Operating Systems</span>
+                <h1>CPU Scheduling Visualizer</h1>
+                <p>Configure process parameters to dynamically simulate scheduling operations or compare algorithms simultaneously.</p>
+            </div>
+            <button class="btn" id="sim-challenge-btn" onclick="toggleChallengeMode()" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none; padding: 10px 20px; border-radius: 12px; font-weight: bold; margin-top: 10px;">
+                <i class="fas fa-gamepad"></i> Beat the Scheduler
+            </button>
+        </header>
+
+        <!-- Mode Selector -->
+        <div class="btn-group-toggle" style="display: flex; gap: 15px; margin-bottom: 30px; justify-content: center;">
+            <button class="btn btn-secondary active" id="mode-compare-btn" onclick="switchMode('compare')">📊 Compare All (Static)</button>
+            <button class="btn btn-secondary" id="mode-interactive-btn" onclick="switchMode('interactive')">🎬 Interactive Simulation (Stepped)</button>
+        </div>
+
+        <div class="grid grid-2">
+            <div class="glass-card visualizer-card">
+                <h3>Process Configuration</h3>
+                <div class="input-section" style="margin-top: 20px;">
+                    <table id="process-table" style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); color: var(--accent);">
+                                <th style="padding: 8px; text-align: center;">PID</th>
+                                <th style="padding: 8px;">Arrival</th>
+                                <th style="padding: 8px;">Burst</th>
+                                <th style="padding: 8px;">Priority</th>
+                                <th style="padding: 8px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="process-tbody">
+                            <!-- Rows injected via JS -->
+                        </tbody>
+                    </table>
+
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                        <button class="btn" onclick="addProcessRow()"
+                            style="background: var(--secondary); color: white; padding: 5px 15px; font-size: 0.8rem;">
+                            <i class="fas fa-plus"></i> Add Process
+                        </button>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Time Quantum (for Round Robin):</label>
+                        <input type="number" id="quantum" value="2" min="1" style="text-align: center;">
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="btn btn-primary" id="main-action-btn" onclick="runMainAction()" style="flex: 1;">🚀 Generate Comparisons</button>
+                        <button class="btn" id="share-btn" onclick="shareSession()" style="flex: 0 0 110px; border: 1px solid var(--secondary); color: var(--secondary); background: transparent;"><i class="fas fa-share-alt"></i> Share</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card" style="padding: 30px;">
+                <h3>📜 Visualizer Instructions</h3>
+                <ul id="instructions-list" style="margin-top: 15px; padding-left: 20px; line-height: 1.8; color: var(--text-muted);">
+                    <li>Use the <strong>Process Configuration</strong> table to add process jobs.</li>
+                    <li>In <strong>Compare All</strong>, view multi-algorithm Gantt charts and performance analysis side-by-side.</li>
+                    <li>In <strong>Interactive Simulation</strong>, step through individual FCFS, SJF, or Round Robin threads tick-by-tick!</li>
+                    <li>Enable <strong>Beat the Scheduler Challenge</strong> to manually dispatch ready-queue processes!</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="simulationContainer" style="display: none; margin-bottom: 40px;">
+            <!-- Interactive controls -->
+            <div class="glass-card" style="padding: 30px; margin-bottom: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                    <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">Select Algorithm</label>
+                            <select id="selected-algo" style="padding: 8px 16px; border-radius: 10px; width: 160px;" onchange="resetSimulation()">
+                                <option value="FCFS">First Come First Serve</option>
+                                <option value="SJF">Shortest Job First</option>
+                                <option value="RR">Round Robin</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="play-sim-btn" onclick="toggleSimPlay()" style="padding: 10px 20px;"><i class="fas fa-play"></i> Play</button>
+                        <button class="btn btn-secondary" onclick="stepSim()" style="padding: 10px 20px; border: 1px solid var(--primary); color: var(--primary); background: transparent;"><i class="fas fa-step-forward"></i> Step</button>
+                        <button class="btn" onclick="resetSimulation()" style="padding: 10px 20px; border: 1px solid var(--accent); color: var(--accent); background: transparent;"><i class="fas fa-undo"></i> Reset</button>
+                        
+                        <div style="display: flex; align-items: center; gap: 8px; margin-left: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;"><i class="fas fa-gauge-high"></i> Speed</span>
+                            <input type="range" id="sim-speed-slider" min="1" max="10" value="5" style="width: 80px; height: 6px; cursor: pointer; padding: 0; border: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simulation Dashboard -->
+            <div class="grid grid-2" style="margin-bottom: 30px;">
+                <div class="glass-card" style="padding: 25px;">
+                    <h3>🖥️ Execution Dashboard</h3>
+                    
+                    <div style="margin-top: 20px;">
+                        <h4 style="color: var(--accent); margin-bottom: 8px;">CPU Status</h4>
+                        <div id="sim-cpu-box" class="cpu-box">
+                            <span style="font-size: 1.5rem;"><i class="fas fa-microchip"></i></span>
+                            <span style="font-size: 0.95rem; margin-top: 5px;">IDLE</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 25px;">
+                        <h4 style="color: var(--primary); margin-bottom: 8px;">Ready Queue</h4>
+                        <div id="sim-ready-queue" class="queue-row">
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">Queue is empty.</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 25px;">
+                        <h4 style="color: var(--success); margin-bottom: 8px;">Completed Processes</h4>
+                        <div id="sim-completed" class="queue-row">
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">None completed yet.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="padding: 25px; display: flex; flex-direction: column;">
+                    <h3>📜 Step Explanations</h3>
+                    <div id="sim-clock" style="font-size: 1.2rem; font-weight: 800; color: var(--accent); margin: 15px 0 5px;">Time: 0</div>
+                    <div id="sim-log" style="flex: 1; font-size: 0.9rem; line-height: 1.6; color: var(--text-muted); padding: 15px; background: rgba(0,0,0,0.15); border-radius: 12px; border: 1px solid var(--glass-border); min-height: 120px; overflow-y: auto;">
+                        Click Play or Step to begin simulation.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Gantt Chart -->
+            <div class="glass-card visualizer-card" style="padding: 30px;">
+                <h3>📊 Real-time Gantt Chart</h3>
+                <div class="gantt-container" style="margin-top: 20px;">
+                    <div id="sim-gantt-timeline" class="gantt-timeline"></div>
+                    <div id="sim-gantt-axis" class="gantt-axis"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="chartsContainer" class="charts-container"></div>
+    </main>
+
+    <script>
+        // Colors & Configuration
+        const algoColors = {
+            'P1': '#FF6384',
+            'P2': '#36A2EB',
+            'P3': '#FFCE56',
+            'P4': '#4BC0C0',
+            'P5': '#9966FF',
+            'P6': '#FF9F40',
+            'P7': '#FF63C3',
+            'P8': '#36EBA2',
+            'IDLE': '#1e293b'
+        };
+
+        const colors = { 'FCFS': '#FF6384', 'SJF': '#36A2EB', 'Priority NP': '#FFCE56', 'Priority P': '#4BC0C0', 'Round Robin': '#9966FF' };
+        let pidCounter = 1;
+        let activeMode = 'compare'; // 'compare' or 'interactive'
+
+        function addProcessRow(at = 0, bt = 5, pr = 1) {
+            const tbody = document.getElementById('process-tbody');
+            const tr = document.createElement('tr');
+            const pid = pidCounter++;
+            tr.innerHTML = `
+                <td style="padding: 8px; vertical-align: middle;">P${pid}</td>
+                <td style="padding: 8px; vertical-align: middle;"><input type="number" class="at-input" value="${at}" min="0" required style="width: 100%; text-align: center; padding: 5px; border-radius: 5px; border: 1px solid #ddd;"></td>
+                <td style="padding: 8px; vertical-align: middle;"><input type="number" class="bt-input" value="${bt}" min="1" required style="width: 100%; text-align: center; padding: 5px; border-radius: 5px; border: 1px solid #ddd;"></td>
+                <td style="padding: 8px; vertical-align: middle;"><input type="number" class="pr-input" value="${pr}" min="1" required style="width: 100%; text-align: center; padding: 5px; border-radius: 5px; border: 1px solid #ddd;"></td>
+                <td style="padding: 8px; vertical-align: middle;">
+                    <button onclick="this.closest('tr').remove()" style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function initTable() {
+            addProcessRow(0, 5, 2);
+            addProcessRow(1, 4, 1);
+            addProcessRow(2, 2, 3);
+            addProcessRow(4, 1, 4);
+            runMainAction();
+        }
+
+        function switchMode(mode) {
+            activeMode = mode;
+            document.getElementById('mode-compare-btn').classList.toggle('active', mode === 'compare');
+            document.getElementById('mode-interactive-btn').classList.toggle('active', mode === 'interactive');
+            
+            const btn = document.getElementById('main-action-btn');
+            
+            if (mode === 'compare') {
+                document.getElementById('simulationContainer').style.display = 'none';
+                document.getElementById('chartsContainer').style.display = 'block';
+                btn.innerHTML = '🚀 Generate Comparisons';
+                btn.onclick = generateVisualizations;
+                generateVisualizations();
+            } else {
+                document.getElementById('chartsContainer').style.display = 'none';
+                document.getElementById('simulationContainer').style.display = 'block';
+                btn.innerHTML = '🎬 Start Interactive Simulation';
+                btn.onclick = startSimFromMain;
+                resetSimulation();
+            }
+        }
+
+        function runMainAction() {
+            if (activeMode === 'compare') {
+                generateVisualizations();
+            } else {
+                startSimFromMain();
+            }
+        }
+
+        // Standard Comparative Visualizations (Static)
+        function fcfs(at, bt) {
+            const processes = at.map((a, i) => ({ id: i + 1, name: `P${i+1}`, at: a, bt: bt[i] })).sort((a, b) => a.at - b.at);
+            let t = 0;
+            processes.forEach(p => { if (t < p.at) t = p.at; p.st = t; p.ct = t + p.bt; p.tat = p.ct - p.at; p.wt = p.tat - p.bt; t = p.ct; });
+            return processes;
+        }
+
+        function sjf(at, bt) {
+            const n = at.length; const processes = at.map((a, i) => ({ id: i + 1, name: `P${i+1}`, at: a, bt: bt[i] }));
+            const done = new Array(n).fill(false); let t = 0, c = 0;
+            while (c < n) {
+                let idx = -1, mn = Infinity;
+                for (let i = 0; i < n; i++) if (!done[i] && processes[i].at <= t && processes[i].bt < mn) { mn = processes[i].bt; idx = i; }
+                if (idx === -1) { t++; continue; }
+                processes[idx].st = t; processes[idx].ct = t + processes[idx].bt; processes[idx].tat = processes[idx].ct - processes[idx].at; processes[idx].wt = processes[idx].tat - processes[idx].bt; t = processes[idx].ct; done[idx] = true; c++;
+            }
+            return processes;
+        }
+
+        function priorityNP(at, bt, pr) {
+            const n = at.length; const processes = at.map((a, i) => ({ id: i + 1, name: `P${i+1}`, at: a, bt: bt[i], pr: pr[i] }));
+            const done = new Array(n).fill(false); let t = 0, c = 0;
+            while (c < n) {
+                let idx = -1, mn = Infinity;
+                for (let i = 0; i < n; i++) if (!done[i] && processes[i].at <= t && processes[i].pr < mn) { mn = processes[i].pr; idx = i; }
+                if (idx === -1) { t++; continue; }
+                processes[idx].st = t; processes[idx].ct = t + processes[idx].bt; processes[idx].tat = processes[idx].ct - processes[idx].at; processes[idx].wt = processes[idx].tat - processes[idx].bt; t = processes[idx].ct; done[idx] = true; c++;
+            }
+            return processes;
+        }
+
+        function priorityP(at, bt, pr) {
+            const n = at.length; const processes = at.map((a, i) => ({ id: i + 1, name: `P${i+1}`, at: a, bt: bt[i], pr: pr[i], rem: bt[i], st: -1 }));
+            let t = 0, c = 0; const timeline = [];
+            while (c < n) {
+                let idx = -1, mn = Infinity;
+                for (let i = 0; i < n; i++) if (processes[i].at <= t && processes[i].rem > 0 && processes[i].pr < mn) { mn = processes[i].pr; idx = i; }
+                if (idx === -1) { t++; continue; }
+                if (processes[idx].st === -1) processes[idx].st = t;
+                const start = t; processes[idx].rem--; t++;
+                if (timeline.length > 0 && timeline[timeline.length - 1].pid === processes[idx].id) timeline[timeline.length - 1].end = t;
+                else timeline.push({ pid: processes[idx].id, name: `P${processes[idx].id}`, start, end: t });
+                if (processes[idx].rem === 0) { processes[idx].ct = t; processes[idx].tat = t - processes[idx].at; processes[idx].wt = processes[idx].tat - processes[idx].bt; c++; }
+            }
+            return { processes, timeline };
+        }
+
+        function roundRobin(at, bt, q) {
+            const n = at.length; const processes = at.map((a, i) => ({ id: i + 1, name: `P${i+1}`, at: a, bt: bt[i], rem: bt[i], st: -1 }));
+            const inQ = new Array(n).fill(false); const queue = []; let t = 0, c = 0; const timeline = [];
+            while (c < n) {
+                for (let i = 0; i < n; i++) if (!inQ[i] && processes[i].at <= t && processes[i].rem > 0) { queue.push(i); inQ[i] = true; }
+                if (queue.length === 0) { t++; continue; }
+                const idx = queue.shift(); if (processes[idx].st === -1) processes[idx].st = t;
+                const start = t; const run = Math.min(q, processes[idx].rem); processes[idx].rem -= run; t += run;
+                timeline.push({ pid: processes[idx].id, name: `P${processes[idx].id}`, start, end: t });
+                for (let i = 0; i < n; i++) if (!inQ[i] && processes[i].at <= t && processes[i].rem > 0) { queue.push(i); inQ[i] = true; }
+                if (processes[idx].rem > 0) queue.push(idx);
+                else { processes[idx].ct = t; processes[idx].tat = t - processes[idx].at; processes[idx].wt = processes[idx].tat - processes[idx].bt; c++; }
+            }
+            return { processes, timeline };
+        }
+
+        function getTableProcesses() {
+            const rows = document.querySelectorAll('#process-tbody tr');
+            const at = [], bt = [], pr = [], names = [];
+            let hasError = false;
+
+            rows.forEach((row) => {
+                const pName = row.querySelector('td:first-child').innerText.trim();
+                const atInput = row.querySelector('.at-input').value;
+                const btInput = row.querySelector('.bt-input').value;
+                const prInput = row.querySelector('.pr-input').value;
+
+                if (atInput === '' || parseInt(atInput) < 0) {
+                    alert(`Invalid Arrival Time for ${pName}. It cannot be empty or negative.`);
+                    hasError = true;
+                }
+                if (btInput === '' || parseInt(btInput) <= 0) {
+                    alert(`Invalid Burst Time for ${pName}. It cannot be empty, zero, or negative.`);
+                    hasError = true;
+                }
+                if (prInput === '' || parseInt(prInput) <= 0) {
+                    alert(`Invalid Priority for ${pName}. It cannot be empty, zero, or negative.`);
+                    hasError = true;
+                }
+
+                names.push(pName);
+                at.push(parseInt(atInput));
+                bt.push(parseInt(btInput));
+                pr.push(parseInt(prInput));
+            });
+
+            if (hasError) return null;
+            return { names, at, bt, pr };
+        }
+
+        function generateVisualizations() {
+            const procData = getTableProcesses();
+            if (!procData) return;
+
+            const { at, bt, pr } = procData;
+            const qInput = document.getElementById('quantum').value;
+            if (qInput === '' || parseInt(qInput) <= 0) {
+                alert("Invalid Time Quantum. It cannot be empty, zero, or negative.");
+                return;
+            }
+            const q = parseInt(qInput);
+
+            if (at.length === 0) {
+                document.getElementById('chartsContainer').innerHTML = '<p class="text-center">Add at least one process to visualize.</p>';
+                return;
+            }
+
+            const res = { 'FCFS': fcfs(at, bt), 'SJF': sjf(at, bt), 'Priority NP': priorityNP(at, bt, pr), 'Priority P': priorityP(at, bt, pr), 'Round Robin': roundRobin(at, bt, q) };
+            const container = document.getElementById('chartsContainer');
+            container.innerHTML = '';
+
+            container.innerHTML += `<div class="visualizer-card"><h3>📊 Algorithm Performance Comparison</h3><table class="table-premium"><tr><th>Algorithm</th><th>Avg Wait</th><th>Avg TAT</th></tr>${Object.keys(res).map(algo => {
+                const ps = res[algo].processes || res[algo];
+                const aw = (ps.reduce((s, p) => s + p.wt, 0) / ps.length).toFixed(2);
+                const atat = (ps.reduce((s, p) => s + p.tat, 0) / ps.length).toFixed(2);
+                return `<tr><td>${algo}</td><td>${aw}</td><td>${atat}</td></tr>`;
+            }).join('')}</table></div>`;
+
+            container.innerHTML += `<div class="grid grid-2"><div class="chart-wrapper"><canvas id="wtComp"></canvas></div><div class="chart-wrapper"><canvas id="tatComp"></canvas></div></div>`;
+
+            // Gantt Charts
+            Object.keys(res).forEach((algo) => {
+                const data = res[algo];
+                let timeline = [];
+
+                if (data.timeline) {
+                    timeline = data.timeline;
+                } else {
+                    [...data].sort((a, b) => a.st - b.st).forEach(p => {
+                        timeline.push({ pid: p.id, name: p.name, start: p.st, end: p.ct });
+                    });
+                }
+
+                const maxTime = Math.max(...timeline.map(t => t.end));
+                const pixelPerUnit = Math.max(25, Math.floor(600 / maxTime));
+
+                let ganttHTML = `<div class="chart-wrapper gantt-container">
+                    <h3>${algo} Gantt Chart</h3>
+                    <div class="gantt-timeline" style="width: ${maxTime * pixelPerUnit}px; min-width: 100%;">`;
+
+                timeline.forEach(segment => {
+                    const width = (segment.end - segment.start) * pixelPerUnit;
+                    ganttHTML += `<div class="gantt-block" style="width: ${width}px; background: ${algoColors[segment.name] || '#6366f1'};">
+                        ${segment.name}
+                    </div>`;
+                });
+
+                ganttHTML += `</div><div class="gantt-axis" style="width: ${maxTime * pixelPerUnit}px; min-width: 100%;">`;
+                for (let t = 0; t <= maxTime; t++) {
+                    ganttHTML += `<div class="gantt-tick" style="width: ${pixelPerUnit}px;">${t}</div>`;
+                }
+                ganttHTML += `</div></div>`;
+
+                container.innerHTML += ganttHTML;
+            });
+
+            setTimeout(() => {
+                const algos = Object.keys(res);
+                const awts = algos.map(a => { const p = res[a].processes || res[a]; return (p.reduce((s, x) => s + x.wt, 0) / p.length).toFixed(2); });
+                const tats = algos.map(a => { const p = res[a].processes || res[a]; return (p.reduce((s, x) => s + x.tat, 0) / p.length).toFixed(2); });
+
+                const chartConfig = {
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: { size: 14, weight: 'bold' },
+                                color: '#f1f5f9'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { font: { size: 14 }, color: '#f1f5f9' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        },
+                        y: {
+                            ticks: { font: { size: 14 }, color: '#f1f5f9' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        }
+                    }
+                };
+
+                new Chart(document.getElementById('wtComp').getContext('2d'), {
+                    type: 'bar',
+                    data: { labels: algos, datasets: [{ label: 'Avg Waiting Time', data: awts, backgroundColor: algos.map(a => colors[a]) }] },
+                    options: chartConfig
+                });
+
+                new Chart(document.getElementById('tatComp').getContext('2d'), {
+                    type: 'bar',
+                    data: { labels: algos, datasets: [{ label: 'Avg Turnaround Time', data: tats, backgroundColor: algos.map(a => colors[a]) }] },
+                    options: chartConfig
+                });
+            }, 100);
+        }
+
+        // ==========================================
+        // STEPPED INTERACTIVE SIMULATION ENGINE
+        // ==========================================
+        let simState = {
+            isPlaying: false,
+            intervalId: null,
+            time: 0,
+            processes: [],
+            readyQueue: [],
+            completed: [],
+            running: null,
+            quantumLeft: 0,
+            timeline: [], // { pid, name, start, end }
+            challengeMode: false,
+            optimalWait: 0
+        };
+
+        function startSimFromMain() {
+            resetSimulation();
+            toggleSimPlay();
+        }
+
+        function resetSimulation() {
+            if (simState.intervalId) {
+                clearInterval(simState.intervalId);
+            }
+            
+            const procData = getTableProcesses();
+            if (!procData) return;
+
+            const { names, at, bt, pr } = procData;
+            
+            // Map table processes into internal state objects
+            simState.processes = names.map((name, i) => ({
+                id: i + 1,
+                name: name,
+                at: at[i],
+                bt: bt[i],
+                pr: pr[i],
+                rem: bt[i],
+                st: -1,
+                ct: -1,
+                wt: 0,
+                tat: 0
+            }));
+
+            simState.isPlaying = false;
+            simState.time = 0;
+            simState.readyQueue = [];
+            simState.completed = [];
+            simState.running = null;
+            simState.quantumLeft = 0;
+            simState.timeline = [];
+            
+            document.getElementById('play-sim-btn').innerHTML = '<i class="fas fa-play"></i> Play';
+            document.getElementById('sim-clock').innerText = `Time: 0`;
+            document.getElementById('sim-log').innerHTML = 'Simulation reset. Ready to start.';
+            
+            // Clear CPU rendering
+            const cpu = document.getElementById('sim-cpu-box');
+            cpu.className = 'cpu-box';
+            cpu.innerHTML = `<span style="font-size: 1.5rem;"><i class="fas fa-microchip"></i></span><span style="font-size: 0.95rem; margin-top: 5px;">IDLE</span>`;
+            cpu.style.backgroundColor = '';
+
+            // Calculate optimal wait time using SJF behind the scenes for achievement verification
+            const sjfCopy = sjf(at, bt);
+            simState.optimalWait = sjfCopy.reduce((s, p) => s + p.wt, 0) / sjfCopy.length;
+
+            updateUI();
+        }
+
+        function toggleSimPlay() {
+            if (simState.isPlaying) {
+                simState.isPlaying = false;
+                clearInterval(simState.intervalId);
+                document.getElementById('play-sim-btn').innerHTML = '<i class="fas fa-play"></i> Play';
+            } else {
+                simState.isPlaying = true;
+                document.getElementById('play-sim-btn').innerHTML = '<i class="fas fa-pause"></i> Pause';
+                
+                const getSpeedDelay = () => {
+                    const val = parseInt(document.getElementById('sim-speed-slider').value);
+                    return 2200 - (val * 200); // 200ms to 2000ms
+                };
+
+                const runLoop = () => {
+                    if (simState.isPlaying) {
+                        const hasMore = stepSim();
+                        if (!hasMore) {
+                            simState.isPlaying = false;
+                            clearInterval(simState.intervalId);
+                            document.getElementById('play-sim-btn').innerHTML = '<i class="fas fa-play"></i> Play';
+                        } else {
+                            // reschedule with current speed slider value in case it changed
+                            clearInterval(simState.intervalId);
+                            simState.intervalId = setInterval(runLoop, getSpeedDelay());
+                        }
+                    }
+                };
+
+                simState.intervalId = setInterval(runLoop, getSpeedDelay());
+            }
+        }
+
+        function toggleChallengeMode() {
+            const btn = document.getElementById('sim-challenge-btn');
+            if (simState.challengeMode) {
+                simState.challengeMode = false;
+                btn.classList.remove('glow-active');
+                btn.innerHTML = '<i class="fas fa-gamepad"></i> Beat the Scheduler';
+                resetSimulation();
+            } else {
+                // Auto-switch to interactive mode if currently in compare mode
+                if (activeMode !== 'interactive') {
+                    switchMode('interactive');
+                }
+                simState.challengeMode = true;
+                btn.classList.add('glow-active');
+                btn.innerHTML = '<i class="fas fa-gamepad"></i> Exit Challenge';
+                
+                // Force a challenge configuration
+                const tbody = document.getElementById('process-tbody');
+                tbody.innerHTML = '';
+                pidCounter = 1;
+                addProcessRow(0, 5, 2);
+                addProcessRow(1, 3, 1);
+                addProcessRow(2, 6, 3);
+                addProcessRow(3, 2, 4);
+
+                resetSimulation();
+                
+                document.getElementById('sim-log').innerHTML = `
+                    <h4 style="color: var(--accent); margin-bottom: 5px;">🥋 Challenge Active!</h4>
+                    You are in manual scheduling mode. At each clock tick, click a process block in the <strong>Ready Queue</strong> to dispatch it to the CPU for 1 unit of time!
+                    <br><strong>Goal:</strong> Minimize average waiting time to match SJF (optimal) scheduler!
+                `;
+            }
+        }
+
+        function stepSim() {
+            if (simState.isPlaying) {
+                toggleSimPlay();
+            }
+            const algo = document.getElementById('selected-algo').value;
+            const q = parseInt(document.getElementById('quantum').value);
+            const totalCount = simState.processes.length;
+
+            if (simState.completed.length === totalCount) {
+                document.getElementById('sim-log').innerHTML += `<br><span style="color: var(--success); font-weight:700;">Simulation Finished!</span>`;
+                
+                // Calculate and record scores/progress
+                const avgWait = (simState.completed.reduce((s, p) => s + p.wt, 0) / totalCount).toFixed(2);
+                const avgTat = (simState.completed.reduce((s, p) => s + p.tat, 0) / totalCount).toFixed(2);
+                
+                document.getElementById('sim-log').innerHTML += `<br><strong>Average Waiting Time:</strong> ${avgWait} | <strong>Average Turnaround:</strong> ${avgTat}`;
+
+                if (typeof ProgressSystem !== 'undefined') {
+                    ProgressSystem.complete('os', 'CPU Scheduling');
+                }
+
+                if (simState.challengeMode) {
+                    if (parseFloat(avgWait) <= simState.optimalWait) {
+                        if (typeof GamificationSystem !== 'undefined') {
+                            GamificationSystem.unlock('beat_scheduler', 'Grandmaster Scheduler', 'Achieved optimal waiting time manually!', '👑');
+                        }
+                    } else {
+                        if (typeof GamificationSystem !== 'undefined') {
+                            GamificationSystem.unlock('challenged_scheduler', 'Kernel Recruit', 'Completed the CPU scheduling challenge.', '⚙️');
+                        }
+                    }
+                }
+
+                return false;
+            }
+
+            // A. Check for new arrivals at this exact timestamp
+            simState.processes.forEach(p => {
+                if (p.at === simState.time) {
+                    // Place in ready queue
+                    if (!simState.readyQueue.some(x => x.id === p.id) && p.ct === -1 && (!simState.running || simState.running.id !== p.id)) {
+                        simState.readyQueue.push(p);
+                        logStep(`Process <strong>${p.name}</strong> arrives and enters the ready queue.`);
+                    }
+                }
+            });
+
+            // B. If Challenge Mode is active, check if user needs to make a scheduling decision
+            if (simState.challengeMode) {
+                if (!simState.running && simState.readyQueue.length > 0) {
+                    // Pause simulation and wait for user click
+                    if (simState.isPlaying) {
+                        toggleSimPlay();
+                    }
+                    logStep(`<span style="color: var(--warning); font-weight:700;">[DECISION REQUIRED]</span> Time ${simState.time}: Select a process in the Ready Queue to schedule.`);
+                    updateUI();
+                    return true;
+                }
+            }
+
+            // C. Auto-Scheduler Dispatching logic
+            if (!simState.challengeMode) {
+                if (algo === 'FCFS') {
+                    if (!simState.running && simState.readyQueue.length > 0) {
+                        simState.readyQueue.sort((a, b) => a.at - b.at);
+                        simState.running = simState.readyQueue.shift();
+                        logStep(`Time ${simState.time}: CPU is idle. Dispatching <strong>${simState.running.name}</strong> (FCFS).`);
+                    }
+                } else if (algo === 'SJF') {
+                    if (!simState.running && simState.readyQueue.length > 0) {
+                        // Pick shortest burst job
+                        simState.readyQueue.sort((a, b) => a.rem - b.rem || a.at - b.at);
+                        simState.running = simState.readyQueue.shift();
+                        logStep(`Time ${simState.time}: SJF schedules <strong>${simState.running.name}</strong> (Burst remaining: ${simState.running.rem}).`);
+                    }
+                } else if (algo === 'RR') {
+                    // Check if quantum expired or no process running
+                    if (simState.running) {
+                        if (simState.quantumLeft <= 0 && simState.running.rem > 0) {
+                            logStep(`Time ${simState.time}: Time quantum expired for <strong>${simState.running.name}</strong>. Moving back to queue.`);
+                            simState.readyQueue.push(simState.running);
+                            simState.running = null;
+                        }
+                    }
+
+                    if (!simState.running && simState.readyQueue.length > 0) {
+                        simState.running = simState.readyQueue.shift();
+                        simState.quantumLeft = q;
+                        logStep(`Time ${simState.time}: Round Robin schedules <strong>${simState.running.name}</strong> for quantum size ${q}.`);
+                    }
+                }
+            }
+
+            // D. CPU Execution Tick
+            if (simState.running) {
+                const currentP = simState.running;
+                if (currentP.st === -1) currentP.st = simState.time;
+
+                // Add to Gantt chart segment
+                const len = simState.timeline.length;
+                if (len > 0 && simState.timeline[len - 1].pid === currentP.id && simState.timeline[len - 1].end === simState.time) {
+                    simState.timeline[len - 1].end++;
+                } else {
+                    simState.timeline.push({ pid: currentP.id, name: currentP.name, start: simState.time, end: simState.time + 1 });
+                }
+
+                currentP.rem--;
+                simState.quantumLeft--;
+
+                logStep(`Executing <strong>${currentP.name}</strong> (Remaining: ${currentP.rem}).`);
+
+                // Check completed
+                if (currentP.rem === 0) {
+                    currentP.ct = simState.time + 1;
+                    currentP.tat = currentP.ct - currentP.at;
+                    currentP.wt = currentP.tat - currentP.bt;
+                    simState.completed.push(currentP);
+                    simState.running = null;
+                    logStep(`<span style="color: var(--success); font-weight:700;">Process ${currentP.name} has finished execution at t=${currentP.ct}.</span>`);
+                }
+            } else {
+                // CPU is Idle
+                const len = simState.timeline.length;
+                if (len > 0 && simState.timeline[len - 1].pid === -1 && simState.timeline[len - 1].end === simState.time) {
+                    simState.timeline[len - 1].end++;
+                } else {
+                    simState.timeline.push({ pid: -1, name: 'IDLE', start: simState.time, end: simState.time + 1 });
+                }
+                logStep(`CPU is Idle.`);
+            }
+
+            // Increment waiting time for all processes waiting in Ready Queue
+            simState.readyQueue.forEach(p => {
+                p.wt++;
+            });
+
+            // Increment Clock
+            simState.time++;
+            document.getElementById('sim-clock').innerText = `Time: ${simState.time}`;
+
+            updateUI();
+            return true;
+        }
+
+        function handleQueueBlockClick(pid) {
+            if (!simState.challengeMode || simState.running) return;
+
+            const idx = simState.readyQueue.findIndex(p => p.id === pid);
+            if (idx !== -1) {
+                // Dispatch process
+                simState.running = simState.readyQueue.splice(idx, 1)[0];
+                logStep(`Time ${simState.time}: Manually dispatching <strong>${simState.running.name}</strong> to CPU.`);
+                
+                // Trigger step to execute immediately
+                stepSim();
+            }
+        }
+
+        function logStep(msg) {
+            const log = document.getElementById('sim-log');
+            log.innerHTML += `<br>• ${msg}`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function updateUI() {
+            // 1. CPU Box
+            const cpu = document.getElementById('sim-cpu-box');
+            if (simState.running) {
+                cpu.className = 'cpu-box busy';
+                cpu.style.backgroundColor = algoColors[simState.running.name];
+                cpu.innerHTML = `
+                    <span style="font-size: 1.2rem; font-weight: 800;">${simState.running.name}</span>
+                    <span style="font-size: 0.8rem; margin-top: 4px;">Remaining: ${simState.running.rem}</span>
+                `;
+            } else {
+                cpu.className = 'cpu-box';
+                cpu.style.backgroundColor = '';
+                cpu.innerHTML = `<span style="font-size: 1.5rem;"><i class="fas fa-microchip"></i></span><span style="font-size: 0.95rem; margin-top: 5px;">IDLE</span>`;
+            }
+
+            // 2. Ready Queue
+            const rq = document.getElementById('sim-ready-queue');
+            if (simState.readyQueue.length === 0) {
+                rq.innerHTML = `<span style="font-size: 0.85rem; color: var(--text-muted);">Queue is empty.</span>`;
+            } else {
+                rq.innerHTML = simState.readyQueue.map(p => `
+                    <div class="process-block" style="background: ${algoColors[p.name]}; cursor: ${simState.challengeMode ? 'pointer' : 'default'};" onclick="handleQueueBlockClick(${p.id})">
+                        <span>${p.name}</span>
+                        <span style="font-size: 0.65rem; opacity: 0.8; margin-top: 2px;">Rem: ${p.rem}</span>
+                    </div>
+                `).join('');
+            }
+
+            // 3. Completed
+            const comp = document.getElementById('sim-completed');
+            if (simState.completed.length === 0) {
+                comp.innerHTML = `<span style="font-size: 0.85rem; color: var(--text-muted);">None completed yet.</span>`;
+            } else {
+                comp.innerHTML = simState.completed.map(p => `
+                    <div class="process-block" style="background: #22c55e;">
+                        <span>${p.name}</span>
+                        <span style="font-size: 0.65rem; opacity: 0.8; margin-top: 2px;">Wait: ${p.wt}</span>
+                    </div>
+                `).join('');
+            }
+
+            // 4. Gantt Timeline Chart Rendering
+            const timeline = simState.timeline;
+            if (timeline.length === 0) {
+                document.getElementById('sim-gantt-timeline').innerHTML = '';
+                document.getElementById('sim-gantt-axis').innerHTML = '';
+                return;
+            }
+
+            const maxTime = Math.max(10, Math.max(...timeline.map(t => t.end)));
+            const pixelPerUnit = Math.max(25, Math.floor(650 / maxTime));
+
+            let ganttHTML = '';
+            timeline.forEach(segment => {
+                const width = (segment.end - segment.start) * pixelPerUnit;
+                ganttHTML += `<div class="gantt-block" style="width: ${width}px; background: ${algoColors[segment.name]};">
+                    ${segment.name !== 'IDLE' ? segment.name : '💤'}
+                </div>`;
+            });
+
+            document.getElementById('sim-gantt-timeline').style.width = `${maxTime * pixelPerUnit}px`;
+            document.getElementById('sim-gantt-timeline').innerHTML = ganttHTML;
+
+            let axisHTML = '';
+            for (let t = 0; t <= maxTime; t++) {
+                axisHTML += `<div class="gantt-tick" style="width: ${pixelPerUnit}px;">${t}</div>`;
+            }
+            document.getElementById('sim-gantt-axis').style.width = `${maxTime * pixelPerUnit}px`;
+            document.getElementById('sim-gantt-axis').innerHTML = axisHTML;
+        }
+
+        // Share visualizer inputs via serializing to link
+        function shareSession() {
+            if (typeof SharingSystem !== 'undefined') {
+                const procData = getTableProcesses();
+                if (!procData) return;
+                
+                const q = document.getElementById('quantum').value;
+                SharingSystem.copyLink({
+                    mode: activeMode,
+                    quantum: q,
+                    arrival: procData.at.join(','),
+                    burst: procData.bt.join(','),
+                    priorities: procData.pr.join(',')
+                }, document.getElementById('share-btn'));
+            }
+        }
+
+        window.onload = function () {
+            initTable();
+
+            // Load shared URL parameters
+            setTimeout(() => {
+                if (typeof SharingSystem !== 'undefined') {
+                    const params = SharingSystem.deserialize();
+                    if (params.arrival && params.burst) {
+                        const at = params.arrival.split(',').map(Number);
+                        const bt = params.burst.split(',').map(Number);
+                        const pr = params.priorities ? params.priorities.split(',').map(Number) : new Array(at.length).fill(1);
+                        
+                        // Populate Table
+                        const tbody = document.getElementById('process-tbody');
+                        tbody.innerHTML = '';
+                        pidCounter = 1;
+                        at.forEach((a, idx) => {
+                            addProcessRow(a, bt[idx], pr[idx]);
+                        });
+
+                        if (params.quantum) {
+                            document.getElementById('quantum').value = params.quantum;
+                        }
+
+                        if (params.mode === 'interactive') {
+                            switchMode('interactive');
+                        } else {
+                            switchMode('compare');
+                        }
+                    }
+                }
+            }, 150);
+        };
+    </script>
+
+    <script src="../../assets/js/core/algo-content.js"></script>
+    <script src='../../../assets/js/core/ui-extras.js'></script>
+    <script src="../../assets/js/brain-animation.js"></script>
+</body>
+
+</html>

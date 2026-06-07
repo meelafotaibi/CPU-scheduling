@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -8,6 +8,25 @@
     <link rel="icon" href="assets/img/logo.png" type="image/png">
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/responsive.css?v=mobile_fix_1">
+
+    <style>
+        /* Guide page: strict, no-movement card hover */
+        .glass-card {
+            transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+        }
+
+        .glass-card:hover {
+            transform: none !important;
+            border-color: rgba(99, 102, 241, 0.5) !important;
+            box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.2), 0 4px 20px rgba(99, 102, 241, 0.1) !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        /* Disable the shimmer sweep */
+        .glass-card::before {
+            display: none !important;
+        }
+    </style>
 
 </head>
 
@@ -105,7 +124,7 @@
             <section>
                 <h2 style="font-size: 1.8rem; margin-bottom: 16px;">❓ Need Help?</h2>
                 <p style="color: var(--text-muted); margin-bottom: 16px;">
-                    Visit our <a href="support.html" style="color: var(--primary); text-decoration: underline;">Support
+                    Visit our <a href="faq.html" style="color: var(--primary); text-decoration: underline;">FAQs
                         Page</a> for FAQs and contact information.
                 </p>
             </section>
@@ -127,7 +146,7 @@
                                 style="color: var(--text-muted);">Sorting</a></li>
                         <li style="margin-bottom: 8px;"><a href="roadmap.html"
                                 style="color: var(--text-muted);">Roadmap</a></li>
-                        <li style="margin-bottom: 8px;"><a href="guide.html" style="color: var(--text-muted);">Guide</a>
+                        <li style="margin-bottom: 8px;"><a href="faq.html" style="color: var(--text-muted);">FAQ</a>
                         </li>
                     </ul>
                 </div>

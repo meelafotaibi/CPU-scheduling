@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linked List Visualizer | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        #dsa-canvas {
+            width: 100%;
+            height: 400px;
+            /* background: #fff; removed */
+            border: 2px solid #eee;
+            border-radius: 12px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            align-items: center;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 80px;
+        }
+    </style>
+    
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+</head>
+
+<body><canvas id="brain-canvas"></canvas>
+    <nav>
+        <div class="container nav-content">
+            <a href="../../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../dsa.html">Back to DSA</a>
+            </div>
+        </div>
+    </nav>
+    <main class="container">
+        <header style="margin-top: 40px;">
+            <span class="btn-primary"
+                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; display: inline-block; margin-bottom: 10px;">Linear
+                DS</span>
+            <h1>Linked List Visualizer</h1>
+            <p>Interactive Singly Linked List. Add and remove nodes to see pointer updates.</p>
+        </header>
+
+        <div class="visualizer-layout">
+            <div class="glass-card" id="visualizer-container" style="padding: 30px; margin-top: 30px;">
+                <canvas id="dsa-canvas"></canvas>
+                <div class="controls">
+                    <input type="number" id="node-val" placeholder="Val" value="10" style="width:70px">
+                    <input type="number" id="node-idx" placeholder="Idx" value="0" style="width:70px">
+                    <button class="btn btn-primary" onclick="addNode()">Add</button>
+                    <button class="btn" onclick="insertAt()" title="Insert at Index"><i
+                            class="fas fa-level-down-alt"></i>
+                        Ins</button>
+                    <button class="btn" onclick="removeNode()" title="Remove Head"><i class="fas fa-minus"></i></button>
+                    <button class="btn" onclick="removeAt()" title="Remove at Index"><i class="fas fa-cut"></i></button>
+                    <button class="btn" onclick="reverseList()" title="Reverse List"><i class="fas fa-random"></i>
+                        Rev</button>
+                    <button class="btn" id="grid-toggle-btn" title="Toggle Grid"><i
+                            class="fas fa-border-all"></i></button>
+                    <button class="btn btn-secondary"
+                        onclick="shareScreenshot('visualizer-container', 'Linked List')">📸 Share</button>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <!-- Injected via ui-extras.js -->
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 AlgoVisual Hub — Created with ❤️ by Meelo</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../assets/js/core/dsa-engine.js"></script>
+    <script src="../../assets/js/algos/dsa/linked-list.js"></script>
+    <script>
+        const canvas = document.getElementById('dsa-canvas');
+        const engine = new DSAEngine('dsa-canvas');
+        window.algo = new LinkedListAlgo(engine);
+        const list = window.algo; // Backward compatibility
+
+        // Override draw
+        engine.draw = () => list.draw();
+
+        function addNode() {
+            const val = document.getElementById('node-val').value || Math.floor(Math.random() * 100);
+            list.add(val);
+        }
+
+        function insertAt() {
+            const val = document.getElementById('node-val').value;
+            const idx = parseInt(document.getElementById('node-idx').value);
+            list.insertAt(idx, val);
+        }
+
+        function removeNode() {
+            list.remove();
+        }
+
+        function removeAt() {
+            const idx = parseInt(document.getElementById('node-idx').value);
+            list.removeAt(idx);
+        }
+
+        function reverseList() {
+            list.reverse();
+        }
+
+        window.addEventListener('load', () => {
+            list.add(10);
+            list.add(20);
+            list.add(30);
+        });
+    </script>
+
+    <script src='../../assets/js/core/ui-extras.js'></script>
+<script src="../../assets/js/brain-animation.js"></script></body>
+
+</html>
+

@@ -29,6 +29,13 @@ class DiskEngine {
         resize();
     }
 
+    reset() {
+        this.requests = [];
+        this.path = [];
+        this.maxSteps = 0;
+        this.draw();
+    }
+
     setData(requests, initialHead, path, maxSteps) {
         this.requests = requests;
         this.path = path; // Current path subset
@@ -135,4 +142,3 @@ class DiskEngine {
         // Optional real-time marker
     }
 }
-Riverside

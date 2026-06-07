@@ -169,9 +169,78 @@
             letter-spacing: 0.05em;
         }
 
-        #paypal-container-JWZWSZ7JRYMPE {
+        .paypal-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
             width: 100%;
             max-width: 400px;
+            padding: 16px 24px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            border: 1px solid rgba(255, 196, 57, 0.4);
+            background: rgba(255, 196, 57, 0.08);
+            color: #ffffff;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.24), inset 0 1px 0 rgba(255,255,255,0.1);
+            backdrop-filter: blur(18px) saturate(150%);
+            -webkit-backdrop-filter: blur(18px) saturate(150%);
+            transition: all 0.2s ease;
+            text-decoration: none;
+            box-sizing: border-box;
+        }
+
+        .paypal-btn:hover {
+            background: rgba(255, 196, 57, 0.18);
+            border-color: rgba(255, 196, 57, 0.8);
+            box-shadow: 0 14px 34px rgba(255, 196, 57, 0.2), inset 0 1px 0 rgba(255,255,255,0.2);
+            transform: translateY(-1px);
+        }
+
+        .usd-notice {
+            background: rgba(245, 158, 11, 0.05);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-left: 4px solid #f59e0b;
+            color: #fef08a;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .usd-notice .notice-icon {
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        .usd-notice strong {
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        .sar-symbol-inline {
+            height: 0.95em;
+            width: auto;
+            vertical-align: -0.12em;
+            display: inline-block;
+            fill: #f59e0b;
+            margin: 0 2px;
+        }
+
+        .sar-symbol {
+            height: 0.9em;
+            width: auto;
+            vertical-align: -0.1em;
+            display: inline-block;
+            fill: currentColor;
+            margin-left: 2px;
         }
 
         .paytabs-btn {
@@ -255,6 +324,7 @@
                     <a href="index.html">Home</a>
                     <a href="roadmap.html">Roadmap</a>
                     <a href="contact.html">Contact</a>
+                    <a href="#faq">FAQ</a>
                     <a href="index.html" class="support-header-cta">💙 Support</a>
                 </div>
             </div>
@@ -280,22 +350,30 @@
                 <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 6px;">Choose an Amount</h2>
                 <p style="color: var(--text-muted); margin-bottom: 4px; font-size: 0.9rem;">One-time. No recurring billing. No account required.</p>
 
+                <!-- USD Processing Notice -->
+                <div class="usd-notice">
+                    <span class="notice-icon">💡</span>
+                    <span class="notice-text">
+                        Payments are processed in <strong>USD ($)</strong>. For reference, <strong>$20</strong> is equal to <strong>75 <svg class="sar-symbol-inline" viewBox="0 0 1124.14 1256.39"><path d="M699.62,1113.02h0c-20.06,44.48-33.32,92.75-38.4,143.37l424.51-90.24c20.06-44.47,33.31-92.75,38.4-143.37l-424.51,90.24Z"/><path d="M1085.73,895.8c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.33v-135.2l292.27-62.11c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.27V66.13c-50.67,28.45-95.67,66.32-132.25,110.99v403.35l-132.25,28.11V0c-50.67,28.44-95.67,66.32-132.25,110.99v525.69l-295.91,62.88c-20.06,44.47-33.33,92.75-38.42,143.37l334.33-71.05v170.26l-358.3,76.14c-20.06,44.47-33.32,92.75-38.4,143.37l375.04-79.7c30.53-6.35,56.77-24.4,73.83-49.24l68.78-101.97v-.02c7.14-10.55,11.3-23.27,11.3-36.97v-149.98l132.25-28.11v270.4l424.53-90.28Z"/></svg> SAR</strong> (official Saudi Riyal).
+                    </span>
+                </div>
+
                 <div class="amount-grid">
                     <div class="amount-card selected" onclick="selectAmount(this, 5)">
-                        <div class="amount-value">5 SAR</div>
-                        <div class="amount-label">~$1.3</div>
+                        <div class="amount-value">$5</div>
+                        <div class="amount-label">~18.75 <svg class="sar-symbol" viewBox="0 0 1124.14 1256.39"><path d="M699.62,1113.02h0c-20.06,44.48-33.32,92.75-38.4,143.37l424.51-90.24c20.06-44.47,33.31-92.75,38.4-143.37l-424.51,90.24Z"/><path d="M1085.73,895.8c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.33v-135.2l292.27-62.11c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.27V66.13c-50.67,28.45-95.67,66.32-132.25,110.99v403.35l-132.25,28.11V0c-50.67,28.44-95.67,66.32-132.25,110.99v525.69l-295.91,62.88c-20.06,44.47-33.33,92.75-38.42,143.37l334.33-71.05v170.26l-358.3,76.14c-20.06,44.47-33.32,92.75-38.4,143.37l375.04-79.7c30.53-6.35,56.77-24.4,73.83-49.24l68.78-101.97v-.02c7.14-10.55,11.3-23.27,11.3-36.97v-149.98l132.25-28.11v270.4l424.53-90.28Z"/></svg></div>
                     </div>
                     <div class="amount-card" onclick="selectAmount(this, 10)">
-                        <div class="amount-value">10 SAR</div>
-                        <div class="amount-label">~$2.7</div>
+                        <div class="amount-value">$10</div>
+                        <div class="amount-label">~37.50 <svg class="sar-symbol" viewBox="0 0 1124.14 1256.39"><path d="M699.62,1113.02h0c-20.06,44.48-33.32,92.75-38.4,143.37l424.51-90.24c20.06-44.47,33.31-92.75,38.4-143.37l-424.51,90.24Z"/><path d="M1085.73,895.8c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.33v-135.2l292.27-62.11c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.27V66.13c-50.67,28.45-95.67,66.32-132.25,110.99v403.35l-132.25,28.11V0c-50.67,28.44-95.67,66.32-132.25,110.99v525.69l-295.91,62.88c-20.06,44.47-33.33,92.75-38.42,143.37l334.33-71.05v170.26l-358.3,76.14c-20.06,44.47-33.32,92.75-38.4,143.37l375.04-79.7c30.53-6.35,56.77-24.4,73.83-49.24l68.78-101.97v-.02c7.14-10.55,11.3-23.27,11.3-36.97v-149.98l132.25-28.11v270.4l424.53-90.28Z"/></svg></div>
                     </div>
                     <div class="amount-card" onclick="selectAmount(this, 20)">
-                        <div class="amount-value">20 SAR</div>
-                        <div class="amount-label">~$5.3</div>
+                        <div class="amount-value">$20</div>
+                        <div class="amount-label">75.00 <svg class="sar-symbol" viewBox="0 0 1124.14 1256.39"><path d="M699.62,1113.02h0c-20.06,44.48-33.32,92.75-38.4,143.37l424.51-90.24c20.06-44.47,33.31-92.75,38.4-143.37l-424.51,90.24Z"/><path d="M1085.73,895.8c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.33v-135.2l292.27-62.11c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.27V66.13c-50.67,28.45-95.67,66.32-132.25,110.99v403.35l-132.25,28.11V0c-50.67,28.44-95.67,66.32-132.25,110.99v525.69l-295.91,62.88c-20.06,44.47-33.33,92.75-38.42,143.37l334.33-71.05v170.26l-358.3,76.14c-20.06,44.47-33.32,92.75-38.4,143.37l375.04-79.7c30.53-6.35,56.77-24.4,73.83-49.24l68.78-101.97v-.02c7.14-10.55,11.3-23.27,11.3-36.97v-149.98l132.25-28.11v270.4l424.53-90.28Z"/></svg></div>
                     </div>
                     <div class="amount-card custom-card" onclick="this.querySelector('input').focus()">
                         <input type="number" id="custom-amount" placeholder="Custom" min="1" oninput="selectCustom(this)">
-                        <div class="amount-label">SAR</div>
+                        <div class="amount-label">USD ($)</div>
                     </div>
                 </div>
 
@@ -305,10 +383,17 @@
                     <span>Pay Securely <span style="font-size: 0.8rem; opacity: 0.6;">(Visa · Mada · Apple Pay · Google Pay — Coming Soon)</span></span>
                 </button>
 
-                <!-- PayPal Hosted Button -->
+                <!-- PayPal Button -->
                 <div class="paypal-section">
                     <h3>or pay with PayPal</h3>
-                    <div id="paypal-container-JWZWSZ7JRYMPE"></div>
+                    <button class="paypal-btn" onclick="handlePayPal()">
+                        <svg class="paypal-icon" viewBox="0 0 24 24" width="20" height="20" style="vertical-align: middle;">
+                            <path fill="#003087" d="M20.08 6.64c.2 1-.03 2.1-.67 2.96-.65.86-1.63 1.4-2.73 1.5l-4.72.63c-.45.06-.8.4-.88.85l-1.12 6.47c-.07.41-.43.72-.85.72H6.62c-.52 0-.9-.47-.8-.98l2.54-14.7C8.45 3.6 8.9 3.2 9.4 3.2h5.5c1.47 0 2.7.38 3.5 1.1.75.7 1.1 1.5 1.18 2.34z"/>
+                            <path fill="#0079C1" d="M18.72 8.3c.2 1-.03 2.1-.67 2.96-.65.86-1.63 1.4-2.73 1.5l-4.72.63c-.45.06-.8.4-.88.85l-1.12 6.47c-.07.41-.43.72-.85.72H5.26c-.52 0-.9-.47-.8-.98l2.54-14.7c.07-.41.43-.72.85-.72h5.5c1.47 0 2.7.38 3.5 1.1.75.7 1.1 1.5 1.18 2.34z"/>
+                            <path fill="#00457C" d="M15.54 11.23L14.42 17.7c-.07.41-.43.72-.85.72H10.5c-.52 0-.9-.47-.8-.98l1.12-6.47c.07-.41.43-.72.85-.72h2.3c.67 0 1.25.35 1.57.98z"/>
+                        </svg>
+                        <span>Pay with PayPal</span>
+                    </button>
                 </div>
 
                 <p style="text-align: center; color: var(--text-muted); font-size: 0.82rem; margin-top: 20px;">
@@ -387,6 +472,7 @@
                 <p>&copy; 2025 AlgoVisual Hub — Free forever, built with 💙 by Meelo</p>
                 <div style="display: flex; gap: 24px; justify-content: center; margin-top: 12px; flex-wrap: wrap;">
                     <a href="index.html" style="color: var(--text-muted);">Home</a>
+                    <a href="faq.html" style="color: var(--text-muted);">FAQ</a>
                     <a href="privacy.html" style="color: var(--text-muted);">Privacy</a>
                     <a href="terms.html" style="color: var(--text-muted);">Terms</a>
                     <a href="contact.html" style="color: var(--text-muted);">Contact</a>
@@ -398,12 +484,18 @@
     <script src="assets/js/loader.js"></script>
     <script src="assets/js/brain-animation.js"></script>
 
-    <!-- PayPal SDK -->
-    <script src="https://www.paypal.com/sdk/js?client-id=BAAMaTWFlA4yDCFfQ6fdB7MsJwfaNmHSq8PfqVYIXiG0IKGza_SqzUyCjMz-D5gvMyyDYgLk_9yVsiXFS4&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
     <script>
-        paypal.HostedButtons({
-            hostedButtonId: "JWZWSZ7JRYMPE",
-        }).render("#paypal-container-JWZWSZ7JRYMPE");
+        function handlePayPal() {
+            const baseUrl = "https://www.paypal.com/paypalme/Melioronic";
+            const queryParams = "v=1&utm_source=unp&utm_medium=email&utm_campaign=RT000481&utm_unptid=93b981fa-6059-11f1-8108-1565608a0a10&ppid=RT000481&cnac=SA&rsta=ar_EG%28ar-SA%29&cust=P6CHE9P497JC6&unptid=93b981fa-6059-11f1-8108-1565608a0a10&calc=f76856653b2fb&unp_tpcid=ppme-social-business-profile-created&page=main%3Aemail%3ART000481&pgrp=main%3Aemail&e=cl&mchn=em&s=ci&mail=sys&appVersion=1.415.0&tenant_name=PAYPAL&xt=175543%2C104038%2C180658&link_ref=paypalme_melioronic";
+            
+            let url = baseUrl;
+            if (typeof selectedAmount === 'number' && selectedAmount > 0) {
+                url += `/${selectedAmount}USD`;
+            }
+            url += `?${queryParams}`;
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
 
         let selectedAmount = 5;
 

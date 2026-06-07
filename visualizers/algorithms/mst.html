@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MST Visualizer (Prim's) | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .visualizer-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        #graph-canvas {
+            width: 100%;
+            height: 500px;
+
+            border: 2px solid #eee;
+            border-radius: 12px;
+            cursor: crosshair;
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .stat-card {
+            padding: 15px;
+            /* background: #f8f9fa; removed for glass-card compatibility */
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-val {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+    </style>
+    
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+</head>
+
+<body><canvas id="brain-canvas"></canvas>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="../../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../algorithms.html">Back to Algorithms</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 40px;">
+            <span class="btn-primary"
+                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Graph
+                Algorithms</span>
+            <h1>Minimum Spanning Tree (Prim's)</h1>
+            <p>Find the subset of edges that connects all vertices with the minimum total edge weight.</p>
+        </header>
+
+        <div class="visualizer-layout">
+            <div class="glass-card" id="visualizer-container" style="padding: 30px;">
+                <canvas id="graph-canvas"></canvas>
+
+                <div style="margin-top: 25px; display: flex; justify-content: space-between;">
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Run</button>
+                        <button class="btn" id="next-btn" style="background: var(--dark); color: white;">Next
+                            Step</button>
+                        <button class="btn" id="reset-btn"
+                            style="border: 1px solid var(--accent); color: var(--accent);">Reset</button>
+                        <button class="btn btn-secondary"
+                            onclick="shareScreenshot('visualizer-container', 'MST - Prims')">📸 Share</button>
+                    </div>
+                </div>
+                <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">Click to add nodes, drag from node to node
+                    to add weighted edges.</p>
+            </div>
+
+            <div class="side-panel">
+                <div class="glass-card" style="padding: 20px;">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-val" id="total-weight">0</span>
+                            <small>Total MST Weight</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>📜 Execution Log</h4>
+                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 10px; min-height: 50px;">Ready.
+                        Build a graph or use a preset, then click Run.</p>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>🛠️ HW / Manual Mode</h4>
+                    <button class="btn" onclick="loadMstPreset()"
+                        style="width: 100%; border: 1px solid #ddd; font-size: 0.9rem;">Load Example Graph</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../../assets/js/core/graph-engine.js"></script>
+    <script src="../../assets/js/core/playback.js"></script>
+    <script src="../../assets/js/algos/algorithms/prims.js"></script>
+    <script>
+        window.engine = new GraphEngine('graph-canvas', { isDirected: false });
+        window.ui = {
+            updateStatus: (t) => { document.getElementById('explanation-text').innerText = t; },
+            updateStats: (w) => { document.getElementById('total-weight').innerText = w; }
+        };
+        const ui = window.ui;
+        const playback = new Playback(() => window.algo.nextStep());
+        window.playback = playback;
+        const engine = window.engine;
+        window.algo = new PrimsAlgo(window.engine, playback, ui);
+        const algo = window.algo;
+
+        window.engine.onNodeClick = (nodeId) => {
+            if (!window.algo.complete && window.algo.visited.size === 0) {
+                window.algo.start(nodeId);
+                playback.play();
+            }
+        };
+
+        document.getElementById('play-btn').onclick = () => {
+            if (engine.nodes.size === 0) return alert("Please add nodes first");
+            const startNode = engine.nodes.keys().next().value;
+            algo.start(startNode);
+            playback.play();
+        };
+
+        document.getElementById('next-btn').onclick = () => {
+            if (engine.nodes.size === 0) return;
+            if (algo.visited.size === 0) algo.start(engine.nodes.keys().next().value);
+            else algo.nextStep();
+        };
+
+        document.getElementById('reset-btn').onclick = () => {
+            algo.reset();
+            playback.stop();
+            engine.draw();
+        };
+
+        function loadMstPreset() {
+            engine.clear();
+            engine.addNode(100, 100); // 0
+            engine.addNode(300, 100); // 1
+            engine.addNode(500, 100); // 2
+            engine.addNode(100, 300); // 3
+            engine.addNode(300, 300); // 4
+            engine.addNode(500, 300); // 5
+
+            engine.addEdge(0, 1, 4);
+            engine.addEdge(1, 2, 3);
+            engine.addEdge(0, 3, 2);
+            engine.addEdge(1, 4, 1);
+            engine.addEdge(2, 5, 5);
+            engine.addEdge(3, 4, 3);
+            engine.addEdge(4, 5, 2);
+            algo.reset();
+        }
+
+        window.onload = () => {
+            loadMstPreset();
+        };
+    </script>
+
+    <script src='../../assets/js/core/ui-extras.js'></script>
+<script src="../../assets/js/brain-animation.js"></script></body>
+
+</html>
+

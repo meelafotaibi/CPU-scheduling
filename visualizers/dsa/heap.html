@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Heap Visualizer | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .visualizer-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        #heap-canvas {
+            width: 100%;
+            height: 550px;
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .heap-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .mode-toggle {
+            display: flex;
+            /* background: #f1f3f5; removed */
+            padding: 5px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+        }
+
+        .mode-btn.active {
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            color: var(--primary);
+        }
+    </style>
+
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+</head>
+
+<body><canvas id="brain-canvas"></canvas>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="../../index.html" class="logo">AlgoVisual Hub</a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../dsa.html">Back to DSA</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 40px;">
+            <span class="btn-primary"
+                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Priority
+                Queues</span>
+            <h1>Binary Heap Visualizer</h1>
+            <p>Visualize how a Binary Heap maintains the Max/Min property through insertion and extraction.</p>
+        </header>
+
+        <div class="visualizer-layout">
+            <div class="glass-card" id="visualizer-container" style="padding: 30px;">
+                <div class="mode-toggle">
+                    <button class="mode-btn active" id="max-btn">Max Heap</button>
+                    <button class="mode-btn" id="min-btn">Min Heap</button>
+                </div>
+
+                <canvas id="heap-canvas"></canvas>
+
+                    <div class="heap-controls">
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="heap-input" value="10"
+                            style="width: 70px; padding: 10px; border-radius: 8px;">
+                        <button class="btn btn-primary" id="insert-btn"><i class="fas fa-plus"></i> Insert</button>
+                    </div>
+                    <button class="btn" id="extract-btn" style="background: var(--dark); color: white;"><i
+                            class="fas fa-minus"></i> Extract Root</button>
+                    <button class="btn" id="next-btn"
+                        style="border: 1px solid var(--accent); color: var(--accent);">Next Step</button>
+                    <button class="btn" id="reset-btn" style="border: 1px solid var(--glass-border);">Clear</button>
+                    <button class="btn btn-secondary"
+                        onclick="shareScreenshot('visualizer-container', 'Binary Heap')">📸 Share</button>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>📜 Execution Log</h4>
+                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 10px; min-height: 50px;">Input a
+                        value and click Insert.</p>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>🏗️ Array Mapping</h4>
+                    <p style="font-size: 0.8rem; color: #666; line-height: 1.5;">
+                        A Binary Heap is a <em>complete tree</em> stored in an array.<br>
+                        <strong>Left Child:</strong> 2 * i + 1<br>
+                        <strong>Right Child:</strong> 2 * i + 2<br>
+                        <strong>Parent:</strong> floor((i - 1) / 2)
+                    </p>
+                </div>
+
+                <div class="glass-card" style="padding: 20px;">
+                    <h4>💡 Complexity</h4>
+                    <ul style="font-size: 0.85rem; color: var(--text-muted); padding-left: 20px;">
+                        <li><strong>Insert:</strong> O(log n)</li>
+                        <li><strong>Delete:</strong> O(log n)</li>
+                        <li><strong>Get Top:</strong> O(1)</li>
+                        <li><strong>Build:</strong> O(n)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../../assets/js/core/heap-engine.js"></script>
+    <script src="../../assets/js/core/playback.js"></script>
+    <script src="../../assets/js/algos/dsa/heap-algo.js"></script>
+    <script>
+        const engine = new HeapEngine('heap-canvas');
+        window.ui = {
+            updateStatus: (t) => document.getElementById('explanation-text').innerText = t
+        };
+        const ui = window.ui;
+        const playback = new Playback(() => window.algo.nextStep());
+        window.playback = playback;
+        window.algo = new HeapAlgo(engine, playback, ui);
+
+        document.getElementById('max-btn').onclick = () => {
+            window.algo.setMode(true);
+            document.getElementById('max-btn').classList.add('active');
+            document.getElementById('min-btn').classList.remove('active');
+            ui.updateStatus("Switched to Max Heap mode.");
+        };
+
+        document.getElementById('min-btn').onclick = () => {
+            window.algo.setMode(false);
+            document.getElementById('min-btn').classList.add('active');
+            document.getElementById('max-btn').classList.remove('active');
+            ui.updateStatus("Switched to Min Heap mode.");
+        };
+
+        document.getElementById('insert-btn').onclick = () => {
+            const val = parseInt(document.getElementById('heap-input').value);
+            if (isNaN(val)) return;
+            playback.stop();
+            window.algo.insert(val);
+            playback.play();
+        };
+
+        document.getElementById('extract-btn').onclick = () => {
+            playback.stop();
+            window.algo.extract();
+            playback.play();
+        };
+
+        document.getElementById('next-btn').onclick = () => {
+            window.algo.nextStep();
+        };
+
+        document.getElementById('reset-btn').onclick = () => {
+            playback.stop();
+            window.algo.reset();
+            engine.setHeap([]);
+            ui.updateStatus("Heap cleared.");
+        };
+
+        window.onload = () => {
+            engine.setHeap([50, 30, 20, 15, 10, 8, 16]);
+            window.algo.reset();
+        };
+    </script>
+
+    <script src='../../assets/js/core/ui-extras.js'></script>
+<script src="../../assets/js/brain-animation.js"></script></body>
+
+</html>
+

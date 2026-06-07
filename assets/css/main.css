@@ -70,6 +70,7 @@
 
     /* Deep Space Gradients */
     --gradient-cosmic: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+    --gradient-primary: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
     --gradient-glow: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
     --gradient-tri-tone: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
     --gradient-text: linear-gradient(135deg, #f8fafc 0%, #94a3b8 100%);
@@ -133,8 +134,21 @@ h3 {
     background-clip: text;
     -webkit-text-fill-color: transparent;
     display: inline-block;
+    vertical-align: middle;
     filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.3));
     font-weight: 900;
+}
+
+/* Align category tags next to headings vertically centered */
+.page-hero span.btn-primary,
+header span.btn-primary,
+.premium-header span.btn-primary,
+main.container span.btn-primary {
+    vertical-align: middle !important;
+    margin-bottom: 0 !important;
+    margin-right: 12px !important;
+    margin-top: 0 !important;
+    display: inline-block !important;
 }
 
 #brain-canvas {
@@ -271,8 +285,8 @@ main {
 
 /* Navigation */
 nav {
-    position: fixed;
-    /* Fixed nav for better UX */
+    position: sticky;
+    /* Sticky nav for better UX & auto-spacing */
     top: 0;
     width: 100%;
     z-index: 1000;
@@ -581,7 +595,7 @@ a.btn-primary:hover,
     border-radius: 20px;
     padding: 32px;
     box-shadow: var(--glass-shadow);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     color: var(--text);
     position: relative;
     overflow: hidden;
@@ -612,7 +626,7 @@ a.btn-primary:hover,
 }
 
 .glass-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-2px);
     box-shadow: var(--shadow-xl), var(--shadow-glow);
     border-color: var(--primary);
     background: rgba(255, 255, 255, 0.08);
@@ -1089,44 +1103,158 @@ footer {
     grid-template-columns: 1fr !important;
 }
 
-/* Card catalog alignment: keep tags and actions fixed to the right edge. */
+/* Card catalog alignment */
 #algo-grid > .glass-card {
     display: flex !important;
     flex-direction: column;
     align-items: stretch;
+    justify-content: flex-start;
 }
 
-#algo-grid > .glass-card > span.btn-primary:first-child {
-    align-self: flex-end;
-    margin-left: auto !important;
-    margin-bottom: 20px !important;
-    width: fit-content;
-    max-width: 100%;
-    text-align: center;
+/* Card sizing: wider and square-like, tall enough to contain all content */
+#algo-grid:not(.list-view) > .glass-card {
+    min-height: 330px;
+    padding: 28px 24px !important;
 }
 
-#algo-grid > .glass-card > h2,
-#algo-grid > .glass-card > p {
+/* Grid layout with 3-4 columns */
+#algo-grid {
+    gap: 24px !important;
+}
+
+#algo-grid.grid-4:not(.list-view) {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+}
+
+@media (min-width: 1400px) {
+    #algo-grid.grid-4:not(.list-view) {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+@media (min-width: 900px) and (max-width: 1399px) {
+    #algo-grid.grid-4:not(.list-view) {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+@media (max-width: 899px) {
+    #algo-grid.grid-4:not(.list-view) {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+    }
+}
+
+#algo-grid > .glass-card > h2 {
+    font-size: 1.35rem !important;
+    margin-bottom: 12px !important;
+    line-height: 1.3 !important;
     width: 100%;
 }
 
+#algo-grid > .glass-card > p {
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+    margin-bottom: 0 !important;
+    width: 100%;
+}
+
+/* Action buttons container */
 #algo-grid > .glass-card > div:last-child {
     display: flex !important;
-    justify-content: flex-end !important;
+    justify-content: center !important; /* Center buttons horizontally */
     align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
+    gap: 12px !important;
+    flex-wrap: nowrap !important; /* Force side-by-side on desktop */
     width: 100%;
     margin-top: auto !important;
-    padding-top: 30px;
+    padding-top: 20px;
 }
 
 #algo-grid > .glass-card > div:last-child > .btn {
-    flex: 0 0 auto;
+    flex: 0 0 auto !important;
+    padding: 14px 32px !important; /* A bit bigger button padding */
+    font-size: 0.98rem !important;  /* Slightly larger text size */
+    border-radius: 12px !important;
+    white-space: nowrap !important;
+}
+
+@media (max-width: 600px) {
+    #algo-grid > .glass-card > div:last-child {
+        flex-wrap: wrap !important;
+    }
+    #algo-grid > .glass-card > div:last-child > .btn {
+        flex: 1 1 auto !important;
+    }
+}
+
+/* Layout properties for card badges */
+.card-badge,
+#algo-grid > .glass-card > span.btn-primary:first-child {
+    align-self: flex-start !important;
+    margin: 0 0 16px 0 !important;
+    width: fit-content;
+    max-width: 100%;
+    text-align: left;
+    display: inline-block !important;
+}
+
+/* Layout properties for header tags only */
+.page-hero span.btn-primary,
+header span.btn-primary,
+.premium-header span.btn-primary,
+main.container span.btn-primary {
+    vertical-align: middle !important;
+    margin-bottom: 0 !important;
+    margin-right: 12px !important;
+    margin-top: 0 !important;
+    display: inline-block !important;
+}
+
+/* Glassy style for all badges and tags (excluding graphics) */
+.card-badge,
+#algo-grid > .glass-card > span.btn-primary:first-child,
+.page-hero span.btn-primary:not(.cg-card *),
+header span.btn-primary:not(.cg-card *),
+.premium-header span.btn-primary:not(.cg-card *),
+main.container span.btn-primary:not(.cg-card *),
+.section-tag:not(.cg-card *):not(.cg-roadmap-cta *) {
+    font-size: 0.8rem !important;
+    padding: 6px 16px !important;
+    border-radius: 20px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    font-weight: 700 !important;
+    cursor: default !important;
+    
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #e2e8f0 !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+    
+    background-clip: padding-box !important;
+    -webkit-background-clip: padding-box !important;
+    filter: none !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+/* Pink glow hover state for all tags (excluding graphics) */
+.card-badge:hover,
+#algo-grid > .glass-card > span.btn-primary:first-child:hover,
+.page-hero span.btn-primary:not(.cg-card *):hover,
+header span.btn-primary:not(.cg-card *):hover,
+.premium-header span.btn-primary:not(.cg-card *):hover,
+main.container span.btn-primary:not(.cg-card *):hover,
+.section-tag:not(.cg-card *):not(.cg-roadmap-cta *):hover {
+    transform: translateY(-2px) !important;
+    background: rgba(236, 72, 153, 0.18) !important;
+    border-color: rgba(236, 72, 153, 0.6) !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 25px rgba(236, 72, 153, 0.35), 0 0 15px rgba(236, 72, 153, 0.2) !important;
 }
 
 #algo-grid.list-view > .glass-card {
-    min-height: 220px;
+    min-height: unset;
+    height: auto;
 }
 
 .cg-card {
