@@ -110,6 +110,52 @@
             white-space: pre-wrap;
             box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
         }
+        .glut-context-menu {
+            position: fixed;
+            background: #080812;
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 15px rgba(139, 92, 246, 0.2);
+            border-radius: 8px;
+            padding: 6px 0;
+            z-index: 1000;
+            display: none;
+            min-width: 170px;
+        }
+        .glut-context-menu-item {
+            padding: 8px 16px;
+            color: #ccc;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+        .glut-context-menu-item:hover {
+            background: rgba(139, 92, 246, 0.2);
+            color: #fff;
+        }
+        .glut-context-menu-item .submenu-arrow {
+            font-size: 0.6rem;
+            color: #aaa;
+        }
+        .glut-context-submenu {
+            position: absolute;
+            left: 100%;
+            top: 0;
+            background: #080812;
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border-radius: 8px;
+            padding: 6px 0;
+            display: none;
+            min-width: 140px;
+            z-index: 1001;
+        }
+        .glut-context-menu-item:hover > .glut-context-submenu {
+            display: block;
+        }
         .slider-group {
             display: grid;
             grid-template-columns: 110px 1fr 50px;
@@ -389,6 +435,14 @@
         // For storing drawn offscreen canvas state
         let offscreenTeapot;
 
+        // Interactive states simulating GLUT functions
+        let drawStyle = 'wireframe'; // 'wireframe', 'solid', 'points'
+        let passiveX = -1, passiveY = -1;
+        let dragPoints = []; // trail points of active dragging
+        let isDragging = false;
+        let keypressIndicator = "";
+        let keypressTimeout = null;
+
         window.addEventListener('load', () => {
             canvasBack = document.getElementById('cg-canvas-back');
             ctxBack = canvasBack.getContext('2d');
@@ -456,6 +510,10 @@
                 document.getElementById('stat-fps').innerText = `${fps} FPS`;
             }
 
+            // Age active drag points (glutMotionFunc trail)
+            dragPoints.forEach(p => p.age--);
+            dragPoints = dragPoints.filter(p => p.age > 0);
+
             // glutTimerFunc simulation
             if (timestamp - lastTimerTick > timerInterval) {
                 lastTimerTick = timestamp;
@@ -499,7 +557,7 @@
 
             if (isSingle) {
                 if (phase === 0) {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clears to purple, creating flash
+                    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clears to transparent, creating flash
                     return;
                 }
             } else {
@@ -517,10 +575,20 @@
             ctx.strokeStyle = activeColor;
             ctx.lineWidth = 2;
 
+            if (drawStyle === 'points') {
+                ctx.setLineDash([3, 7]);
+            } else {
+                ctx.setLineDash([]);
+            }
+
             // 1. Body
             if (drawAll || phase >= 1) {
                 ctx.beginPath();
                 ctx.arc(xc, yc, size, 0, Math.PI * 2);
+                if (drawStyle === 'solid') {
+                    ctx.fillStyle = hexToRgba(activeColor, 0.15);
+                    ctx.fill();
+                }
                 ctx.stroke();
             }
 
@@ -528,6 +596,10 @@
             if (drawAll || phase >= 2) {
                 ctx.beginPath();
                 ctx.arc(xc, yc - size - 15, 8, 0, Math.PI * 2);
+                if (drawStyle === 'solid') {
+                    ctx.fillStyle = hexToRgba(activeColor, 0.15);
+                    ctx.fill();
+                }
                 ctx.stroke();
             }
 
@@ -537,6 +609,10 @@
                 ctx.moveTo(xc + size - 10, yc - size / 4);
                 ctx.lineTo(xc + size + 25 + Math.cos(angle)*5, yc - size / 2 + Math.sin(angle)*5);
                 ctx.lineTo(xc + size + 15, yc + size / 4);
+                if (drawStyle === 'solid') {
+                    ctx.fillStyle = hexToRgba(activeColor, 0.15);
+                    ctx.fill();
+                }
                 ctx.stroke();
             }
 
@@ -544,8 +620,14 @@
             if (drawAll || phase >= 4) {
                 ctx.beginPath();
                 ctx.arc(xc - size - 10, yc, size / 2, -Math.PI / 2, Math.PI / 2);
+                if (drawStyle === 'solid') {
+                    ctx.fillStyle = hexToRgba(activeColor, 0.15);
+                    ctx.fill();
+                }
                 ctx.stroke();
             }
+
+            ctx.setLineDash([]); // Reset dash for overlays
 
             // Draw window border overlay inside the viewport
             ctx.strokeStyle = 'rgba(255,255,255,0.08)';
@@ -561,9 +643,44 @@
                 ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
             }
 
+            // Draw active drag trail (glutMotionFunc)
+            if (dragPoints.length > 0) {
+                ctx.strokeStyle = activeColor;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                for (let i = 0; i < dragPoints.length; i++) {
+                    const pt = dragPoints[i];
+                    if (i === 0) ctx.moveTo(pt.x, pt.y);
+                    else ctx.lineTo(pt.x, pt.y);
+                }
+                ctx.stroke();
+            }
+
+            // Draw passive motion crosshair (glutPassiveMotionFunc)
+            if (passiveX >= 0 && passiveY >= 0) {
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([2, 2]);
+                ctx.beginPath(); ctx.moveTo(0, passiveY); ctx.lineTo(canvas.width, passiveY); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(passiveX, 0); ctx.lineTo(passiveX, canvas.height); ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.font = '9px monospace';
+                ctx.fillText(`(x: ${passiveX}, y: ${passiveY})`, passiveX + 8, passiveY - 8);
+            }
+
+            // Draw keyboard key tap visual overlay
+            if (keypressIndicator) {
+                ctx.fillStyle = '#10b981';
+                ctx.font = 'bold 12px monospace';
+                ctx.fillText(keypressIndicator, 20, canvas.height - 25);
+            }
+
             document.getElementById('math-trace').innerHTML = `
                 <b>Buffer Architecture:</b><br>
                 Mode: <span style="color:${isSingle ? '#f43f5e' : '#10b981'}">${isSingle ? 'Single Buffer (Direct Screen)' : 'Double Buffer (Swap)'}</span><br>
+                Draw Style: <span style="color:var(--cg-primary); text-transform:uppercase;"><b>${drawStyle}</b></span><br>
                 Rot angle: <b>${(angle * 180 / Math.PI).toFixed(1)}°</b><br>
                 Timer ticks: <b>Every ${timerInterval}ms</b><br><br>
                 <i>Notice how Single Buffering shows the rendering steps directly on-screen, causing noticeable flickering. Double Buffering draws offscreen in the Back Buffer and swaps instantly using glutSwapBuffers().</i>
@@ -571,24 +688,157 @@
         }
 
         function registerGlutInteraction() {
-            const h = (e) => {
-                const rect = canvasFront.getBoundingClientRect();
-                const x = Math.round(e.clientX - rect.left);
-                const y = Math.round(e.clientY - rect.top);
-                document.getElementById('stat-last-event').innerText = 'Mouse Click';
-                logGlutEvent(`[glutMouseFunc] Click at x:${x}, y:${y}`);
+            const getCanvasCoords = (e, canvas) => {
+                const rect = canvas.getBoundingClientRect();
+                return {
+                    x: Math.round(e.clientX - rect.left),
+                    y: Math.round(e.clientY - rect.top)
+                };
             };
 
-            canvasFront.onmousedown = h;
-            canvasBack.onmousedown = h;
-
-            window.onkeydown = (e) => {
-                document.getElementById('stat-last-event').innerText = 'Key Down';
-                logGlutEvent(`[glutKeyboardFunc] Key tap: '${e.key}'`);
+            const handleMouseDown = (e, canvas) => {
+                if (e.button === 0) { // Left click
+                    isDragging = true;
+                    const coords = getCanvasCoords(e, canvas);
+                    dragPoints = [{ x: coords.x, y: coords.y, age: 30 }];
+                    document.getElementById('stat-last-event').innerText = 'Mouse Click';
+                    logGlutEvent(`[glutMouseFunc] Left Button Down at x:${coords.x}, y:${coords.y}`);
+                }
             };
 
-            canvasFront.oncontextmenu = (e) => e.preventDefault();
-            canvasBack.oncontextmenu = (e) => e.preventDefault();
+            const handleMouseMove = (e, canvas) => {
+                const coords = getCanvasCoords(e, canvas);
+                passiveX = coords.x;
+                passiveY = coords.y;
+
+                if (isDragging && e.buttons === 1) { // Left drag
+                    dragPoints.push({ x: coords.x, y: coords.y, age: 30 });
+                    if (dragPoints.length > 50) dragPoints.shift();
+                    document.getElementById('stat-last-event').innerText = 'Mouse Drag';
+                    if (Math.random() < 0.15) { // throttle dragging logs
+                        logGlutEvent(`[glutMotionFunc] Dragging at x:${coords.x}, y:${coords.y}`);
+                    }
+                } else {
+                    document.getElementById('stat-last-event').innerText = 'Passive Hover';
+                    if (Math.random() < 0.05) { // highly throttle passive logs
+                        logGlutEvent(`[glutPassiveMotionFunc] Hover at x:${coords.x}, y:${coords.y}`);
+                    }
+                }
+            };
+
+            const handleMouseUp = (e, canvas) => {
+                if (e.button === 0) {
+                    isDragging = false;
+                    document.getElementById('stat-last-event').innerText = 'Mouse Up';
+                    logGlutEvent(`[glutMouseFunc] Left Button Up`);
+                }
+            };
+
+            const handleMouseLeave = () => {
+                passiveX = -1;
+                passiveY = -1;
+                isDragging = false;
+            };
+
+            [
+                { c: canvasFront },
+                { c: canvasBack }
+            ].forEach(item => {
+                item.c.addEventListener('mousedown', (e) => handleMouseDown(e, item.c));
+                item.c.addEventListener('mousemove', (e) => handleMouseMove(e, item.c));
+                item.c.addEventListener('mouseup', (e) => handleMouseUp(e, item.c));
+                item.c.addEventListener('mouseleave', handleMouseLeave);
+            });
+
+            window.addEventListener('keydown', (e) => {
+                if (document.activeElement.tagName === 'INPUT') return;
+
+                const ascii = e.key.length === 1 ? e.key.charCodeAt(0) : 0;
+                document.getElementById('stat-last-event').innerText = 'Key Press';
+                
+                let logMsg = `[glutKeyboardFunc] Key tap: '${e.key}'`;
+                if (ascii > 0) logMsg += ` (ASCII: ${ascii})`;
+                logGlutEvent(logMsg);
+
+                // Keyboard visually floats on canvas
+                keypressIndicator = `Key Pressed: '${e.key}' ${ascii > 0 ? `(ASCII ${ascii})` : ''}`;
+                if (keypressTimeout) clearTimeout(keypressTimeout);
+                keypressTimeout = setTimeout(() => {
+                    keypressIndicator = "";
+                }, 1200);
+
+                const keyLower = e.key.toLowerCase();
+                if (keyLower === 'c') {
+                    glutLogs = [`[GLUT Console] Console cleared.`];
+                    logGlutEvent(`[glutKeyboardFunc] Key 'c' pressed -> Cleared logs`);
+                } else if (keyLower === 'd') {
+                    setBuffering(bufferingMode === 'double' ? 'single' : 'double');
+                    logGlutEvent(`[glutKeyboardFunc] Key 'd' pressed -> Toggled buffering`);
+                } else if (keyLower === 'w') {
+                    drawStyle = 'wireframe';
+                    logGlutEvent(`[glutKeyboardFunc] Key 'w' pressed -> Draw style: Wireframe`);
+                } else if (keyLower === 's') {
+                    drawStyle = 'solid';
+                    logGlutEvent(`[glutKeyboardFunc] Key 's' pressed -> Draw style: Solid`);
+                } else if (keyLower === 'p') {
+                    drawStyle = 'points';
+                    logGlutEvent(`[glutKeyboardFunc] Key 'p' pressed -> Draw style: Points`);
+                }
+            });
+
+            const showMenu = (e) => {
+                e.preventDefault();
+                const menu = document.getElementById('glut-menu-root');
+                menu.style.display = 'block';
+                menu.style.left = e.clientX + 'px';
+                menu.style.top = e.clientY + 'px';
+                document.getElementById('stat-last-event').innerText = 'Right Click';
+                logGlutEvent(`[glutCreateMenu] Right-click menu opened.`);
+            };
+
+            canvasFront.addEventListener('contextmenu', showMenu);
+            canvasBack.addEventListener('contextmenu', showMenu);
+
+            window.addEventListener('click', () => {
+                document.getElementById('glut-menu-root').style.display = 'none';
+            });
+        }
+
+        function selectMenuOption(option) {
+            logGlutEvent(`[glutMenuEntry] Menu handler triggered: option ${option}`);
+            
+            if (option === 'clear_screen') {
+                dragPoints = [];
+                glutLogs = [`[GLUT Console] Canvas cleared.`];
+                logGlutEvent(`[GLUT] Clear Screen executed.`);
+            } else if (option === 'style_wireframe') {
+                drawStyle = 'wireframe';
+                logGlutEvent(`[GLUT] Changed Draw Style to WIREFRAME.`);
+            } else if (option === 'style_solid') {
+                drawStyle = 'solid';
+                logGlutEvent(`[GLUT] Changed Draw Style to SOLID.`);
+            } else if (option === 'style_points') {
+                drawStyle = 'points';
+                logGlutEvent(`[GLUT] Changed Draw Style to POINTS.`);
+            } else if (option === 'color_cyan') {
+                setDrawColor('#22d3ee');
+                logGlutEvent(`[GLUT] Changed color to Cyan.`);
+            } else if (option === 'color_purple') {
+                setDrawColor('#a78bfa');
+                logGlutEvent(`[GLUT] Changed color to Purple.`);
+            } else if (option === 'color_pink') {
+                setDrawColor('#ec4899');
+                logGlutEvent(`[GLUT] Changed color to Pink.`);
+            } else if (option === 'color_green') {
+                setDrawColor('#22c55e');
+                logGlutEvent(`[GLUT] Changed color to Green.`);
+            } else if (option === 'color_yellow') {
+                setDrawColor('#eab308');
+                logGlutEvent(`[GLUT] Changed color to Yellow.`);
+            } else if (option === 'toggle_buffer') {
+                setBuffering(bufferingMode === 'double' ? 'single' : 'double');
+                logGlutEvent(`[GLUT] Buffering toggled.`);
+            }
         }
 
         function logGlutEvent(msg) {
@@ -602,30 +852,100 @@
         }
 
         function updateCode() {
-            let code = `// GLUT Double/Single Buffering and Timer Callback Example\n`;
-            if (bufferingMode === 'double') {
-                code += `glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);\n\n`;
-            } else {
-                code += `glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);\n\n`;
-            }
-            code += `void timerCallback(int value) {\n`;
-            code += `    rotationAngle += 2.0f; // Update state variables\n`;
-            code += `    glutPostRedisplay();   // Request redraw\n`;
-            code += `    glutTimerFunc(${timerInterval}, timerCallback, 0); // Re-register timer\n`;
+            let code = `// GLUT Event Hooks & Menu Configuration (C++)\n`;
+            code += `#include <GL/glut.h>\n\n`;
+            code += `// Keyboard callback: catches character inputs\n`;
+            code += `void myKeyboard(unsigned char key, int x, int y) {\n`;
+            code += `    if (key == 'c' || key == 'C') clearLogs();\n`;
+            code += `    if (key == 'w' || key == 'W') drawStyle = WIREFRAME;\n`;
+            code += `    if (key == 's' || key == 'S') drawStyle = SOLID;\n`;
+            code += `    if (key == 'p' || key == 'P') drawStyle = POINTS;\n`;
             code += `}\n\n`;
-            code += `void displayCallback() {\n`;
-            code += `    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);\n`;
-            code += `    glColor3f(${activeColor === '#22d3ee' ? '0.13f, 0.82f, 0.93f' : activeColor === '#a78bfa' ? '0.65f, 0.54f, 0.98f' : activeColor === '#ec4899' ? '0.92f, 0.28f, 0.60f' : activeColor === '#22c55e' ? '0.13f, 0.77f, 0.36f' : '0.91f, 0.70f, 0.03f'});\n`;
-            code += `    drawTeapot(rotationAngle);\n`;
+            code += `// Mouse click callback: catches button, state, coords\n`;
+            code += `void myMouse(int button, int state, int x, int y) {\n`;
+            code += `    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {\n`;
+            code += `        logClick(x, y);\n`;
+            code += `    }\n`;
+            code += `}\n\n`;
+            code += `// Active mouse drag callback\n`;
+            code += `void myMotion(int x, int y) {\n`;
+            code += `    addTrailPoint(x, y);\n`;
+            code += `}\n\n`;
+            code += `// Passive mouse hover callback\n`;
+            code += `void myPassiveMotion(int x, int y) {\n`;
+            code += `    updateCrosshair(x, y);\n`;
+            code += `}\n\n`;
+            code += `// Menu Callback option handler\n`;
+            code += `void rightClickMenu(int option) {\n`;
+            code += `    switch(option) {\n`;
+            code += `        case 1: drawStyle = WIREFRAME; break;\n`;
+            code += `        case 2: drawStyle = SOLID; break;\n`;
+            code += `        case 3: drawStyle = POINTS; break;\n`;
+            code += `        case 4: clearScreen(); break;\n`;
+            code += `    }\n`;
+            code += `}\n\n`;
+            code += `int main(int argc, char** argv) {\n`;
+            code += `    glutInit(&argc, argv);\n`;
             if (bufferingMode === 'double') {
-                code += `    glutSwapBuffers(); // Swap Front and Back buffers cleanly\n`;
+                code += `    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);\n`;
             } else {
-                code += `    glFlush();         // Flush drawings directly to screen (causes flicker)\n`;
+                code += `    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);\n`;
             }
+            code += `    glutInitWindowSize(800, 600);\n`;
+            code += `    glutCreateWindow("GLUT Interaction & Menus");\n\n`;
+            code += `    // Register User Interaction callbacks\n`;
+            code += `    glutMouseFunc(myMouse);\n`;
+            code += `    glutMotionFunc(myMotion);\n`;
+            code += `    glutPassiveMotionFunc(myPassiveMotion);\n`;
+            code += `    glutKeyboardFunc(myKeyboard);\n`;
+            code += `    glutTimerFunc(${timerInterval}, timerCallback, 0);\n\n`;
+            code += `    // Setup Right-Click Menu and Submenus\n`;
+            code += `    int styleSub = glutCreateMenu(rightClickMenu);\n`;
+            code += `    glutAddMenuEntry("Wireframe", 1);\n`;
+            code += `    glutAddMenuEntry("Solid", 2);\n`;
+            code += `    glutAddMenuEntry("Points", 3);\n\n`;
+            code += `    glutCreateMenu(rightClickMenu);\n`;
+            code += `    glutAddSubMenu("Draw Style", styleSub);\n`;
+            code += `    glutAddMenuEntry("Clear Screen", 4);\n`;
+            code += `    glutAttachMenu(GLUT_RIGHT_BUTTON);\n\n`;
+            code += `    glutMainLoop();\n`;
+            code += `    return 0;\n`;
             code += `}`;
             document.getElementById('opengl-code').textContent = code;
         }
     </script>
     <script src="../../assets/js/brain-animation.js"></script>
+
+    <!-- Custom Right-Click Context Menu simulating GLUT Menu APIs -->
+    <div id="glut-menu-root" class="glut-context-menu">
+        <div class="glut-context-menu-item" onclick="selectMenuOption('clear_screen')">
+            <span>Clear Screen</span>
+            <span style="font-size: 0.6rem; color:#aaa;">(C)</span>
+        </div>
+        <div class="glut-context-menu-item">
+            <span>Draw Style</span>
+            <span class="submenu-arrow">▶</span>
+            <div id="glut-style-submenu" class="glut-context-submenu">
+                <div class="glut-context-menu-item" onclick="selectMenuOption('style_wireframe')">Wireframe (W)</div>
+                <div class="glut-context-menu-item" onclick="selectMenuOption('style_solid')">Solid (S)</div>
+                <div class="glut-context-menu-item" onclick="selectMenuOption('style_points')">Points (P)</div>
+            </div>
+        </div>
+        <div class="glut-context-menu-item">
+            <span>Material Color</span>
+            <span class="submenu-arrow">▶</span>
+            <div id="glut-color-submenu" class="glut-context-submenu">
+                <div class="glut-context-menu-item" onclick="selectMenuOption('color_cyan')">Neon Cyan</div>
+                <div class="glut-context-menu-item" onclick="selectMenuOption('color_purple')">Neon Purple</div>
+                <div class="glut-context-menu-item" onclick="selectMenuOption('color_pink')">Neon Pink</div>
+                <div class="glut-context-menu-item" onclick="selectMenuOption('color_green')">Neon Green</div>
+                <div class="glut-context-menu-item" onclick="selectMenuOption('color_yellow')">Yellow</div>
+            </div>
+        </div>
+        <div class="glut-context-menu-item" onclick="selectMenuOption('toggle_buffer')">
+            <span>Toggle Buffering</span>
+            <span style="font-size: 0.6rem; color:#aaa;">(D)</span>
+        </div>
+    </div>
 </body>
 </html>
