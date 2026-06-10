@@ -1,110 +1,536 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BST Visualizer | AlgoVisual Hub</title>
+    <title>BST Monster | AlgoVisual Hub</title>
+    <meta name="description" content="Interactive Binary Search Tree with traversal modes, rotation hints, challenge mode, and live stats.">
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="../../assets/css/dsa-monster.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
     <style>
-        #dsa-canvas {
-            width: 100%;
-            height: 500px;
-            /* background: #fff; removed */
-            border: 2px solid #eee;
-            border-radius: 12px;
-        }
+        #dsa-canvas { height: 460px; }
 
-        .controls {
+        .traversal-strip {
             display: flex;
-            gap: 15px;
-            margin-top: 25px;
+            gap: 6px;
+            flex-wrap: wrap;
+            min-height: 44px;
+            padding: 10px 14px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
             align-items: center;
         }
 
-        input {
-            padding: 10px;
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
-            width: 80px;
+        .traversal-node {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--monster-primary), var(--monster-accent));
+            color: white;
+            animation: bounceIn 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .traversal-arrow {
+            color: #555;
+            font-size: 0.8rem;
         }
     </style>
-
-    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
 </head>
+<body>
+<canvas id="brain-canvas"></canvas>
 
-<body><canvas id="brain-canvas"></canvas>
-    <nav>
-        <div class="container nav-content">
-            <a href="../../index.html" class="logo">AlgoVisual Hub</a>
-            <div class="nav-links">
-                <a href="../../index.html">Home</a>
-                <a href="../../dsa.html">Back to DSA</a>
+<nav>
+    <div class="container nav-content">
+        <a href="../../index.html" class="logo">AlgoVisual Hub</a>
+        <div class="nav-links">
+            <a href="../../index.html">Home</a>
+            <a href="../../dsa.html">Back to DSA</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <header class="monster-header">
+        <span class="category-badge">⚡ Hierarchical Structures</span>
+        <h1>Binary Search Tree Monster</h1>
+        <p>Insert, search, traverse — BST with in-order, pre-order, post-order visualization and challenge mode.</p>
+    </header>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid" style="margin-top: 24px;">
+        <div class="stat-card" style="--stat-color: hsl(258,89%,66%);">
+            <div class="stat-icon">🔵</div>
+            <div class="stat-value" id="stat-nodes">5</div>
+            <div class="stat-label">Nodes</div>
+        </div>
+        <div class="stat-card" style="--stat-color: hsl(45,100%,60%);">
+            <div class="stat-icon">📐</div>
+            <div class="stat-value" id="stat-height">3</div>
+            <div class="stat-label">Tree Height</div>
+        </div>
+        <div class="stat-card" style="--stat-color: hsl(189,100%,52%);">
+            <div class="stat-icon">🔍</div>
+            <div class="stat-value" id="stat-comps">0</div>
+            <div class="stat-label">Comparisons</div>
+        </div>
+        <div class="stat-card" style="--stat-color: hsl(145,75%,50%);">
+            <div class="stat-icon">⚖️</div>
+            <div class="stat-value" id="stat-balance">—</div>
+            <div class="stat-label">Balanced?</div>
+        </div>
+    </div>
+
+    <div class="monster-layout">
+        <div class="main-panel">
+            <!-- Traversal mode tabs -->
+            <div class="mode-tabs">
+                <button class="mode-tab active" id="tab-insert" onclick="setViewMode('insert')">
+                    <i class="fas fa-plus-circle"></i> Insert
+                </button>
+                <button class="mode-tab" id="tab-inorder" onclick="runTraversal('inorder')">
+                    <i class="fas fa-sort-amount-up"></i> In-Order
+                </button>
+                <button class="mode-tab" id="tab-preorder" onclick="runTraversal('preorder')">
+                    <i class="fas fa-arrow-up"></i> Pre-Order
+                </button>
+                <button class="mode-tab" id="tab-postorder" onclick="runTraversal('postorder')">
+                    <i class="fas fa-arrow-down"></i> Post-Order
+                </button>
+            </div>
+
+            <!-- Canvas -->
+            <div class="monster-canvas-container" id="dsa-main-card">
+                <canvas id="dsa-canvas"></canvas>
+                <div class="canvas-badge" id="view-badge">BST INSERT MODE</div>
+            </div>
+
+            <!-- Traversal result -->
+            <div>
+                <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--monster-accent); margin-bottom: 10px;">
+                    <i class="fas fa-list-ol"></i> Traversal Result
+                </div>
+                <div class="traversal-strip" id="traversal-strip">
+                    <span style="color: #444; font-size: 0.85rem;">Run a traversal to see order</span>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="monster-controls">
+                <input type="number" id="node-val" value="50" min="1" max="999" placeholder="Value">
+                <button class="btn btn-primary" onclick="doInsert()">
+                    <i class="fas fa-plus"></i> Insert
+                </button>
+                <button class="btn" onclick="doSearch()"
+                    style="border: 1px solid var(--monster-accent); color: var(--monster-accent); background: transparent;">
+                    <i class="fas fa-search"></i> Search
+                </button>
+                <button class="btn" onclick="doDelete()"
+                    style="border: 1px solid var(--monster-danger); color: var(--monster-danger); background: transparent;">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+                <div class="divider-v"></div>
+                <button class="btn btn-primary" id="play-btn" onclick="togglePlay()">
+                    <i class="fas fa-play"></i> Play
+                </button>
+                <button class="btn" id="step-btn" onclick="doStep()"
+                    style="border: 1px solid rgba(255,255,255,0.2); color: white; background: transparent;">
+                    <i class="fas fa-step-forward"></i> Step
+                </button>
+                <label style="font-size: 0.75rem; color: #888; font-weight: 700; white-space: nowrap;">⚡ Speed</label>
+                <input type="range" id="speed-slider" min="1" max="100" value="50">
+                <div class="divider-v"></div>
+                <button class="btn" id="clear-btn" onclick="doClear()"
+                    style="border: 1px solid rgba(255,255,255,0.15); color: #ccc; background: transparent;">
+                    <i class="fas fa-undo"></i> Clear
+                </button>
+                <button class="btn btn-secondary" onclick="shareScreenshot('dsa-main-card', 'BST')">📸 Share</button>
             </div>
         </div>
-    </nav>
-    <main class="container">
-        <header style="margin-top: 40px;">
-            <span class="btn-primary"
-                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; display: inline-block; margin-bottom: 10px;">Hierarchical
-                DS</span>
-            <h1>Binary Search Tree (BST)</h1>
-            <p>Visualize how values are inserted into a BST based on the rule: Smaller to the left, larger to the right.
-            </p>
-        </header>
 
-        <div class="glass-card" style="padding: 30px; margin-top: 30px;">
-            <canvas id="dsa-canvas"></canvas>
-            <div class="controls">
-                <input type="number" id="node-val" placeholder="Val" value="50">
-                <button class="btn btn-primary" onclick="insert()">Insert Node</button>
-                <button class="btn" onclick="showModal('input-modal')" style="background: var(--dark); color: white;"><i
-                        class="fas fa-edit"></i> Batch Input</button>
-                <button class="btn" onclick="location.reload()" style="/* background: #eee; removed */">Clear
-                    Tree</button>
+        <!-- Side Panel -->
+        <div class="side-panel">
+            <div class="log-panel">
+                <h4><i class="fas fa-terminal"></i> Operation Log</h4>
+                <div class="log-text" id="log-text">Insert node values to trace BST path traversal.</div>
+            </div>
+
+            <!-- Game Mode -->
+            <div class="game-panel">
+                <div class="game-header">
+                    <span class="game-title"><i class="fas fa-gamepad"></i> Challenge Mode</span>
+                    <span class="score-display" id="game-score">0</span>
+                </div>
+                <div class="game-prompt" id="game-prompt">
+                    Predict the in-order traversal result to earn points!
+                </div>
+                <div class="timer-bar" id="timer-bar" style="display: none;">
+                    <div class="timer-fill" id="timer-fill" style="width: 100%;"></div>
+                </div>
+                <div class="lives-display" id="lives-display" style="margin-bottom: 12px;">❤️❤️❤️</div>
+                <button class="challenge-btn-monster" id="challenge-btn" onclick="toggleChallenge()">
+                    <i class="fas fa-gamepad"></i> ACTIVATE CHALLENGE
+                </button>
+                <div id="challenge-input-area" style="display: none; margin-top: 12px;">
+                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 6px;">Enter in-order (comma-separated):</div>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="challenge-answer" placeholder="e.g. 10,20,30"
+                            style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: white; font-family: 'JetBrains Mono', monospace;"
+                            onkeydown="if(event.key==='Enter') submitAnswer()">
+                        <button class="btn btn-primary" onclick="submitAnswer()"><i class="fas fa-check"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Complexity -->
+            <div class="info-card">
+                <h4>⚡ Time Complexity</h4>
+                <div class="complexity-row">
+                    <span class="op">Insert (Avg)</span>
+                    <span class="complexity-badge good">O(log n)</span>
+                </div>
+                <div class="complexity-row">
+                    <span class="op">Insert (Worst)</span>
+                    <span class="complexity-badge bad">O(n)</span>
+                </div>
+                <div class="complexity-row">
+                    <span class="op">Search (Avg)</span>
+                    <span class="complexity-badge good">O(log n)</span>
+                </div>
+                <div class="complexity-row">
+                    <span class="op">Delete (Avg)</span>
+                    <span class="complexity-badge good">O(log n)</span>
+                </div>
+                <div class="complexity-row">
+                    <span class="op">Traversal</span>
+                    <span class="complexity-badge good">O(n)</span>
+                </div>
+            </div>
+
+            <!-- BST Rules -->
+            <div class="info-card">
+                <h4>🧠 BST Rules</h4>
+                <div style="font-size: 0.82rem; line-height: 1.8; color: var(--text-muted, #888);">
+                    <div>📌 Left child <code>&lt;</code> Parent</div>
+                    <div>📌 Right child <code>&gt;</code> Parent</div>
+                    <div style="margin-top: 10px;">
+                        <strong style="color: var(--monster-primary)">In-Order:</strong> Left → Root → Right → <em>sorted!</em>
+                    </div>
+                    <div><strong style="color: var(--monster-accent)">Pre-Order:</strong> Root → Left → Right</div>
+                    <div><strong style="color: var(--monster-gold)">Post-Order:</strong> Left → Right → Root</div>
+                </div>
             </div>
         </div>
+    </div>
+</main>
 
-    </main>
+<script src="../../assets/js/core/dsa-engine.js"></script>
+<script src="../../assets/js/core/playback.js"></script>
+<script src="../../assets/js/algos/dsa/bst.js"></script>
+<script>
+    window.engine = new DSAEngine('dsa-canvas');
+    const playback = new Playback(() => window.algo.nextStep());
+    window.playback = playback;
 
-    <script src="../../assets/js/core/dsa-engine.js"></script>
-    <script src="../../assets/js/core/ComplexityTracker.js"></script>
-    <script src="../../../assets/js/core/ui-extras.js"></script>
-    <script src="../../assets/js/algos/dsa/bst.js"></script>
-    <script>
-        window.engine = new DSAEngine('dsa-canvas');
+    let comparisons = 0;
+    let traversalTimeouts = [];
 
-        // Define Playback for controls
-        const playback = {
-            setSpeed: (s) => console.log("Speed set: " + s) // BST is instant, dummy playback for slider
-        };
-        window.playback = playback;
-
-        window.algo = new BSTAlgo(window.engine);
-
-        window.engine.draw = () => window.algo.draw();
-
-        function insert() {
-            const val = parseInt(document.getElementById('node-val').value);
-            if (!isNaN(val)) {
-                window.algo.insert(val);
-                document.getElementById('node-val').value = Math.floor(Math.random() * 100);
-            }
+    function clearTraversalTimeouts() {
+        traversalTimeouts.forEach(t => clearTimeout(t));
+        traversalTimeouts = [];
+        if (window.algo && window.algo.root) {
+            const clearHighlight = (n) => {
+                if (!n) return;
+                n.highlight = false;
+                clearHighlight(n.left);
+                clearHighlight(n.right);
+            };
+            clearHighlight(window.algo.root);
+            window.engine.draw();
         }
+    }
 
-        window.onload = () => {
-            if (window.complexityTracker) {
-                window.complexityTracker.setComplexity("O(log n) avg", "O(n)");
-            }
-            window.algo.insert(50);
-            window.algo.insert(30);
-            window.algo.insert(70);
-            window.algo.insert(20);
-            window.algo.insert(40);
+    window.ui = {
+        updateStatus: (t) => {
+            const el = document.getElementById('log-text');
+            if (el) { el.innerHTML = t; el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+        }
+    };
+
+    window.algo = new BSTAlgo(window.engine, playback, window.ui);
+    window.engine.draw = () => window.algo.draw();
+
+    function doInsert() {
+        if (window.algo.challengeActive) { alert('Exit Challenge Mode first!'); return; }
+        const val = parseInt(document.getElementById('node-val').value);
+        if (!isNaN(val)) {
+            playback.stop();
+            window.algo.insert(val);
+            playback.play();
+            document.getElementById('node-val').value = Math.floor(Math.random() * 100 + 1);
+            comparisons++;
+            setTimeout(updateStats, 500);
+        }
+    }
+
+    function doSearch() {
+        if (window.algo.challengeActive) { alert('Exit Challenge Mode first!'); return; }
+        const val = parseInt(document.getElementById('node-val').value);
+        if (!isNaN(val) && window.algo.search) {
+            playback.stop();
+            window.algo.search(val);
+            playback.play();
+        } else {
+            window.ui.updateStatus(`🔍 Searching for <strong>${val}</strong>...`);
+        }
+    }
+
+    function doDelete() {
+        if (window.algo.challengeActive) { alert('Exit Challenge Mode first!'); return; }
+        const val = parseInt(document.getElementById('node-val').value);
+        if (!isNaN(val) && window.algo.remove) {
+            window.algo.remove(val);
+            setTimeout(updateStats, 300);
+        }
+    }
+
+    function setViewMode(mode) {
+        clearTraversalTimeouts();
+        document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-insert').classList.add('active');
+        document.getElementById('view-badge').innerText = 'BST INSERT MODE';
+        document.getElementById('traversal-strip').innerHTML = '<span style="color: #444; font-size: 0.85rem;">Run a traversal to see order</span>';
+    }
+
+    function runTraversal(type) {
+        clearTraversalTimeouts();
+        document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(`tab-${type}`).classList.add('active');
+        document.getElementById('view-badge').innerText = type.toUpperCase().replace('ORDER',' ORDER') + ' TRAVERSAL';
+
+        const strip = document.getElementById('traversal-strip');
+        strip.innerHTML = '';
+
+        // Get traversal from algo's BST root
+        const nodes = [];
+        function inorder(n) { if (!n) return; inorder(n.left); nodes.push(n.value); inorder(n.right); }
+        function preorder(n) { if (!n) return; nodes.push(n.value); preorder(n.left); preorder(n.right); }
+        function postorder(n) { if (!n) return; postorder(n.left); postorder(n.right); nodes.push(n.value); }
+
+        const root = window.algo.root;
+        if (!root) { strip.innerHTML = '<span style="color:#444">Tree is empty</span>'; return; }
+
+        if (type === 'inorder') inorder(root);
+        else if (type === 'preorder') preorder(root);
+        else if (type === 'postorder') postorder(root);
+
+        // Animate each node in strip with delay
+        nodes.forEach((v, i) => {
+            const tid = setTimeout(() => {
+                strip.innerHTML += `<span class="traversal-node">${v}</span>`;
+                if (i < nodes.length - 1) strip.innerHTML += '<span class="traversal-arrow">→</span>';
+
+                // Highlight node in canvas
+                if (window.algo.highlightNode) window.algo.highlightNode(v);
+            }, i * 150);
+            traversalTimeouts.push(tid);
+        });
+
+        window.ui.updateStatus(`📋 <strong>${type.charAt(0).toUpperCase()+type.slice(1)}</strong> traversal: ${nodes.join(' → ')}`);
+    }
+
+    function togglePlay() {
+        const btn = document.getElementById('play-btn');
+        if (playback.isRunning) {
+            playback.pause();
+            btn.innerHTML = '<i class="fas fa-play"></i> Play';
+        } else {
+            playback.play();
+            btn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+        }
+    }
+
+    function doStep() {
+        if (window.algo.challengeActive) { alert('Exit Challenge Mode first!'); return; }
+        playback.pause();
+        document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Play';
+        playback.step();
+    }
+
+    function doClear() {
+        playback.stop();
+        clearTraversalTimeouts();
+        if (window.algo.challengeActive) endChallenge();
+        window.algo.reset();
+        comparisons = 0;
+        document.getElementById('traversal-strip').innerHTML = '<span style="color: #444; font-size: 0.85rem;">Run a traversal to see order</span>';
+        window.ui.updateStatus('🗑️ Tree cleared.');
+        updateStats();
+    }
+
+    function updateStats() {
+        const root = window.algo.root;
+        const getHeight = (n) => !n ? 0 : 1 + Math.max(getHeight(n.left), getHeight(n.right));
+        const countNodes = (n) => !n ? 0 : 1 + countNodes(n.left) + countNodes(n.right);
+        const isBalanced = (n) => {
+            if (!n) return true;
+            const lh = getHeight(n.left), rh = getHeight(n.right);
+            return Math.abs(lh - rh) <= 1 && isBalanced(n.left) && isBalanced(n.right);
         };
-    </script>
-<script src="../../assets/js/brain-animation.js"></script></body>
 
+        const h = getHeight(root);
+        const n = countNodes(root);
+        const bal = n > 0 ? (isBalanced(root) ? '✅' : '❌') : '—';
+
+        animStat('stat-nodes', n);
+        animStat('stat-height', h);
+        animStat('stat-comps', comparisons);
+        animStat('stat-balance', bal);
+    }
+
+    function animStat(id, val) {
+        const el = document.getElementById(id);
+        if (el && el.innerText != val) {
+            el.innerText = val;
+            el.classList.remove('pulse-update');
+            void el.offsetWidth;
+            el.classList.add('pulse-update');
+        }
+    }
+
+    // ─── CHALLENGE MODE ───────────────────────────────────────────────────────
+    let challengeActive = false, score = 0, lives = 3;
+    let timerInterval = null, timeLeft = 15;
+    let expectedTraversal = [];
+
+    function toggleChallenge() {
+        if (challengeActive) endChallenge();
+        else startChallenge();
+    }
+
+    function startChallenge() {
+        clearTraversalTimeouts();
+        challengeActive = true;
+        window.algo.challengeActive = true;
+        score = 0; lives = 3;
+        document.getElementById('game-score').innerText = '0';
+        document.getElementById('lives-display').innerText = '❤️❤️❤️';
+        document.getElementById('challenge-btn').innerHTML = '<i class="fas fa-stop"></i> STOP CHALLENGE';
+        document.getElementById('challenge-btn').classList.add('active');
+        document.getElementById('challenge-input-area').style.display = 'block';
+        document.getElementById('timer-bar').style.display = 'block';
+        nextChallengeRound();
+    }
+
+    function endChallenge() {
+        clearTraversalTimeouts();
+        challengeActive = false;
+        window.algo.challengeActive = false;
+        clearInterval(timerInterval);
+        document.getElementById('challenge-btn').innerHTML = '<i class="fas fa-gamepad"></i> ACTIVATE CHALLENGE';
+        document.getElementById('challenge-btn').classList.remove('active');
+        document.getElementById('challenge-input-area').style.display = 'none';
+        document.getElementById('timer-bar').style.display = 'none';
+        document.getElementById('game-prompt').innerHTML = `Done! <strong style="color:var(--monster-gold)">Score: ${score}</strong>`;
+    }
+
+    function nextChallengeRound() {
+        if (lives <= 0) { endChallenge(); return; }
+        clearInterval(timerInterval);
+
+        // Generate random BST
+        const vals = Array.from({length: 4 + Math.floor(Math.random()*3)}, () => Math.floor(Math.random()*90+5));
+        const uniqueVals = [...new Set(vals)].slice(0, 5);
+        window.algo.reset();
+        uniqueVals.forEach(v => window.algo.insert(v));
+        window.algo.currentStep = window.algo.steps.length; // jump to final
+
+        // Compute in-order
+        expectedTraversal = [];
+        const inorder = (n) => { if (!n) return; inorder(n.left); expectedTraversal.push(n.value); inorder(n.right); };
+        inorder(window.algo.root);
+        window.algo.layout();
+
+        document.getElementById('game-prompt').innerHTML =
+            `<strong>Inserted:</strong> [${uniqueVals.join(', ')}]<br><br>Enter the <strong style="color:var(--monster-gold)">In-Order traversal</strong> (sorted order):`;
+        document.getElementById('challenge-answer').value = '';
+        document.getElementById('challenge-answer').focus();
+        updateStats();
+
+        startTimer();
+    }
+
+    function startTimer() {
+        timeLeft = 15;
+        const fill = document.getElementById('timer-fill');
+        fill.style.width = '100%';
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            timeLeft -= 0.1;
+            const pct = (timeLeft / 15) * 100;
+            fill.style.width = pct + '%';
+            fill.style.background = pct > 60 ? 'var(--monster-success)' : pct > 30 ? 'var(--monster-gold)' : 'var(--monster-danger)';
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                lives--;
+                updateLivesDisplay();
+                window.ui.updateStatus(`⏰ Time's up! In-order: <strong>${expectedTraversal.join(', ')}</strong>`);
+                setTimeout(nextChallengeRound, 1600);
+            }
+        }, 100);
+    }
+
+    function submitAnswer() {
+        if (!challengeActive) return;
+        clearInterval(timerInterval);
+        const raw = document.getElementById('challenge-answer').value;
+        const given = raw.split(',').map(x => parseInt(x.trim())).filter(x => !isNaN(x));
+        const correct = JSON.stringify(given) === JSON.stringify(expectedTraversal);
+
+        if (correct) {
+            const pts = 15 + Math.floor(timeLeft);
+            score += pts;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-prompt').innerHTML = `<span style="color:var(--monster-success)">✅ Correct! +${pts} pts</span>`;
+            window.ui.updateStatus(`✅ Correct In-Order: <strong>${expectedTraversal.join(' → ')}</strong>`);
+        } else {
+            lives--;
+            updateLivesDisplay();
+            document.getElementById('game-prompt').innerHTML = `<span style="color:var(--monster-danger)">❌ Wrong! Answer: <strong>${expectedTraversal.join(', ')}</strong></span>`;
+            window.ui.updateStatus(`❌ Expected: <strong>${expectedTraversal.join(', ')}</strong>`);
+        }
+        setTimeout(nextChallengeRound, 1600);
+    }
+
+    function updateLivesDisplay() {
+        const h = ['❤️','❤️','❤️'].map((x,i) => i >= lives ? '🖤' : x);
+        document.getElementById('lives-display').innerHTML = h.join('');
+        if (lives <= 0) setTimeout(endChallenge, 1000);
+    }
+
+    // Speed slider
+    document.getElementById('speed-slider').oninput = (e) => playback.setSpeed(parseInt(e.target.value));
+    playback.setSpeed(50);
+
+    // Init
+    window.onload = () => {
+        [50, 30, 70, 20, 40].forEach(v => {
+            window.algo.insert(v);
+            window.algo.currentStep = window.algo.steps.length;
+        });
+        window.algo.layout();
+        updateStats();
+        window.ui.updateStatus('🚀 BST Monster loaded! Insert nodes or try <strong>traversal modes</strong> and <strong>Challenge Mode</strong>.');
+    };
+</script>
+
+<script src="../../assets/js/core/ui-extras.js"></script>
+<script src="../../assets/js/brain-animation.js"></script>
+</body>
 </html>

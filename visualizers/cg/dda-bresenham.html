@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDA &amp; Bresenham's Line Drawing | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="../../assets/css/dsa-monster.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+    <style>
+        :root {
+            --cg-primary: hsl(189, 100%, 52%);
+            --cg-accent: hsl(258, 89%, 66%);
+            --cg-glow: 0 0 25px rgba(6, 182, 212, 0.4);
+        }
+        .cg-viewport {
+            width: 100%;
+            height: 420px;
+            background: radial-gradient(circle at center, #1b0a3a 0%, #070214 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.15);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cg-viewport canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .pane-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 0.68rem;
+            background: rgba(0,0,0,0.6);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #ccc;
+            font-weight: 700;
+            z-index: 10;
+        }
+        .opengl-code-panel {
+            background: #080812;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .opengl-code-panel h4 {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--monster-accent);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .opengl-code-panel pre {
+            margin: 0;
+            overflow-x: auto;
+        }
+        .opengl-code-panel code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+        }
+        .slider-group {
+            display: grid;
+            grid-template-columns: 100px 1fr 40px;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+        }
+        .slider-group label {
+            color: #aaa;
+            font-weight: 600;
+        }
+        .slider-group span {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--cg-primary);
+            text-align: right;
+            font-weight: 700;
+        }
+        .slider-group input[type="range"] {
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.1);
+            outline: none;
+            cursor: pointer;
+        }
+        .slider-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--cg-primary);
+            cursor: pointer;
+            box-shadow: 0 0 6px var(--cg-primary);
+        }
+        .param-radio-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .param-radio-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #ccc;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        .param-radio-btn.active {
+            background: rgba(6, 182, 212, 0.15);
+            border-color: var(--cg-primary);
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="brain-canvas"></canvas>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="../../index.html" class="logo">
+                <img src="../../assets/img/logo.png" alt="AlgoVisual Hub" style="height: 48px; width: 48px;">
+                <span>AlgoVisual Hub</span>
+            </a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../cg.html">Back to Graphics</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="monster-header">
+            <span class="category-badge">🧮 Line drawing algorithms</span>
+            <h1>DDA &amp; Bresenham's Line drawing</h1>
+            <p>Compare step-by-step pixel selections and decision parameter math between DDA and Bresenham's line algorithms.</p>
+        </header>
+
+        <div class="stats-grid" style="margin-top: 24px;">
+            <div class="stat-card" style="--stat-color: hsl(189,100%,52%);">
+                <div class="stat-icon">🧮</div>
+                <div class="stat-value" id="stat-math-type">Integer</div>
+                <div class="stat-label">Operation Math</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(258,89%,66%);">
+                <div class="stat-icon">📐</div>
+                <div class="stat-value" id="stat-points">24</div>
+                <div class="stat-label">Active Points</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(45,100%,60%);">
+                <div class="stat-icon">📈</div>
+                <div class="stat-value" id="stat-slope">0.60</div>
+                <div class="stat-label">Line Slope</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(145,75%,50%);">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-value" id="stat-fps">60 FPS</div>
+                <div class="stat-label">Render Cycle</div>
+            </div>
+        </div>
+
+        <div class="monster-layout">
+            <div class="main-panel">
+                <div class="cg-viewport" id="viewport-container">
+                    <canvas id="cg-canvas"></canvas>
+                    <div class="pane-label" id="viewport-badge">Rasterization Grid</div>
+                </div>
+
+                <div class="opengl-code-panel">
+                    <h4><i class="fas fa-code"></i> Live C++ OpenGL Code</h4>
+                    <pre><code id="opengl-code"></code></pre>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="info-card">
+                    <h4>Parameters</h4>
+                    <div class="color-picker-group" style="display: flex; gap: 8px; margin-top: 15px; margin-bottom: 15px; align-items: center;">
+                        <label style="font-size: 0.8rem; color: #aaa; font-weight: 600;">Color Choice:</label>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="color-dot active" style="background: #22d3ee; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; padding: 0;" onclick="setDrawColor('#22d3ee', this)"></button>
+                            <button class="color-dot" style="background: #a78bfa; width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;" onclick="setDrawColor('#a78bfa', this)"></button>
+                            <button class="color-dot" style="background: #ec4899; width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;" onclick="setDrawColor('#ec4899', this)"></button>
+                            <button class="color-dot" style="background: #22c55e; width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;" onclick="setDrawColor('#22c55e', this)"></button>
+                            <button class="color-dot" style="background: #eab308; width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;" onclick="setDrawColor('#eab308', this)"></button>
+                        </div>
+                    </div>
+                    <div class="param-radio-group">
+                        <button class="param-radio-btn active" id="btn-dda" onclick="setLineAlgo('dda')">DDA Line</button>
+                        <button class="param-radio-btn" id="btn-bresenham" onclick="setLineAlgo('bresenham')">Bresenham</button>
+                    </div>
+
+                    <div class="slider-group">
+                        <label>Start X (x1):</label>
+                        <input type="range" id="param-x1" min="1" max="23" value="2" oninput="updateLineParams()">
+                        <span id="val-x1">2</span>
+                    </div>
+                    <div class="slider-group">
+                        <label>Start Y (y1):</label>
+                        <input type="range" id="param-y1" min="1" max="23" value="3" oninput="updateLineParams()">
+                        <span id="val-y1">3</span>
+                    </div>
+                    <div class="slider-group">
+                        <label>End X (x2):</label>
+                        <input type="range" id="param-x2" min="1" max="23" value="22" oninput="updateLineParams()">
+                        <span id="val-x2">22</span>
+                    </div>
+                    <div class="slider-group">
+                        <label>End Y (y2):</label>
+                        <input type="range" id="param-y2" min="1" max="23" value="15" oninput="updateLineParams()">
+                        <span id="val-y2">15</span>
+                    </div>
+
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <a href="../../guides/cg/dda-bresenham.html" id="open-guide-btn" class="btn btn-secondary" style="flex: 1; text-align: center; justify-content: center; font-size: 0.8rem; padding: 10px;"><i class="fas fa-book"></i> Read Guide</a>
+                    </div>
+                </div>
+
+                <div class="log-panel" style="min-height: 240px;">
+                    <h4><i class="fas fa-info-circle"></i> Mathematical Trace</h4>
+                    <div class="log-text" id="math-trace">Initialize the visualizer by adjusting parameters on the left.</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+
+        function getPrimaryColor() {
+            return getComputedStyle(document.documentElement).getPropertyValue('--cg-primary').trim() || '#22d3ee';
+        }
+        function getAccentColor() {
+            return getComputedStyle(document.documentElement).getPropertyValue('--cg-accent').trim() || '#a78bfa';
+        }
+        function hexToRgba(hex, alpha) {
+            if (hex.startsWith('hsl')) {
+                return hex.replace('hsl', 'hsla').replace(')', `, ${alpha})`);
+            }
+            let c;
+            if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+                c= hex.substring(1).split('');
+                if(c.length== 3){
+                    c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+                }
+                c= '0x'+c.join('');
+                return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';
+            }
+            return hex;
+        }
+        function getPrimaryColorRgba(alpha) {
+            return hexToRgba(getPrimaryColor(), alpha);
+        }
+        function getAccentColorRgba(alpha) {
+            return hexToRgba(getAccentColor(), alpha);
+        }
+        function getPrimaryColorRgb() {
+            let hex = getPrimaryColor();
+            let r = 34, g = 211, b = 238;
+            if (hex.startsWith('hsl')) {
+                let match = hex.match(/\d+/g);
+                if (match) {
+                    let h = parseInt(match[0]);
+                    let s = parseInt(match[1]) / 100;
+                    let l = parseInt(match[2]) / 100;
+                    let c = (1 - Math.abs(2 * l - 1)) * s;
+                    let x = c * (1 - Math.abs((h / 60) % 2 - 1));
+                    let m = l - c/2;
+                    let r_ = 0, g_ = 0, b_ = 0;
+                    if (h >= 0 && h < 60) { r_ = c; g_ = x; b_ = 0; }
+                    else if (h >= 60 && h < 120) { r_ = x; g_ = c; b_ = 0; }
+                    else if (h >= 120 && h < 180) { r_ = 0; g_ = c; b_ = x; }
+                    else if (h >= 180 && h < 240) { r_ = 0; g_ = x; b_ = c; }
+                    else if (h >= 240 && h < 300) { r_ = x; g_ = 0; b_ = c; }
+                    else if (h >= 300 && h < 360) { r_ = c; g_ = 0; b_ = x; }
+                    r = Math.round((r_ + m) * 255);
+                    g = Math.round((g_ + m) * 255);
+                    b = Math.round((b_ + m) * 255);
+                }
+            } else if (hex.startsWith('#')) {
+                let c = hex.substring(1).split('');
+                if (c.length === 3) {
+                    c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+                }
+                let val = parseInt(c.join(''), 16);
+                r = (val >> 16) & 255;
+                g = (val >> 8) & 255;
+                b = val & 255;
+            }
+            return { r, g, b };
+        }
+
+        let canvas, ctx;
+        let lineAlgo = 'dda';
+        let x1 = 2, y1 = 3, x2 = 22, y2 = 15;
+        let lastTime = 0;
+
+        window.addEventListener('load', () => {
+            canvas = document.getElementById('cg-canvas');
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            renderLoop(0);
+        });
+
+        function resizeCanvas() {
+            const container = document.getElementById('viewport-container');
+            if (container) {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+        }
+
+        function setLineAlgo(algo) {
+            lineAlgo = algo;
+            document.getElementById('btn-dda').classList.toggle('active', algo === 'dda');
+            document.getElementById('btn-bresenham').classList.toggle('active', algo === 'bresenham');
+            document.getElementById('stat-math-type').innerText = algo === 'dda' ? 'Float Math' : 'Integer';
+        }
+
+        function updateLineParams() {
+            x1 = parseInt(document.getElementById('param-x1').value);
+            y1 = parseInt(document.getElementById('param-y1').value);
+            x2 = parseInt(document.getElementById('param-x2').value);
+            y2 = parseInt(document.getElementById('param-y2').value);
+
+            document.getElementById('val-x1').innerText = x1;
+            document.getElementById('val-y1').innerText = y1;
+            document.getElementById('val-x2').innerText = x2;
+            document.getElementById('val-y2').innerText = y2;
+        }
+
+        function renderLoop(timestamp) {
+            const dt = timestamp - lastTime;
+            lastTime = timestamp;
+            const fps = Math.round(1000 / dt);
+            if (isFinite(fps)) {
+                document.getElementById('stat-fps').innerText = `${fps} FPS`;
+            }
+
+            drawRaster();
+            updateCode();
+
+            requestAnimationFrame(renderLoop);
+        }
+
+        function drawRaster() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const gridCells = 25;
+            const size = Math.min(canvas.width, canvas.height) - 40;
+            const cellSize = Math.floor(size / gridCells);
+            const offsetX = (canvas.width - size) / 2;
+            const offsetY = (canvas.height - size) / 2;
+
+            // Draw grid lines
+            ctx.strokeStyle = 'rgba(168, 85, 247, 0.08)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= gridCells; i++) {
+                ctx.beginPath();
+                ctx.moveTo(offsetX + i * cellSize, offsetY);
+                ctx.lineTo(offsetX + i * cellSize, offsetY + size);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(offsetX, offsetY + i * cellSize);
+                ctx.lineTo(offsetX + size, offsetY + i * cellSize);
+                ctx.stroke();
+            }
+
+            let activeCells = [];
+            let traceText = '';
+            let dx = x2 - x1, dy = y2 - y1;
+            let slope = dx !== 0 ? dy / dx : 999;
+            document.getElementById('stat-slope').innerText = slope === 999 ? '∞' : slope.toFixed(2);
+
+            if (lineAlgo === 'dda') {
+                let steps = Math.max(Math.abs(dx), Math.abs(dy));
+                let xInc = dx / steps, yInc = dy / steps;
+                let rx = x1, ry = y1;
+
+                traceText = `<b>DDA Trace Log:</b><br>Slope m = ${slope.toFixed(3)} (Steps: ${steps})<br>`;
+                traceText += `<table style="width:100%; border-collapse:collapse; text-align:center; font-family:monospace; margin-top:8px;">`;
+                traceText += `<tr style="border-bottom:1px solid #333;"><th>Step</th><th>Exact X, Y</th><th>Rounded (X, Y)</th></tr>`;
+
+                for (let i = 0; i <= steps; i++) {
+                    const plotX = Math.round(rx);
+                    const plotY = Math.round(ry);
+                    activeCells.push({ x: plotX, y: plotY });
+
+                    if (i < 8) {
+                        traceText += `<tr><td>${i}</td><td>(${rx.toFixed(1)}, ${ry.toFixed(1)})</td><td style="color:var(--cg-primary)">(${plotX}, ${plotY})</td></tr>`;
+                    }
+                    rx += xInc;
+                    ry += yInc;
+                }
+                if (steps > 8) traceText += `<tr><td colspan="3">... showing first 8 steps ...</td></tr>`;
+                traceText += `</table>`;
+            } else {
+                let absDx = Math.abs(dx), absDy = Math.abs(dy);
+                let sx = x1 < x2 ? 1 : -1, sy = y1 < y2 ? 1 : -1;
+                let err = absDx - absDy;
+                let rx = x1, ry = y1;
+                let step = 0;
+
+                traceText = `<b>Bresenham's Log (Integer decision math):</b><br>dx = ${absDx}, dy = ${absDy}<br>`;
+                traceText += `<table style="width:100%; border-collapse:collapse; text-align:center; font-family:monospace; margin-top:8px;">`;
+                traceText += `<tr style="border-bottom:1px solid #333;"><th>Step</th><th>Decision (pk)</th><th>Plot (X, Y)</th></tr>`;
+
+                while (true) {
+                    activeCells.push({ x: rx, y: ry });
+                    let pk = err;
+
+                    if (step < 8) {
+                        traceText += `<tr><td>${step}</td><td>${pk}</td><td style="color:var(--cg-primary)">(${rx}, ${ry})</td></tr>`;
+                    }
+                    if (rx === x2 && ry === y2) break;
+                    let e2 = 2 * err;
+                    if (e2 > -absDy) {
+                        err -= absDy;
+                        rx += sx;
+                    }
+                    if (e2 < absDx) {
+                        err += absDx;
+                        ry += sy;
+                    }
+                    step++;
+                }
+                if (step > 8) traceText += `<tr><td colspan="3">... showing first 8 steps ...</td></tr>`;
+                traceText += `</table>`;
+            }
+
+            document.getElementById('stat-points').innerText = activeCells.length;
+
+            // Draw grid cell highlights
+            activeCells.forEach(cell => {
+                if (cell.x >= 0 && cell.x < gridCells && cell.y >= 0 && cell.y < gridCells) {
+                    ctx.fillStyle = getPrimaryColor();
+                    ctx.fillRect(
+                        offsetX + cell.x * cellSize + 1,
+                        offsetY + (gridCells - cell.y - 1) * cellSize + 1,
+                        cellSize - 1,
+                        cellSize - 1
+                    );
+                }
+            });
+
+            // Draw overlay line
+            ctx.strokeStyle = getAccentColorRgba(0.5);
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(offsetX + (x1 + 0.5) * cellSize, offsetY + (gridCells - y1 - 0.5) * cellSize);
+            ctx.lineTo(offsetX + (x2 + 0.5) * cellSize, offsetY + (gridCells - y2 - 0.5) * cellSize);
+            ctx.stroke();
+
+            document.getElementById('math-trace').innerHTML = traceText;
+        }
+
+        function updateCode() {
+            let code = '';
+            if (lineAlgo === 'dda') {
+                code = `// Draw Line using DDA Algorithm\n`;
+                code += `void drawLineDDA(int x1, int y1, int x2, int y2) {\n`;
+                code += `    float dx = x2 - x1, dy = y2 - y1;\n`;
+                code += `    float steps = max(abs(dx), abs(dy));\n`;
+                code += `    float xInc = dx / steps, yInc = dy / steps;\n`;
+                code += `    float x = x1, y = y1;\n`;
+                code += `    glBegin(GL_POINTS);\n`;
+                code += `    for(int i = 0; i <= steps; i++) {\n`;
+                code += `        glVertex2i(round(x), round(y));\n`;
+                code += `        x += xInc;\n`;
+                code += `        y += yInc;\n`;
+                code += `    }\n`;
+                code += `    glEnd();\n`;
+                code += `}`;
+            } else {
+                code = `// Draw Line using Bresenham's Integer Algorithm\n`;
+                code += `void drawLineBresenham(int x1, int y1, int x2, int y2) {\n`;
+                code += `    int dx = abs(x2 - x1), dy = abs(y2 - y1);\n`;
+                code += `    int sx = x1 < x2 ? 1 : -1;\n`;
+                code += `    int sy = y1 < y2 ? 1 : -1;\n`;
+                code += `    int err = dx - dy;\n`;
+                code += `    glBegin(GL_POINTS);\n`;
+                code += `    while(true) {\n`;
+                code += `        glVertex2i(x1, y1);\n`;
+                code += `        if(x1 == x2 && y1 == y2) break;\n`;
+                code += `        int e2 = 2 * err;\n`;
+                code += `        if(e2 > -dy) { err -= dy; x1 += sx; }\n`;
+                code += `        if(e2 < dx) { err += dx; y1 += sy; }\n`;
+                code += `    }\n`;
+                code += `    glEnd();\n`;
+                code += `}`;
+            }
+            document.getElementById('opengl-code').textContent = code;
+        }
+    
+        function setDrawColor(color, btn) {
+            document.documentElement.style.setProperty('--cg-primary', color);
+            if (btn) {
+                document.querySelectorAll('.color-dot').forEach(d => d.style.borderColor = 'transparent');
+                btn.style.borderColor = '#fff';
+            }
+        }
+    </script>
+    <script src="../../assets/js/brain-animation.js"></script>
+</body>
+</html>

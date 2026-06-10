@@ -60,9 +60,9 @@ class BellmanFordAlgo {
             const [u, v, weight] = edges[this.edgeIndex];
             this.ui.updateStatus(`Iteration ${this.iteration}/${numNodes - 1}: Relaxing edge ${u} → ${v} (w=${weight})`);
 
-            this.engine.clearHighlights();
-            // We can't use highlight() directly because it's for ArrayEngine, 
-            // but we can temporarily update node status for visualization.
+            // Reset all node statuses before highlighting
+            this.engine.nodes.forEach(n => { if (n.status !== 'visited') n.status = 'default'; });
+
             this.engine.updateNodeStatus(u, 'current');
             this.engine.updateNodeStatus(v, 'queued');
 

@@ -4,140 +4,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BFS Visualizer | AlgoVisual Hub</title>
+    <title>BFS Exploration Monster | AlgoVisual Hub</title>
+    <meta name="description" content="Breadth-First Search (BFS) graph exploration visualizer. Master queue-based layer-by-layer traversal with interactive controls.">
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="../../assets/css/dsa-monster.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
     <style>
-        .visualizer-layout {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 30px;
-            margin-top: 30px;
-        }
-
         #graph-canvas {
-            width: 100%;
-            height: 500px;
-
-            border: 2px solid #eee;
-            border-radius: 12px;
+            height: 440px;
         }
 
-        .queue-display {
-            display: flex;
-            gap: 10px;
-            /* background: #eee; removed */
-            padding: 15px;
-            border-radius: 8px;
-            min-height: 60px;
-            overflow-x: auto;
-        }
-
-        .queue-item {
-            padding: 10px 15px;
-            background: var(--primary);
+        .queue-item-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--monster-primary) 0%, var(--monster-accent) 100%);
             color: white;
             border-radius: 8px;
-            font-weight: bold;
-            min-width: 50px;
-            text-align: center;
+            font-weight: 800;
+            font-family: monospace;
+            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.25);
         }
 
-        .side-panel {
+        .queue-display-area {
             display: flex;
-            flex-direction: column;
-            gap: 20px;
+            gap: 8px;
+            padding: 12px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            overflow-x: auto;
+            min-height: 60px;
+            align-items: center;
         }
     </style>
-    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
 </head>
 
-<body><canvas id="brain-canvas"></canvas>
+<body>
+    <canvas id="brain-canvas"></canvas>
+
     <nav>
         <div class="container nav-content">
             <a href="../../index.html" class="logo">AlgoVisual Hub</a>
-            <div class="nav-links"><a href="../../index.html">Home</a><a href="../../algorithms.html">Back to Algorithms</a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../algorithms.html">Back to Algorithms</a>
             </div>
         </div>
     </nav>
 
     <main class="container">
-        <header style="margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
-            <div>
-                <span class="btn-primary"
-                    style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Graph Traversal</span>
-                <h1>Breadth-First Search (BFS)</h1>
-                <p><strong>Breadth-First Search</strong> explores nodes layer by layer using a <strong>Queue</strong>. It is ideal for finding the shortest path in unweighted graphs.</p>
-            </div>
-            <a href="../../guide/bfs.html" class="btn" style="border: 2px solid var(--primary); color: var(--primary); font-weight: bold; padding: 10px 20px; border-radius: 12px; margin-top: 10px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
-                <i class="fas fa-book"></i> Read Guide
-            </a>
+        <header class="monster-header">
+            <span class="category-badge">⚡ Graph Traversal</span>
+            <h1>BFS Exploration Monster</h1>
+            <p>Breadth-First Search explores nodes layer by layer using a <strong>Queue (FIFO)</strong>. It guarantees finding the shortest path in unweighted graphs.</p>
         </header>
 
-        <div class="visualizer-layout">
-            <div class="glass-card" style="padding: 30px;">
-                <canvas id="graph-canvas"></canvas>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px;">
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Run</button>
-                        <button class="btn" id="grid-toggle-btn" title="Toggle Grid"><i
-                                class="fas fa-border-all"></i></button>
-                        <button class="btn" id="reset-btn"
-                            style="border: 1px solid var(--accent); color: var(--accent);"><i class="fas fa-undo"></i>
-                            Reset</button>
+        <!-- Stats Grid -->
+        <div class="stats-grid" style="margin-top: 24px;">
+            <div class="stat-card" style="--stat-color: hsl(258,89%,66%);">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="stat-visited">0</div>
+                <div class="stat-label">Visited Nodes</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(189,100%,52%);">
+                <div class="stat-icon">📥</div>
+                <div class="stat-value" id="stat-queue">0</div>
+                <div class="stat-label">Queue Size</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(45,100%,60%);">
+                <div class="stat-icon">🔵</div>
+                <div class="stat-value" id="stat-nodes">0</div>
+                <div class="stat-label">Total Nodes</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(145,75%,50%);">
+                <div class="stat-icon">🐾</div>
+                <div class="stat-value" id="stat-steps">0</div>
+                <div class="stat-label">Traversal Steps</div>
+            </div>
+        </div>
+
+        <div class="monster-layout">
+            <div class="main-panel">
+                <div class="monster-canvas-container" id="visualizer-container">
+                    <canvas id="graph-canvas"></canvas>
+                    <div class="canvas-badge">BREADTH-FIRST SEARCH</div>
+                </div>
+
+                <div class="monster-controls">
+                    <button class="btn btn-primary" id="play-btn">
+                        <i class="fas fa-play"></i> Run BFS
+                    </button>
+                    <button class="btn" id="step-btn" style="border: 1px solid rgba(255,255,255,0.2); color: white; background: transparent;">
+                        <i class="fas fa-step-forward"></i> Step
+                    </button>
+                    <button class="btn" id="reset-btn" style="border: 1px solid var(--monster-danger); color: var(--monster-danger); background: transparent;">
+                        <i class="fas fa-undo"></i> Reset
+                    </button>
+                    <button class="btn" id="grid-toggle-btn" style="border: 1px solid rgba(255,255,255,0.2); color: white; background: transparent;">
+                        <i class="fas fa-border-all"></i> Grid
+                    </button>
+                    <div class="divider-v"></div>
+                    <label style="font-size: 0.75rem; color: #888; font-weight: 700; white-space: nowrap;">⚡ Speed</label>
+                    <input type="range" id="speed-slider" min="1" max="100" value="50">
+                    <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'BFS Graph Exploration')">📸 Share</button>
+                </div>
+
+                <!-- Queue visualizer container -->
+                <div>
+                    <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--monster-accent); margin-bottom: 10px;">
+                        <i class="fas fa-list-ol"></i> FIFO Queue (Front ➔ Back)
                     </div>
-                    <div style="display: flex; align-items: center; gap: 10px;"><i
-                            class="fas fa-tachometer-alt"></i><input type="range" id="speed-slider" min="1" max="100"
-                            value="50"></div>
+                    <div class="queue-display-area" id="queue-container">
+                        <span style="color: #444; font-size: 0.85rem;">Queue is empty</span>
+                    </div>
                 </div>
             </div>
 
             <div class="side-panel">
-                <div class="glass-card" style="padding: 20px;">
-                    <h4>📜 Live Explanation</h4>
-                    <p id="explanation-text" style="font-size: 0.9rem; margin-top: 10px;">Ready to start BFS.</p>
+                <div class="log-panel">
+                    <h4><i class="fas fa-terminal"></i> Execution Log</h4>
+                    <div class="log-text" id="explanation-text">Click Run BFS to start. Double click canvas to add nodes. Drag to connect.</div>
                 </div>
-                <div class="glass-card" style="padding: 20px;">
-                    <h4>🚉 Queue (First-In, First-Out)</h4>
-                    <div id="queue-container" class="queue-display">
-                        <span style="color: #999;">Queue is empty</span>
+
+                <!-- Graph presets / Edit tools -->
+                <div class="info-card">
+                    <h4>🛠️ Graph Controls</h4>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px;">
+                        <strong>Editor mode is active.</strong> Double click on canvas to add nodes. Drag from one node to another to create directed edges.
+                    </p>
+                    <button class="btn" id="load-preset-btn" style="width: 100%; border: 1px solid rgba(255,255,255,0.15); color: white; background: transparent; font-weight: 700;">
+                        <i class="fas fa-network-wired"></i> Reload Preset Graph
+                    </button>
+                </div>
+
+                <!-- BFS complexity -->
+                <div class="info-card">
+                    <h4>⚡ Traversal Complexity</h4>
+                    <div class="complexity-row">
+                        <span class="op">Time Complexity</span>
+                        <span class="complexity-badge good">O(V + E)</span>
+                    </div>
+                    <div class="complexity-row">
+                        <span class="op">Space Complexity</span>
+                        <span class="complexity-badge good">O(V)</span>
                     </div>
                 </div>
             </div>
-            
-            <div style="margin-top: 40px; text-align: center;">
-                
-            </div>
+        </div>
     </main>
 
     <script src="../../assets/js/core/graph-engine.js"></script>
     <script src="../../assets/js/core/playback.js"></script>
     <script src="../../assets/js/algos/algorithms/bfs.js"></script>
-    
     <script>
         window.engine = new GraphEngine('graph-canvas');
-        const playback = new Playback(() => window.algo.nextStep());
+        window.engine.directed = true;
+        window.engine.setEditMode(true);
+
+        let stepCount = 0;
+
         window.ui = {
-            updateStatus: (txt) => { document.getElementById('explanation-text').innerText = txt; },
+            updateStatus: (t) => {
+                const el = document.getElementById('explanation-text');
+                if (el) el.innerHTML = t;
+            },
             updateQueue: (q) => {
                 const container = document.getElementById('queue-container');
-                container.innerHTML = q.length === 0 ? '<span style="color: #999;">Queue is empty</span>' : q.map(id => `<div class="queue-item">${id}</div>`).join('');
+                if (q.length === 0) {
+                    container.innerHTML = '<span style="color: #444; font-size: 0.85rem;">Queue is empty</span>';
+                } else {
+                    container.innerHTML = q.map(id => `<div class="queue-item-badge">${id}</div>`).join(' <i class="fas fa-long-arrow-alt-right" style="color:var(--monster-primary); opacity:0.6;"></i> ');
+                }
             }
         };
-        const ui = window.ui;
-        const engine = window.engine;
-        window.algo = new BFSAlgo(window.engine, playback, ui);
-        const nodes = [{ id: 1, x: 100, y: 100 }, { id: 2, x: 250, y: 50 }, { id: 3, x: 400, y: 100 }, { id: 4, x: 100, y: 300 }, { id: 5, x: 250, y: 400 }, { id: 6, x: 400, y: 300 }, { id: 7, x: 250, y: 200 }];
-        const edges = [[1, 2], [1, 4], [1, 7], [2, 3], [3, 6], [4, 5], [5, 6], [7, 5], [7, 2]];
 
-        document.getElementById('play-btn').onclick = () => {
-            if (playback.isRunning) { playback.pause(); document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Play'; }
-            else { playback.play(); document.getElementById('play-btn').innerHTML = '<i class="fas fa-pause"></i> Pause'; }
+        const ui = window.ui;
+        const playback = new Playback(async () => {
+            if (window.algo.complete) return false;
+            stepCount++;
+            const hasMore = await window.algo.nextStep();
+            updateStats();
+            return hasMore;
+        });
+        window.playback = playback;
+
+        window.algo = new BFSAlgo(window.engine, playback, ui);
+
+        function updateStats() {
+            animStat('stat-visited', window.algo.visited.size);
+            animStat('stat-queue', window.algo.queue.length);
+            animStat('stat-nodes', window.engine.nodes.length);
+            animStat('stat-steps', stepCount);
+        }
+
+        function animStat(id, val) {
+            const el = document.getElementById(id);
+            if (el && el.innerText != val) {
+                el.innerText = val;
+                el.classList.remove('pulse-update');
+                void el.offsetWidth;
+                el.classList.add('pulse-update');
+            }
+        }
+
+        // Hook Controls
+        const playBtn = document.getElementById('play-btn');
+        playBtn.onclick = () => {
+            if (window.engine.nodes.length === 0) return alert("Graph is empty! Double click canvas to add nodes first.");
+            if (playback.isRunning) {
+                playback.pause();
+                playBtn.innerHTML = '<i class="fas fa-play"></i> Run BFS';
+            } else {
+                playback.play();
+                playBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            }
         };
-        document.getElementById('step-btn').onclick = () => playback.step();
-        document.getElementById('reset-btn').onclick = () => { playback.reset(); window.algo.reset(); document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Play'; };
-        document.getElementById('speed-slider').oninput = (e) => playback.setSpeed(e.target.value);
+
+        document.getElementById('step-btn').onclick = async () => {
+            if (window.engine.nodes.length === 0) return alert("Graph is empty!");
+            playback.pause();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Run BFS';
+            await playback.step();
+        };
+
+        document.getElementById('reset-btn').onclick = () => {
+            playback.stop();
+            window.algo.reset();
+            stepCount = 0;
+            updateStats();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Run BFS';
+        };
 
         document.getElementById('grid-toggle-btn').onclick = () => {
             window.engine.showGrid = !window.engine.showGrid;
@@ -145,16 +246,40 @@
             window.engine.draw();
         };
 
-        window.onload = () => {
+        // Load Preset Graph
+        function loadPresetGraph() {
+            playback.stop();
+            const nodes = [
+                { id: 1, x: 150, y: 100 },
+                { id: 2, x: 350, y: 100 },
+                { id: 3, x: 550, y: 100 },
+                { id: 4, x: 150, y: 300 },
+                { id: 5, x: 350, y: 300 },
+                { id: 6, x: 550, y: 300 }
+            ];
+            const edges = [
+                [1, 2], [1, 4], [2, 3], [2, 5],
+                [3, 6], [4, 5], [5, 6], [5, 2]
+            ];
             window.engine.setGraph(nodes, edges);
             window.algo.reset();
-            setTimeout(() => {
-            }, 1000);
+            stepCount = 0;
+            updateStats();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Run BFS';
+        }
+
+        document.getElementById('load-preset-btn').onclick = loadPresetGraph;
+
+        // Speed Slider
+        const speedSlider = document.getElementById('speed-slider');
+        speedSlider.oninput = (e) => playback.setSpeed(parseInt(e.target.value));
+        playback.setSpeed(parseInt(speedSlider.value));
+
+        window.onload = () => {
+            loadPresetGraph();
         };
     </script>
-
-    <script src='../../assets/js/core/ui-extras.js'></script>
-<script src="../../assets/js/brain-animation.js"></script></body>
+    <script src="../../assets/js/brain-animation.js"></script>
+</body>
 
 </html>
-

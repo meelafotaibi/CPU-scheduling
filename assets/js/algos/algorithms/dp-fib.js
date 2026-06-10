@@ -20,7 +20,6 @@ class DPFibAlgo {
         this.steps = [];
         const memo = {};
         const run = (num) => {
-            const id = this.steps.length;
             this.steps.push({ type: 'call', n: num, memo: { ...memo } });
 
             if (num in memo) {
@@ -81,4 +80,3 @@ class DPFibAlgo {
         return this.currentStep < this.steps.length;
     }
 }
-Riverside

@@ -507,7 +507,6 @@
                 </div>
             </div>
         </div>
-
         <!-- ===== MODULE 1: FUNDAMENTALS ===== -->
         <div class="topic-group">
             <div class="topic-group-header">
@@ -515,7 +514,7 @@
                     <i class="fas fa-vector-square"></i>
                 </div>
                 <h2>Module 1 — Fundamentals &amp; Rasterization</h2>
-                <span class="badge">Planned</span>
+                <span class="badge" style="background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3);">Live</span>
             </div>
             <div class="cg-grid">
 
@@ -530,7 +529,10 @@
                         <span class="concept-tag">octants</span>
                     </div>
                     <div class="formula-preview">d = 2Δy − Δx</div>
-                    <span class="card-action card-action-planned"><i class="fas fa-clock"></i> Planned</span>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/dda-bresenham.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/dda-bresenham.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
                 </div>
 
                 <!-- Midpoint Circle -->
@@ -544,7 +546,10 @@
                         <span class="concept-tag">pixel grid</span>
                     </div>
                     <div class="formula-preview">f(x,y) = x² + y² − r²</div>
-                    <span class="card-action card-action-planned"><i class="fas fa-clock"></i> Planned</span>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/midpoint-circle.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/midpoint-circle.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
                 </div>
 
                 <!-- Polygon Fill -->
@@ -557,7 +562,10 @@
                         <span class="concept-tag">parity test</span>
                         <span class="concept-tag">fill rule</span>
                     </div>
-                    <span class="card-action card-action-planned"><i class="fas fa-clock"></i> Planned</span>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/polygon-fill.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/polygon-fill.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
                 </div>
 
                 <!-- Cohen-Sutherland -->
@@ -570,7 +578,26 @@
                         <span class="concept-tag">TBRL bits</span>
                         <span class="concept-tag">viewport</span>
                     </div>
-                    <span class="card-action card-action-planned"><i class="fas fa-clock"></i> Planned</span>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/cohen-sutherland.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/cohen-sutherland.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
+                </div>
+
+                <!-- Sutherland-Hodgman -->
+                <div class="cg-card">
+                    <span class="card-topic-badge badge-fundamentals">Fundamentals</span>
+                    <h3>Sutherland-Hodgman Polygon Clipping</h3>
+                    <p>Clip polygons sequentially against individual viewport edges. Reconstruct the output vertex lists stage-by-stage.</p>
+                    <div class="concept-tags">
+                        <span class="concept-tag">polygon clip</span>
+                        <span class="concept-tag">intersection</span>
+                        <span class="concept-tag">vertices list</span>
+                    </div>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/sutherland-hodgman.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/sutherland-hodgman.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
                 </div>
 
             </div>
@@ -583,7 +610,7 @@
                     <i class="fas fa-arrows-alt"></i>
                 </div>
                 <h2>Module 2 — 2D &amp; 3D Transformations</h2>
-                <span class="badge">Planned</span>
+                <span class="badge" style="background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3);">Live</span>
             </div>
             <div class="cg-grid">
 
@@ -599,7 +626,10 @@
                         <span class="concept-tag">composite</span>
                     </div>
                     <div class="formula-preview">P' = T · R · S · P</div>
-                    <span class="card-action card-action-planned"><i class="fas fa-clock"></i> Planned</span>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/transformations.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/transformations.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
                 </div>
 
                 <!-- 3D Transforms -->
@@ -613,21 +643,27 @@
                         <span class="concept-tag">pitch/yaw/roll</span>
                     </div>
                     <div class="formula-preview">[x' y' z' 1] = [x y z 1] · M</div>
-                    <span class="card-action card-action-planned"><i class="fas fa-clock"></i> Planned</span>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/transformations.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/transformations.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
                 </div>
 
                 <!-- Bezier Curves -->
                 <div class="cg-card">
                     <span class="card-topic-badge badge-math">Math</span>
                     <h3>Bézier Curves</h3>
-                    <p>Understand parametric curves through control points. Watch de Casteljau's algorithm subdivide the curve step-by-step — the math behind SVG paths and font outlines.</p>
+                    <p>Understand parametric curves through control points. Watch de Casteljau's algorithm subdivide the curve step-by-step — the math behind SVG paths and outlines.</p>
                     <div class="concept-tags">
                         <span class="concept-tag">de Casteljau</span>
                         <span class="concept-tag">control points</span>
                         <span class="concept-tag">parametric t</span>
                     </div>
                     <div class="formula-preview">B(t) = Σ C(n,i)·(1-t)^(n-i)·t^i·Pᵢ</div>
-                    <span class="card-action card-action-soon"><i class="fas fa-hourglass-half"></i> Coming Soon</span>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/bezier.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/bezier.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
                 </div>
 
             </div>
@@ -640,7 +676,7 @@
                     <i class="fas fa-video"></i>
                 </div>
                 <h2>Module 3 — Camera &amp; Projections</h2>
-                <span class="badge">Planned</span>
+                <span class="badge" style="background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3);">Live</span>
             </div>
             <div class="cg-grid">
 
@@ -654,7 +690,10 @@
                         <span class="concept-tag">world space</span>
                         <span class="concept-tag">camera space</span>
                     </div>
-                    <span class="card-action card-action-planned"><i class="fas fa-clock"></i> Planned</span>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/camera-view.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/camera-view.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
                 </div>
 
                 <!-- Perspective -->
@@ -669,7 +708,10 @@
                         <span class="concept-tag">near/far planes</span>
                     </div>
                     <div class="formula-preview">x_screen = x/(z·tan(FOV/2))</div>
-                    <span class="card-action card-action-planned"><i class="fas fa-clock"></i> Planned</span>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/projections.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/projections.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
                 </div>
 
                 <!-- Orthographic -->
@@ -682,7 +724,10 @@
                         <span class="concept-tag">no depth distortion</span>
                         <span class="concept-tag">CAD</span>
                     </div>
-                    <span class="card-action card-action-planned"><i class="fas fa-clock"></i> Planned</span>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/projections.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/projections.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
                 </div>
 
                 <!-- Z-Buffer -->
@@ -695,7 +740,10 @@
                         <span class="concept-tag">fragment test</span>
                         <span class="concept-tag">overdraw</span>
                     </div>
-                    <span class="card-action card-action-planned"><i class="fas fa-clock"></i> Planned</span>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/z-buffer.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/z-buffer.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
                 </div>
 
             </div>
@@ -708,7 +756,7 @@
                     <i class="fas fa-lightbulb"></i>
                 </div>
                 <h2>Module 4 — Lighting &amp; Shading Models</h2>
-                <span class="badge">Planned</span>
+                <span class="badge" style="background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3);">Live</span>
             </div>
             <div class="cg-grid">
 
@@ -723,7 +771,10 @@
                         <span class="concept-tag">N·L</span>
                     </div>
                     <div class="formula-preview">I = kd · (N⃗ · L⃗)</div>
-                    <span class="card-action card-action-planned"><i class="fas fa-clock"></i> Planned</span>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/shading-models.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/shading-models.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
                 </div>
 
                 <!-- Gouraud Shading -->
@@ -736,7 +787,10 @@
                         <span class="concept-tag">bilinear interpolation</span>
                         <span class="concept-tag">per-vertex color</span>
                     </div>
-                    <span class="card-action card-action-planned"><i class="fas fa-clock"></i> Planned</span>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/shading-models.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/shading-models.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
                 </div>
 
                 <!-- Phong Shading -->
@@ -751,7 +805,10 @@
                         <span class="concept-tag">shininess</span>
                     </div>
                     <div class="formula-preview">I = ka·Ia + kd·(N·L) + ks·(R·V)^n</div>
-                    <span class="card-action card-action-soon"><i class="fas fa-hourglass-half"></i> Coming Soon</span>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/shading-models.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/shading-models.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
                 </div>
 
                 <!-- Texture Mapping -->
@@ -765,7 +822,10 @@
                         <span class="concept-tag">bilinear filter</span>
                         <span class="concept-tag">mipmaps</span>
                     </div>
-                    <span class="card-action card-action-soon"><i class="fas fa-hourglass-half"></i> Coming Soon</span>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/texture-mapping.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/texture-mapping.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
                 </div>
 
             </div>

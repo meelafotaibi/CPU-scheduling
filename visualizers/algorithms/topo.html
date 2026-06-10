@@ -4,84 +4,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Topological Sort Visualizer | AlgoVisual Hub</title>
+    <title>Topological Sort Monster | AlgoVisual Hub</title>
+    <meta name="description" content="Topological Sort (Kahn's Algorithm) visualizer. Master task scheduling, dependency resolution, and in-degree tracking on Directed Acyclic Graphs.">
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="../../assets/css/dsa-monster.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
     <style>
-        .visualizer-layout {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 30px;
-            margin-top: 30px;
-        }
-
         #graph-canvas {
             width: 100%;
-            height: 500px;
-
-            border: 2px solid #eee;
-            border-radius: 12px;
+            height: 450px;
             cursor: crosshair;
-        }
-
-        .side-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
         }
 
         .indegree-table {
             width: 100%;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             border-collapse: collapse;
+            font-family: monospace;
         }
 
         .indegree-table th,
         .indegree-table td {
-            border: 1px solid #eee;
+            border: 1px solid rgba(255,255,255,0.08);
             padding: 8px;
             text-align: center;
+        }
+
+        .indegree-table th {
+            color: #888;
+            font-weight: 700;
         }
 
         .topo-result {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 8px;
         }
 
         .topo-node {
-            width: 35px;
-            height: 35px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background: var(--primary);
+            background: #6366f1;
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 0.9rem;
-            animation: fadeIn 0.5s ease-out;
+            font-weight: 800;
+            font-size: 0.88rem;
+            font-family: monospace;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1.5px solid rgba(255,255,255,0.25);
         }
 
-        @keyframes fadeIn {
+        @keyframes popIn {
             from {
                 opacity: 0;
-                transform: scale(0.5);
+                transform: scale(0.4) translateY(10px);
             }
-
             to {
                 opacity: 1;
-                transform: scale(1);
+                transform: scale(1) translateY(0);
             }
         }
     </style>
-    
-    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
 </head>
 
-<body><canvas id="brain-canvas"></canvas>
+<body>
+    <canvas id="brain-canvas"></canvas>
 
     <nav>
         <div class="container nav-content">
@@ -94,71 +87,121 @@
     </nav>
 
     <main class="container">
-        <header style="margin-top: 40px;">
-            <span class="btn-primary"
-                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Scheduling</span>
+        <header class="monster-header">
+            <span class="category-badge">⚡ Graph Algorithms</span>
             <h1>Topological Sort (Kahn's)</h1>
-            <p>Linearly order vertices of a Directed Acyclic Graph (DAG) such that for every directed edge (u, v), u
-                comes before v.</p>
+            <p>Linearly orders vertices of a Directed Acyclic Graph (DAG) such that for every directed edge (u, v), node u comes before node v. Essential for task scheduling and package resolution.</p>
         </header>
 
-        <div class="visualizer-layout">
-            <div class="glass-card" id="visualizer-container" style="padding: 30px;">
-                <canvas id="graph-canvas"></canvas>
-
-                <div style="margin-top: 25px; display: flex; justify-content: space-between;">
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Run Kahn's</button>
-                        <button class="btn" id="next-btn" style="background: var(--dark); color: white;">Next
-                            Step</button>
-                        <button class="btn" id="reset-btn"
-                            style="border: 1px solid var(--accent); color: var(--accent);">Reset</button>
-                        <button class="btn" id="grid-toggle-btn" title="Toggle Grid"><i
-                                class="fas fa-border-all"></i></button>
-                        <button class="btn btn-secondary"
-                            onclick="shareScreenshot('visualizer-container', 'Topological Sort')">📸 Share</button>
-                    </div>
-                </div>
-                <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">Drag from node to node to create
-                    dependencies. Note: Cycles will break the sort.</p>
+        <!-- Stats Grid -->
+        <div class="stats-grid" style="margin-top: 24px;">
+            <div class="stat-card" style="--stat-color: hsl(258,89%,66%);">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="stat-nodes">0</div>
+                <div class="stat-label">Total Nodes</div>
             </div>
-
-            <div class="side-panel">
-                <div class="glass-card" style="padding: 20px;">
-                    <h4>📜 Execution Log</h4>
-                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 10px; min-height: 50px;">Ready.
-                        Connections represent dependencies (e.g. 1 must finish before 2).</p>
-                </div>
-
-                <div class="glass-card" style="padding: 20px;">
-                    <h4>📊 In-Degree Table</h4>
-                    <table class="indegree-table">
-                        <thead>
-                            <tr>
-                                <th>Node</th>
-                                <th>In-Degree</th>
-                            </tr>
-                        </thead>
-                        <tbody id="indegree-body"></tbody>
-                    </table>
-                </div>
-
-                <div class="glass-card" style="padding: 20px;">
-                    <h4>🎯 Sort Order</h4>
-                    <div id="topo-list" class="topo-result"></div>
-                </div>
-
-                <div class="glass-card" style="padding: 20px;">
-                    <button class="btn" onclick="loadTopoPreset()" style="width: 100%; border: 1px solid #ddd;">Load DAG
-                        Example</button>
-                </div>
+            <div class="stat-card" style="--stat-color: hsl(189,100%,52%);">
+                <div class="stat-icon">🔗</div>
+                <div class="stat-value" id="stat-edges">0</div>
+                <div class="stat-label">Total Edges</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(45,100%,60%);">
+                <div class="stat-icon">🏁</div>
+                <div class="stat-value" id="stat-sorted">0</div>
+                <div class="stat-label">Sorted Count</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(145,75%,50%);">
+                <div class="stat-icon">📥</div>
+                <div class="stat-value" id="stat-queue">0</div>
+                <div class="stat-label">Queue Size</div>
             </div>
         </div>
 
+        <div class="monster-layout">
+            <div class="main-panel">
+                <div class="monster-canvas-container" id="visualizer-container">
+                    <canvas id="graph-canvas"></canvas>
+                    <div class="canvas-badge">TOPOLOGICAL SORT DAG</div>
+                </div>
+
+                <div class="monster-controls">
+                    <button class="btn btn-primary" id="play-btn">
+                        <i class="fas fa-play"></i> Run Kahn
+                    </button>
+                    <button class="btn" id="step-btn" style="border: 1px solid rgba(255,255,255,0.2); color: white; background: transparent;">
+                        <i class="fas fa-step-forward"></i> Step
+                    </button>
+                    <button class="btn" id="reset-btn" style="border: 1px solid var(--monster-danger); color: var(--monster-danger); background: transparent;">
+                        <i class="fas fa-undo"></i> Reset
+                    </button>
+                    <div class="divider-v"></div>
+                    <label style="font-size: 0.75rem; color: #888; font-weight: 700; white-space: nowrap;">⚡ Speed</label>
+                    <input type="range" id="speed-slider" min="1" max="100" value="50">
+                    <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'Topological Sort')">📸 Share</button>
+                </div>
+                
+                <p style="font-size: 0.8rem; color: #888; margin-top: 12px; font-weight: 500;">
+                    💡 <strong>Editor Guide:</strong> Click empty space to add a node. Click and drag from one node to another to create a dependency edge.
+                </p>
+            </div>
+
+            <div class="side-panel">
+                <div class="log-panel">
+                    <h4><i class="fas fa-terminal"></i> Execution Log</h4>
+                    <div class="log-text" id="explanation-text">Click Load DAG Example or draw a custom DAG, then run.</div>
+                </div>
+
+                <!-- Sort Order -->
+                <div class="info-card">
+                    <h4>🎯 Topological Sort Order</h4>
+                    <div id="topo-list" class="topo-result">
+                        <span style="font-size: 0.78rem; color: #666;">No nodes sorted yet.</span>
+                    </div>
+                </div>
+
+                <!-- In-Degree Table -->
+                <div class="info-card">
+                    <h4>📊 In-Degree Tracker</h4>
+                    <div style="max-height: 180px; overflow-y: auto;">
+                        <table class="indegree-table">
+                            <thead>
+                                <tr>
+                                    <th>Node</th>
+                                    <th>In-Degree</th>
+                                </tr>
+                            </thead>
+                            <tbody id="indegree-body">
+                                <tr>
+                                    <td colspan="2" style="color: #666;">No nodes defined.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Presets -->
+                <div class="info-card">
+                    <h4>🛠️ Presets</h4>
+                    <button class="btn" id="preset-btn" style="width: 100%; border: 1px solid rgba(255,255,255,0.15); color: white; background: transparent; font-weight: 700;">
+                        <i class="fas fa-project-diagram"></i> Load DAG Example
+                    </button>
+                </div>
+
+                <!-- Complexity -->
+                <div class="info-card">
+                    <h4>⚡ Kahn's Algorithm</h4>
+                    <div style="font-size: 0.82rem; color: #aaa; line-height: 1.5; margin: 0;">
+                        Kahn's algorithm runs in <strong style="color: var(--monster-accent);">O(V + E)</strong> time. If any node has non-zero in-degree at the end, a cycle exists.
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script src="../../assets/js/core/graph-engine.js"></script>
     <script src="../../assets/js/core/playback.js"></script>
+    <script src="../../assets/js/core/ComplexityTracker.js"></script>
+    <script src="../../assets/js/core/ui-extras.js"></script>
     <script src="../../assets/js/algos/algorithms/topo.js"></script>
     <script>
         window.engine = new GraphEngine('graph-canvas');
@@ -166,72 +209,136 @@
         window.engine.setEditMode(true);
 
         window.ui = {
-            updateStatus: (t) => document.getElementById('explanation-text').innerText = t,
+            updateStatus: (t) => {
+                const el = document.getElementById('explanation-text');
+                if (el) el.innerHTML = t;
+            },
             updateInDegree: (data) => {
                 const body = document.getElementById('indegree-body');
+                if (!body) return;
                 body.innerHTML = Object.keys(data).map(id => `
-                    <tr><td>${id}</td><td>${data[id]}</td></tr>
+                    <tr>
+                        <td>Node ${id}</td>
+                        <td style="${data[id] === 0 ? 'color: var(--monster-success); font-weight: 700;' : ''}">${data[id]}</td>
+                    </tr>
                 `).join('');
+                updateStatsDOM();
             },
             updateList: (list) => {
                 const container = document.getElementById('topo-list');
-                container.innerHTML = list.map(id => `
-                    <div class="topo-node">${id}</div>
-                `).join('');
+                if (!container) return;
+                if (list.length === 0) {
+                    container.innerHTML = '<span style="font-size: 0.78rem; color: #666;">No nodes sorted yet.</span>';
+                } else {
+                    container.innerHTML = list.map(id => `
+                        <div class="topo-node">${id}</div>
+                    `).join('');
+                }
+                updateStatsDOM();
             }
         };
+
         const ui = window.ui;
-
-        const playback = new Playback(() => window.algo.nextStep());
-        window.playback = playback;
         const engine = window.engine;
-        window.algo = new TopoAlgo(window.engine, playback, ui);
-        const algo = window.algo;
 
-        document.getElementById('play-btn').onclick = () => {
-            if (window.engine.nodes.length === 0) return alert("Please add nodes first");
-            window.algo.reset();
-            playback.play();
+        const playback = new Playback(async () => {
+            if (window.algo.complete) {
+                return false;
+            }
+            const hasMore = await window.algo.nextStep();
+            updateStatsDOM();
+            return hasMore;
+        });
+        window.playback = playback;
+
+        window.algo = new TopoAlgo(window.engine, playback, ui);
+
+        function updateStatsDOM() {
+            animStat('stat-nodes', window.engine.nodes.length);
+            animStat('stat-edges', window.engine.edges.length);
+            animStat('stat-sorted', window.algo.result ? window.algo.result.length : 0);
+            animStat('stat-queue', window.algo.queue ? window.algo.queue.length : 0);
+        }
+
+        function animStat(id, val) {
+            const el = document.getElementById(id);
+            if (el && el.innerText != val) {
+                el.innerText = val;
+                el.classList.remove('pulse-update');
+                void el.offsetWidth;
+                el.classList.add('pulse-update');
+            }
+        }
+
+        const playBtn = document.getElementById('play-btn');
+        playBtn.onclick = () => {
+            if (window.engine.nodes.length === 0) {
+                alert("Please add nodes first or select a preset.");
+                return;
+            }
+            if (playback.isRunning) {
+                playback.pause();
+                playBtn.innerHTML = '<i class="fas fa-play"></i> Run Kahn';
+            } else {
+                if (window.algo.complete || !window.algo.started) {
+                    window.algo.reset();
+                }
+                playback.play();
+                playBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            }
         };
 
-        document.getElementById('next-btn').onclick = () => {
-            if (engine.nodes.length === 0) return;
-            if (!algo.started) algo.reset();
-            algo.nextStep();
+        document.getElementById('step-btn').onclick = async () => {
+            if (window.engine.nodes.length === 0) {
+                alert("Please add nodes first.");
+                return;
+            }
+            playback.pause();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Run Kahn';
+            if (window.algo.complete || !window.algo.started) {
+                window.algo.reset();
+            }
+            await playback.step();
+            updateStatsDOM();
         };
 
         document.getElementById('reset-btn').onclick = () => {
-            playback.stop();
-            algo.reset();
+            playback.reset();
+            window.algo.reset();
+            updateStatsDOM();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Run Kahn';
         };
 
-        document.getElementById('grid-toggle-btn').onclick = () => {
-            engine.showGrid = !engine.showGrid;
-            document.getElementById('grid-toggle-btn').classList.toggle('active');
-            engine.draw();
-        };
+        document.getElementById('preset-btn').onclick = loadTopoPreset;
 
         function loadTopoPreset() {
-            engine.nodes = [
-                { id: 1, x: 100, y: 100, status: 'default' },
-                { id: 2, x: 300, y: 100, status: 'default' },
-                { id: 3, x: 100, y: 300, status: 'default' },
-                { id: 4, x: 300, y: 300, status: 'default' },
-                { id: 5, x: 500, y: 200, status: 'default' }
+            playback.pause();
+            window.engine.nodes = [
+                { id: 1, x: 100, y: 150, status: 'default' },
+                { id: 2, x: 280, y: 80, status: 'default' },
+                { id: 3, x: 280, y: 220, status: 'default' },
+                { id: 4, x: 460, y: 150, status: 'default' },
+                { id: 5, x: 620, y: 150, status: 'default' }
             ];
-            engine.edges = [
+            window.engine.edges = [
                 [1, 2, 0], [1, 3, 0], [2, 4, 0], [3, 4, 0], [4, 5, 0]
             ];
-            algo.reset();
+            window.algo.reset();
+            window.engine.draw();
+            updateStatsDOM();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Run Kahn';
         }
+
+        // Speed Slider
+        const speedSlider = document.getElementById('speed-slider');
+        speedSlider.oninput = (e) => playback.setSpeed(parseInt(e.target.value));
+        playback.setSpeed(parseInt(speedSlider.value));
 
         window.onload = () => {
             loadTopoPreset();
         };
     </script>
-
-    <script src='../../assets/js/core/ui-extras.js'></script>
-<script src="../../assets/js/brain-animation.js"></script></body>
+    <script src="../../assets/js/brain-animation.js"></script>
+</body>
 
 </html>
-

@@ -71,35 +71,66 @@
             <div class="glass-card" id="visualizer-container" style="padding: 30px;">
                 <canvas id="ml-canvas"></canvas>
 
-                <div style="margin-top: 25px; display: flex; justify-content: space-between; align-items: center;">
-                    <div style="display: flex; gap: 10px; align-items: center;">
+                <div style="margin-top: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;" id="normal-controls">
                         <button class="btn btn-primary" id="train-btn">Single Iteration</button>
-                        <button class="btn" id="run-btn" style="background: var(--dark); color: white;">Train
-                            Auto</button>
-                        <button class="btn" id="reset-btn"
-                            style="border: 1px solid var(--accent); color: var(--accent);">Reset</button>
-                        <button class="btn btn-secondary"
-                            onclick="shareScreenshot('visualizer-container', 'Linear Regression')">📸 Share</button>
+                        <button class="btn" id="run-btn" style="background: var(--dark); color: white;">Train Auto</button>
+                        <button class="btn" id="challenge-btn" style="padding: 10px 15px; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none;">Challenge Mode</button>
+                        <button class="btn" id="reset-btn" style="border: 1px solid var(--accent); color: var(--accent);">Reset</button>
+                        <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'Linear Regression')">📸 Share</button>
                     </div>
 
-                    <div style="display: flex; gap: 10px; align-items: center;">
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;" id="lr-control-group">
                         <label>Learning Rate:</label>
                         <input type="number" id="lr" value="0.05" step="0.01" min="0.01" max="1"
-                            style="width: 60px; padding: 5px;">
-                        <button class="btn" onclick="generateRandomData()" style="background: #6c757d; color: white;">🎲
-                            Random Data</button>
+                            style="width: 60px; padding: 5px; background: transparent; color: inherit; border: 1px solid #ddd; border-radius: 4px;">
+                        <button class="btn" onclick="generateRandomData()" style="background: #6c757d; color: white;">🎲 Random Data</button>
                     </div>
                 </div>
-                <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">Click on the canvas to add custom data
-                    points.</p>
+                <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">Click on the canvas to add custom data points.</p>
             </div>
 
             <div class="side-panel">
                 <div class="glass-card" style="padding: 20px;">
                     <h4>📜 Learning Equation</h4>
-                    <div class="math-box" id="equation-display">y = 0x + 0</div>
-                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 15px; min-height: 50px;">Ready. Add
-                        points and click 'Train' to see the line learn.</p>
+                    <div class="math-box" id="equation-display">y = 0.00x + 0.00</div>
+                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 15px; min-height: 50px;">Ready. Add points and click 'Train' to see the line learn.</p>
+                </div>
+
+                <div class="glass-card" id="game-panel" style="padding: 20px; display: none; border: 1.5px solid var(--accent); box-shadow: var(--glow-accent);">
+                    <h4 style="color: var(--accent);"><i class="fas fa-gamepad"></i> Line Fitter Challenge</h4>
+                    <p id="game-instruction" style="font-size: 0.85rem; margin-top: 10px; min-height: 50px; line-height: 1.5;">Adjust the slope (m) and intercept (c) manually to fit the data points and beat the optimal machine loss.</p>
+                    
+                    <div style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px;">
+                            <span>Slope (m):</span>
+                            <span id="slider-m-val" style="font-weight: bold; color: var(--accent);">0.00</span>
+                        </div>
+                        <input type="range" id="slider-m" min="-2.5" max="2.5" step="0.01" value="0" style="width: 100%;">
+                    </div>
+                    
+                    <div style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px;">
+                            <span>Intercept (c):</span>
+                            <span id="slider-c-val" style="font-weight: bold; color: var(--accent);">0</span>
+                        </div>
+                        <input type="range" id="slider-c" min="-300" max="800" step="1" value="0" style="width: 100%;">
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-success" id="verify-btn" style="width: 100%; border: none; padding: 10px; font-weight: bold;">Verify Manual Fit</button>
+                    </div>
+
+                    <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; font-size: 0.85rem; display: flex; flex-direction: column; gap: 5px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Your Loss (MSE):</span>
+                            <span id="player-loss" style="font-weight: bold; color: var(--primary);">0.00</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Optimal Loss (MSE):</span>
+                            <span id="optimal-loss" style="font-weight: bold; color: var(--success);">0.00</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="glass-card" style="padding: 20px;">
@@ -113,8 +144,7 @@
                     <div style="font-size: 0.85rem; margin-top: 10px;">
                         <p>1. Start with random <strong>m</strong> (slope) and <strong>c</strong> (intercept).</p>
                         <p>2. Calculate the <strong>Loss</strong> (difference between line and points).</p>
-                        <p>3. Use <strong>Gradient Descent</strong> to nudge m and c in the direction that reduces
-                            error.</p>
+                        <p>3. Use <strong>Gradient Descent</strong> to nudge m and c in the direction that reduces error.</p>
                     </div>
                 </div>
             </div>
@@ -128,6 +158,27 @@
         let m = 0; // Slope
         let c = 0; // Intercept
         let isTraining = false;
+        let challengeActive = false;
+
+        // Override engine draw to draw residuals (vertical red line segments) from points to regression line
+        const originalDraw = engine.draw.bind(engine);
+        engine.draw = () => {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            if (engine.line && engine.points.length > 0) {
+                engine.ctx.strokeStyle = '#ff4d4d';
+                engine.ctx.lineWidth = 1.5;
+                engine.ctx.setLineDash([2, 3]);
+                engine.points.forEach(p => {
+                    const lineY = engine.line.m * p.x + engine.line.c;
+                    engine.ctx.beginPath();
+                    engine.ctx.moveTo(p.x, p.y);
+                    engine.ctx.lineTo(p.x, lineY);
+                    engine.ctx.stroke();
+                });
+                engine.ctx.setLineDash([]);
+            }
+            originalDraw();
+        };
 
         function updateUI() {
             document.getElementById('equation-display').innerText = `y = ${m.toFixed(2)}x + ${c.toFixed(2)}`;
@@ -145,16 +196,21 @@
             });
             const mse = sumError / engine.points.length;
             document.getElementById('loss-display').innerText = mse.toFixed(4);
+            return mse;
         }
 
         function generateRandomData() {
+            if (challengeActive) {
+                resetChallengeData();
+                return;
+            }
             engine.clear();
-            const count = 20;
-            const startM = (Math.random() - 0.5) * 2;
-            const startC = Math.random() * engine.canvas.height;
+            const count = 18;
+            const startM = (Math.random() - 0.5) * 1.5;
+            const startC = Math.random() * (engine.canvas.height - 150) + 75;
             for (let i = 0; i < count; i++) {
                 const x = Math.random() * (engine.canvas.width - 100) + 50;
-                const noise = (Math.random() - 0.5) * 100;
+                const noise = (Math.random() - 0.5) * 80;
                 const y = startM * x + startC + noise;
                 engine.addPoint(x, y);
             }
@@ -163,27 +219,183 @@
         }
 
         function train() {
-            if (engine.points.length === 0) return;
+            if (engine.points.length === 0 || challengeActive) return;
             const lr = parseFloat(document.getElementById('lr').value);
 
             let m_gradient = 0;
             let c_gradient = 0;
             const n = engine.points.length;
 
+            // Simple scaling for coordinates to prevent gradient explosion
             engine.points.forEach(p => {
                 const prediction = m * p.x + c;
                 m_gradient += -2 * p.x * (p.y - prediction);
                 c_gradient += -2 * (p.y - prediction);
             });
 
-            m -= (m_gradient / n) * lr;
-            c -= (c_gradient / n) * lr;
+            // Prevent huge jumps by normalizing step size
+            m -= (m_gradient / n) * lr * 0.00001;
+            c -= (c_gradient / n) * lr * 0.01;
 
             updateUI();
         }
 
+        // Challenge Fit Game Mode
+        document.getElementById('challenge-btn').onclick = () => {
+            const btn = document.getElementById('challenge-btn');
+            if (btn.classList.contains('glow-active')) {
+                btn.classList.remove('glow-active');
+                btn.innerHTML = 'Challenge Mode';
+                stopChallenge();
+            } else {
+                btn.classList.add('glow-active');
+                btn.innerHTML = 'Exit Challenge';
+                startChallenge();
+            }
+        };
+
+        function startChallenge() {
+            challengeActive = true;
+            isTraining = false;
+            document.getElementById('run-btn').innerText = "Train Auto";
+            document.getElementById('train-btn').style.display = 'none';
+            document.getElementById('run-btn').style.display = 'none';
+            document.getElementById('lr-control-group').style.opacity = '0.5';
+            document.getElementById('game-panel').style.display = 'block';
+
+            // Set sliders default
+            document.getElementById('slider-m').value = 0;
+            document.getElementById('slider-m-val').innerText = '0.00';
+            document.getElementById('slider-c').min = -Math.round(engine.canvas.height);
+            document.getElementById('slider-c').max = Math.round(engine.canvas.height * 1.5);
+            document.getElementById('slider-c').value = Math.round(engine.canvas.height / 2);
+            document.getElementById('slider-c-val').innerText = Math.round(engine.canvas.height / 2);
+
+            resetChallengeData();
+        }
+
+        function stopChallenge() {
+            challengeActive = false;
+            document.getElementById('train-btn').style.display = 'inline-block';
+            document.getElementById('run-btn').style.display = 'inline-block';
+            document.getElementById('lr-control-group').style.opacity = '1';
+            document.getElementById('game-panel').style.display = 'none';
+            generateRandomData();
+        }
+
+        function resetChallengeData() {
+            engine.clear();
+            const count = 15;
+            const startM = (Math.random() - 0.5) * 1.2;
+            const startC = Math.random() * (engine.canvas.height - 200) + 100;
+            for (let i = 0; i < count; i++) {
+                const x = Math.random() * (engine.canvas.width - 100) + 50;
+                const noise = (Math.random() - 0.5) * 60;
+                const y = startM * x + startC + noise;
+                engine.addPoint(x, y);
+            }
+            
+            // Set user slope and intercept to 0
+            m = 0;
+            c = Math.round(engine.canvas.height / 2);
+            
+            // Set slider values
+            document.getElementById('slider-m').value = m;
+            document.getElementById('slider-c').value = c;
+            
+            updateChallengeLine();
+        }
+
+        function updateChallengeLine() {
+            if (!challengeActive) return;
+            m = parseFloat(document.getElementById('slider-m').value);
+            c = parseFloat(document.getElementById('slider-c').value);
+
+            document.getElementById('slider-m-val').innerText = m.toFixed(2);
+            document.getElementById('slider-c-val').innerText = Math.round(c);
+
+            const playerMSE = calculateLossFor(m, c);
+            document.getElementById('player-loss').innerText = playerMSE.toFixed(2);
+            
+            const optimal = calculateOptimalLine();
+            const optimalMSE = calculateLossFor(optimal.m, optimal.c);
+            document.getElementById('optimal-loss').innerText = optimalMSE.toFixed(2);
+
+            document.getElementById('loss-display').innerText = playerMSE.toFixed(4);
+            document.getElementById('equation-display').innerText = `y = ${m.toFixed(2)}x + ${c.toFixed(2)}`;
+
+            engine.line = { m, c };
+            engine.draw();
+        }
+
+        function calculateOptimalLine() {
+            const n = engine.points.length;
+            if (n === 0) return { m: 0, c: 0 };
+            
+            let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+            engine.points.forEach(p => {
+                sumX += p.x;
+                sumY += p.y;
+                sumXY += p.x * p.y;
+                sumXX += p.x * p.x;
+            });
+            
+            const num = n * sumXY - sumX * sumY;
+            const den = n * sumXX - sumX * sumX;
+            
+            let optM = 0;
+            if (den !== 0) {
+                optM = num / den;
+            }
+            const optC = (sumY - optM * sumX) / n;
+            
+            return { m: optM, c: optC };
+        }
+
+        function calculateLossFor(testM, testC) {
+            if (engine.points.length === 0) return 0;
+            let sumError = 0;
+            engine.points.forEach(p => {
+                const prediction = testM * p.x + testC;
+                sumError += Math.pow(p.y - prediction, 2);
+            });
+            return sumError / engine.points.length;
+        }
+
+        // Slider events
+        document.getElementById('slider-m').oninput = updateChallengeLine;
+        document.getElementById('slider-c').oninput = updateChallengeLine;
+
+        document.getElementById('verify-btn').onclick = () => {
+            const playerMSE = calculateLossFor(m, c);
+            const optimal = calculateOptimalLine();
+            const optimalMSE = calculateLossFor(optimal.m, optimal.c);
+
+            // If player loss is within 12% of optimal, they succeed
+            const difference = (playerMSE - optimalMSE) / optimalMSE;
+            if (difference <= 0.12) {
+                document.getElementById('game-instruction').innerHTML = `👑 <strong>Fit Verified!</strong> Your MSE is within 12% of optimal. You beat the machine!`;
+                if (typeof GamificationSystem !== 'undefined') {
+                    GamificationSystem.saveScore('linear-regression', 'line_fitter', Math.round(playerMSE), Math.round(optimalMSE));
+                    ProgressSystem.complete('ai', 'Linear Regression');
+                }
+                challengeActive = false;
+                document.getElementById('challenge-btn').classList.remove('glow-active');
+                document.getElementById('challenge-btn').innerHTML = 'Challenge Mode';
+                setTimeout(() => {
+                    stopChallenge();
+                }, 2500);
+            } else {
+                document.getElementById('game-instruction').innerHTML = `❌ <strong>Try again!</strong> Your MSE is ${playerMSE.toFixed(1)}, but optimal is ${optimalMSE.toFixed(1)} (${Math.round(difference * 100)}% higher). Adjust sliders to shrink vertical residuals!`;
+            }
+        };
+
         document.getElementById('train-btn').onclick = train;
         document.getElementById('reset-btn').onclick = () => {
+            if (challengeActive) {
+                resetChallengeData();
+                return;
+            }
             engine.clear();
             m = 0; c = 0;
             updateUI();
@@ -200,17 +412,16 @@
             document.getElementById('run-btn').innerText = "Stop Training";
             while (isTraining) {
                 train();
-                await new Promise(r => setTimeout(r, 50));
+                await new Promise(r => setTimeout(r, 40));
             }
         };
 
         window.onload = () => {
             generateRandomData();
-            setTimeout(() => { }, 1000);
         };
     </script>
 
-    <script src='../../assets/js/core/ui-extras.js'></script>
+    <script src="../../assets/js/core/ui-extras.js"></script>
 <script src="../../assets/js/brain-animation.js"></script></body>
 
 </html>

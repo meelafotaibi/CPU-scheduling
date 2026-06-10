@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process Synchronization Guide - AlgoVisual Hub</title>
+    <meta name="description"
+        content="Process Synchronization models coordinate shared queue buffer operations. In the Producer-Consumer problem, a producer inserts items into a shared buf...">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css?v=mobile_fix_1">
+
+    <link rel="icon" href="../assets/img/logo.png" type="image/png">
+</head>
+
+<body><canvas id="brain-canvas"></canvas>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <a href="../index.html" class="logo">
+                    <img src="../assets/img/logo.png" alt="AlgoVisual Hub" style="height:48px;width:48px;">
+                    <span>AlgoVisual Hub</span>
+                </a>
+                <div class="nav-links">
+                    <a href="../index.html">Home</a>
+                    <a href="../dsa.html">DSA</a>
+                    <a href="../algorithms.html">Algorithms</a>
+                    <a href="../os.html">OS</a>
+                    <a href="../roadmap.html">Roadmap</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container" style="padding: 60px 24px;">
+            <article>
+                <header style="text-align: center; margin-bottom: 60px;">
+                    <span class="section-tag">Concurrency</span>
+                    <h1
+                        style="font-size: 3rem; font-weight: 900; margin: 20px 0; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                        Process Synchronization
+                    </h1>
+                    <p
+                        style="font-size: 1.3rem; color: var(--text-muted); max-width: 800px; margin: 0 auto; line-height: 1.6;">
+                        The Producer-Consumer problem solving race conditions in concurrent processing.
+                    </p>
+                </header>
+
+                <div class="grid grid-2" style="margin-bottom: 60px; gap: 30px;">
+                    <div class="glass-card" style="padding: 35px;">
+                        <h2>What is Process Synchronization?</h2>
+                        <p>Process Synchronization models coordinate shared queue buffer operations. In the Producer-Consumer problem, a producer inserts items into a shared buffer, while a consumer retrieves them. Without synchronization (using Empty, Full semaphores and Mutex locks), concurrent accesses lead to race conditions, data loss, and process state corruption.</p>
+
+                        <h3 style="margin-top: 25px; color: var(--primary);">Key Characteristics:</h3>
+                        <ul style="line-height: 1.8; padding-left: 20px; color: var(--text-muted); margin-top: 10px;">
+                            <li>Prevents overlapping reader/writer thread race conditions.</li><li>Uses empty/full counting semaphores to avoid overflow/underflow.</li><li>Integrates critical section binary mutex mutual exclusion locks.</li><li>Coordinates execution queues atomically.</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card" style="padding: 35px;">
+                        <h2>Complexity Analysis</h2>
+                        <div class="complexity-table" style="margin-top: 20px;">
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Avg Time Complexity:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:var(--primary);">O(1) constant synchronization overhead</span>
+                            </div>
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Space Complexity:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:var(--accent);">O(B) buffer storage elements capacity</span>
+                            </div>
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Best Case:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:#4ade80;">O(1) execution timing</span>
+                            </div>
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0;">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Worst Case:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:#f87171;">Thread block (starvation or lock deadlocks if sequence is improper)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px; padding: 35px;">
+                    <h2>How it Works Step-by-Step</h2>
+                    <ol style="margin: 20px 0; padding-left: 20px; line-height: 2.0; color: var(--text-muted);">
+                        <li><strong>Empty Semaphore Check:</strong> Producer checks if there are empty slots. Consumer checks full slots.</li><li><strong>Acquire Mutex:</strong> Lock critical section using a binary mutex variable.</li><li><strong>Write/Read Buffer:</strong> Modify circular queue index safely.</li><li><strong>Release Mutex:</strong> Unlock critical section to restore access.</li><li><strong>Signal Partner:</strong> Increment target semaphore (full for producer, empty for consumer).</li>
+                    </ol>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px; padding: 35px;">
+                    <h2>Code Implementation</h2>
+                    
+                    <style>
+                        .code-tabs-container {
+                            display: flex;
+                            gap: 12px;
+                            margin-bottom: 20px;
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                            padding-bottom: 12px;
+                        }
+                        .code-tab-btn {
+                            background: transparent;
+                            border: none;
+                            color: var(--text-muted);
+                            font-size: 0.95rem;
+                            font-weight: 600;
+                            padding: 8px 16px;
+                            cursor: pointer;
+                            border-radius: 8px;
+                            transition: all 0.3s ease;
+                            border: 1px solid transparent;
+                        }
+                        .code-tab-btn:hover {
+                            color: var(--text);
+                            background: rgba(255, 255, 255, 0.05);
+                        }
+                        .code-tab-btn.active {
+                            color: #fff;
+                            background: var(--gradient-primary);
+                            box-shadow: var(--glow-primary);
+                            border: 1px solid rgba(255, 255, 255, 0.15);
+                        }
+                        .code-viewer-container {
+                            position: relative;
+                        }
+                        .copy-code-btn {
+                            position: absolute;
+                            top: 15px;
+                            right: 15px;
+                            background: rgba(255, 255, 255, 0.05);
+                            border: 1px solid rgba(255, 255, 255, 0.1);
+                            color: var(--text-muted);
+                            padding: 6px 12px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-size: 0.8rem;
+                            font-weight: 600;
+                            transition: all 0.2s ease;
+                            z-index: 10;
+                        }
+                        .copy-code-btn:hover {
+                            background: rgba(255, 255, 255, 0.15);
+                            color: var(--text);
+                            border-color: rgba(255, 255, 255, 0.2);
+                        }
+                    </style>
+
+                    <div class="code-tabs-container">
+                        <button class="code-tab-btn active" onclick="switchGuideLang(this, 'python')">Python</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'java')">Java</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'cpp')">C++</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'c')">C</button>
+                    </div>
+
+                    <div class="code-viewer-container">
+                        <button class="copy-code-btn" onclick="copyCode()">
+                            <i class="far fa-copy" style="margin-right: 5px;"></i>Copy
+                        </button>
+                        <div class="code-card">
+                            <div class="code-viewer" style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+                                <pre><code id="guide-code-block" class="language-python" style="font-family:'JetBrains Mono', monospace; font-size:0.9rem; color:#e2e8f0; line-height:1.5; white-space: pre-wrap;"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        const codeTemplates = {
+                            python: `import threading
+import time
+
+class BoundedBuffer:
+    def __init__(self, size):
+        self.buffer = [None] * size
+        self.empty = threading.Semaphore(size)
+        self.full = threading.Semaphore(0)
+        self.mutex = threading.Lock()
+        self.in_idx = 0
+        self.out_idx = 0
+
+    def produce(self, item):
+        self.empty.acquire()
+        with self.mutex:
+            self.buffer[self.in_idx] = item
+            self.in_idx = (self.in_idx + 1) % len(self.buffer)
+        self.full.release()
+
+    def consume(self):
+        self.full.acquire()
+        with self.mutex:
+            item = self.buffer[self.out_idx]
+            self.buffer[self.out_idx] = None
+            self.out_idx = (self.out_idx + 1) % len(self.buffer)
+        self.empty.release()
+        return item`,
+                            java: `import java.util.concurrent.Semaphore;
+
+class BoundedBuffer {
+    private final int[] buffer;
+    private final Semaphore empty, full, mutex;
+    private int inIdx = 0, outIdx = 0;
+
+    public BoundedBuffer(int size) {
+        buffer = new int[size];
+        empty = new Semaphore(size);
+        full = new Semaphore(0);
+        mutex = new Semaphore(1);
+    }
+
+    public void produce(int item) throws InterruptedException {
+        empty.acquire();
+        mutex.acquire();
+        buffer[inIdx] = item;
+        inIdx = (inIdx + 1) % buffer.length;
+        mutex.release();
+        full.release();
+    }
+
+    public int consume() throws InterruptedException {
+        full.acquire();
+        mutex.acquire();
+        int item = buffer[outIdx];
+        outIdx = (outIdx + 1) % buffer.length;
+        mutex.release();
+        empty.release();
+        return item;
+    }
+}`,
+                            cpp: `#include <mutex>
+#include <condition_variable>
+#include <vector>
+
+class BoundedBuffer {
+private:
+    std::vector<int> buffer;
+    int head = 0, tail = 0, count = 0;
+    std::mutex mtx;
+    std::condition_variable not_full, not_empty;
+
+public:
+    BoundedBuffer(int size) : buffer(size) {}
+
+    void produce(int item) {
+        std::unique_lock<std::mutex> lock(mtx);
+        not_full.wait(lock, [this]() { return count < buffer.size(); });
+        buffer[tail] = item;
+        tail = (tail + 1) % buffer.size();
+        count++;
+        not_empty.notify_one();
+    }
+
+    int consume() {
+        std::unique_lock<std::mutex> lock(mtx);
+        not_empty.wait(lock, [this]() { return count > 0; });
+        int item = buffer[head];
+        head = (head + 1) % buffer.size();
+        count--;
+        not_full.notify_one();
+        return item;
+    }
+};`,
+                            c: `#include <pthread.h>
+#include <semaphore.h>
+
+#define SIZE 5
+
+int buffer[SIZE];
+int in_idx = 0, out_idx = 0;
+
+sem_t empty_sem;
+sem_t full_sem;
+pthread_mutex_t mutex;
+
+void init() {
+    sem_init(&empty_sem, 0, SIZE);
+    sem_init(&full_sem, 0, 0);
+    pthread_mutex_init(&mutex, NULL);
+}
+
+void produce(int item) {
+    sem_wait(&empty_sem);
+    pthread_mutex_lock(&mutex);
+    buffer[in_idx] = item;
+    in_idx = (in_idx + 1) % SIZE;
+    pthread_mutex_unlock(&mutex);
+    sem_post(&full_sem);
+}
+
+int consume() {
+    int item;
+    sem_wait(&full_sem);
+    pthread_mutex_lock(&mutex);
+    item = buffer[out_idx];
+    out_idx = (out_idx + 1) % SIZE;
+    pthread_mutex_unlock(&mutex);
+    sem_post(&empty_sem);
+    return item;
+}`
+                        };
+
+                        function switchGuideLang(button, lang) {
+                            // Update active tab button style
+                            const container = button.parentElement;
+                            container.querySelectorAll('.code-tab-btn').forEach(btn => btn.classList.remove('active'));
+                            button.classList.add('active');
+
+                            // Update code content
+                            const codeBlock = document.getElementById('guide-code-block');
+                            codeBlock.textContent = codeTemplates[lang];
+                            
+                            // Update syntax highlighting class
+                            codeBlock.className = 'language-' + (lang === 'cpp' ? 'cpp' : lang);
+                        }
+
+                        function copyCode() {
+                            const codeBlock = document.getElementById('guide-code-block');
+                            navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+                                const btn = document.querySelector('.copy-code-btn');
+                                btn.innerHTML = '<i class="fas fa-check" style="margin-right: 5px;"></i>Copied!';
+                                setTimeout(() => {
+                                    btn.innerHTML = '<i class="far fa-copy" style="margin-right: 5px;"></i>Copy';
+                                }, 2000);
+                            });
+                        }
+
+                        // Initialize with default language (Python)
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const firstTab = document.querySelector('.code-tab-btn');
+                            if (firstTab) switchGuideLang(firstTab, 'python');
+                        });
+                    </script>
+                </div>
+
+                <div class="glass-card" style="padding: 35px; margin-bottom: 60px;">
+                    <h2>Worked Trace Example</h2>
+                    <p style="color: var(--text-muted); line-height: 1.8; margin-top: 10px;">
+                        With buffer size 2, empty=2, full=0, mutex=1:<br>1. Producer puts item: decrements empty (1), locks mutex (0), writes item, unlocks mutex (1), increments full (1).<br>2. Current state: empty=1, full=1, mutex=1.<br>3. Consumer gets item: decrements full (0), locks mutex (0), reads, unlocks mutex (1), increments empty (2).<br>Result: Operations run concurrently without conflict.
+                    </p>
+                </div>
+
+                <div class="glass-card" style="padding: 50px; text-align: center; margin-top: 40px;">
+                    <h2 style="margin-bottom: 20px;">Ready to Understand Process Synchronization Visually?</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">
+                        Don't just read about it. Launch our interactive, premium OS visualizer to see the processes, memory blocks, Page replacement queues, or disk head movements update in real-time.
+                    </p>
+                    <a href="../visualizers/os/process-sync.html" class="btn btn-primary"
+                        style="font-size: 1.2rem; padding: 15px 30px; display: inline-block;">
+                        Launch Process Synchronization Visualizer &rarr;
+                    </a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer style="margin-top:60px;">
+        <div class="container" style="text-align:center; padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.08);">
+            <p>© 2025 by Meelo 💙</p>
+        </div>
+    </footer>
+
+    <script src="../assets/js/brain-animation.js"></script>
+</body>
+</html>

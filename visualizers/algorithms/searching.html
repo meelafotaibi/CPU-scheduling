@@ -4,69 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Searching Visualizer | AlgoVisual Hub</title>
+    <title>Searching Monster | AlgoVisual Hub</title>
+    <meta name="description" content="Searching algorithms visualizer. Master Linear and Binary Search strategies with live index highlights and step-by-step trace.">
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="../../assets/css/dsa-monster.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
     <style>
-        .visualizer-layout {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 30px;
-            margin-top: 30px;
-        }
-
         #array-canvas {
-            width: 100%;
             height: 400px;
-            border: 2px solid var(--glass-border);
-            border-radius: 12px;
-            background: rgba(255,255,255,0.02);
-        }
-
-        .side-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .search-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .mode-toggle {
-            display: flex;
-            /* background: #f1f3f5; removed */
-            padding: 5px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-        }
-
-        .mode-btn {
-            flex: 1;
-            padding: 8px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-        }
-
-        .mode-btn.active {
-            background: rgba(99,102,241,0.2);
-            box-shadow: 0 0 12px rgba(99,102,241,0.3);
-            color: var(--primary);
         }
     </style>
-    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
 </head>
 
-<body><canvas id="brain-canvas"></canvas>
+<body>
+    <canvas id="brain-canvas"></canvas>
 
     <nav>
         <div class="container nav-content">
@@ -79,147 +32,304 @@
     </nav>
 
     <main class="container">
-        <header style="margin-top: 40px;">
-            <span class="btn-primary"
-                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Searching
-                Algorithms</span>
-            <h1>Searching Visualizer</h1>
-            <p>Find elements in an array using different search strategies.</p>
+        <header class="monster-header">
+            <span class="category-badge">⚡ Searching Algorithms</span>
+            <h1>Searching Monster</h1>
+            <p>Find elements in an array using different search strategies. Binary Search requires a sorted array.</p>
         </header>
 
-        <div class="visualizer-layout">
-            <div class="glass-card" id="visualizer-container" style="padding: 30px;">
-                <div class="mode-toggle">
-                    <button class="mode-btn active" id="linear-mode">Linear Search</button>
-                    <button class="mode-btn" id="binary-mode">Binary Search</button>
+        <!-- Stats Grid -->
+        <div class="stats-grid" style="margin-top: 24px;">
+            <div class="stat-card" style="--stat-color: hsl(258,89%,66%);">
+                <div class="stat-icon">⚙️</div>
+                <div class="stat-value" id="stat-mode">Linear</div>
+                <div class="stat-label">Mode</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(189,100%,52%);">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="stat-size">0</div>
+                <div class="stat-label">Array Size</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(45,100%,60%);">
+                <div class="stat-icon">⚖️</div>
+                <div class="stat-value" id="stat-comps">0</div>
+                <div class="stat-label">Comparisons</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(145,75%,50%);">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value" id="stat-target">None</div>
+                <div class="stat-label">Target Key</div>
+            </div>
+        </div>
+
+        <div class="monster-layout">
+            <div class="main-panel">
+                <!-- Mode Tabs -->
+                <div class="mode-tabs">
+                    <button class="mode-tab active" id="linear-mode">
+                        <i class="fas fa-exchange-alt"></i> Linear Search
+                    </button>
+                    <button class="mode-tab" id="binary-mode">
+                        <i class="fas fa-search"></i> Binary Search
+                    </button>
                 </div>
 
-                <canvas id="array-canvas"></canvas>
+                <!-- Canvas -->
+                <div class="monster-canvas-container" id="visualizer-container">
+                    <canvas id="array-canvas"></canvas>
+                    <div class="canvas-badge" id="canvas-badge">LINEAR SEARCH</div>
+                </div>
 
-                <div style="margin-top: 25px; display: flex; justify-content: space-between; align-items: center;">
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Search</button>
-                        <button class="btn" id="next-btn" style="background: var(--dark); color: white;">Next
-                            Step</button>
-                        <button class="btn" id="reset-btn"
-                            style="border: 1px solid var(--accent); color: var(--accent);">Reset</button>
-                        <button class="btn btn-secondary"
-                            onclick="shareScreenshot('visualizer-container', 'Searching')">📸 Share</button>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <label>Target:</label>
-                        <input type="number" id="target-val" value="25"
-                            style="width: 70px; padding: 8px; border-radius: 8px; border: 1px solid #ddd;">
-                    </div>
+                <!-- Controls -->
+                <div class="monster-controls">
+                    <input type="number" id="target-val" value="25" min="10" max="99" style="width: 70px; padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); color: white; text-align: center; font-weight: 700; font-family: monospace;">
+                    <button class="btn btn-primary" id="play-btn">
+                        <i class="fas fa-play"></i> Search
+                    </button>
+                    <button class="btn" id="step-btn" style="border: 1px solid rgba(255,255,255,0.2); color: white; background: transparent;">
+                        <i class="fas fa-step-forward"></i> Step
+                    </button>
+                    <button class="btn" id="reset-btn" style="border: 1px solid var(--monster-danger); color: var(--monster-danger); background: transparent;">
+                        <i class="fas fa-undo"></i> Reset
+                    </button>
+                    <div class="divider-v"></div>
+                    <label style="font-size: 0.75rem; color: #888; font-weight: 700; white-space: nowrap;">⚡ Speed</label>
+                    <input type="range" id="speed-slider" min="1" max="100" value="50">
+                    <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'Searching Suite')">📸 Share</button>
                 </div>
             </div>
 
             <div class="side-panel">
-                <div class="glass-card" style="padding: 20px;">
-                    <h4>📜 Execution Log</h4>
-                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 10px; min-height: 50px;">Set a
-                        target and click Search.</p>
+                <div class="log-panel">
+                    <h4><i class="fas fa-terminal"></i> Execution Log</h4>
+                    <div class="log-text" id="explanation-text">Set a target value and click Search.</div>
                 </div>
 
-                <div class="glass-card" style="padding: 20px;">
+                <!-- Custom Array Input Card -->
+                <div class="info-card">
                     <h4>🛠️ Array Controls</h4>
-                    <button class="btn" id="random-btn"
-                        style="width: 100%; border: 1px solid #ddd; margin-bottom: 10px;">Random Data</button>
-                    <button class="btn" onclick="showModal('input-modal')"
-                        style="width: 100%; background: var(--secondary); color: white; margin-bottom: 10px;"><i
-                            class="fas fa-edit"></i> Solve My Assignment</button>
-                    <button class="btn" id="sort-btn"
-                        style="width: 100%; /* background: #f8f9fa; removed */ border: 1px solid #ddd;">Sort Array
-                        (Required for
-                        Binary)</button>
+                    <button class="btn" id="random-btn" style="width: 100%; border: 1px solid rgba(255,255,255,0.15); color: white; background: transparent; margin-bottom: 10px; font-weight: 700;">
+                        <i class="fas fa-random"></i> Randomize Data
+                    </button>
+                    <button class="btn" id="sort-btn" style="width: 100%; border: 1px solid rgba(255,255,255,0.15); color: white; background: transparent; margin-bottom: 14px; font-weight: 700;">
+                        <i class="fas fa-sort-amount-up"></i> Sort Array
+                    </button>
+
+                    <div style="font-size: 0.72rem; color: var(--text-muted, #888); font-weight: 800; text-transform: uppercase; margin-bottom: 8px;">Custom Array Input</div>
+                    <input type="text" id="custom-array-input" placeholder="e.g., 12, 34, 45, 67, 89" style="width: 100%; padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); color: white; margin-bottom: 8px; font-family: monospace;">
+                    <button class="btn btn-primary" id="set-array-btn" style="width: 100%; font-weight: 700;">Set Custom Array</button>
+                </div>
+
+                <!-- Complexity Details -->
+                <div class="info-card">
+                    <h4>⚡ Algorithm Complexity</h4>
+                    <div class="complexity-row">
+                        <span class="op">Best Case</span>
+                        <span class="complexity-badge optimal" id="comp-best">O(1)</span>
+                    </div>
+                    <div class="complexity-row">
+                        <span class="op">Worst Case</span>
+                        <span class="complexity-badge bad" id="comp-worst">O(n)</span>
+                    </div>
+                    <div class="complexity-row">
+                        <span class="op">Space Complexity</span>
+                        <span class="complexity-badge optimal">O(1)</span>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div style="margin: 60px 0; text-align: center;">
-            
         </div>
     </main>
 
     <script src="../../assets/js/core/array-engine.js"></script>
     <script src="../../assets/js/core/playback.js"></script>
     <script src="../../assets/js/core/ComplexityTracker.js"></script>
-    <script src="../../../assets/js/core/ui-extras.js"></script>
+    <script src="../../assets/js/core/ui-extras.js"></script>
     <script src="../../assets/js/algos/algorithms/linear-search.js"></script>
     <script src="../../assets/js/algos/algorithms/binary-search.js"></script>
     <script>
         window.engine = new ArrayEngine('array-canvas');
         window.ui = {
-            updateStatus: (t) => document.getElementById('explanation-text').innerText = t,
-            updateStats: () => { }
+            updateStatus: (t) => {
+                const el = document.getElementById('explanation-text');
+                if (el) el.innerHTML = t;
+            },
+            updateStats: () => {}
         };
-        const ui = window.ui;
-        const playback = new Playback(() => window.algo.nextStep());
 
-        window.algo = new LinearSearchAlgo(window.engine, playback, ui);
+        const ui = window.ui;
+        let comparisonCount = 0;
         let mode = 'linear';
 
+        const playback = new Playback(async () => {
+            if (window.algo.complete) {
+                return false;
+            }
+            comparisonCount++;
+            updateStats();
+            const hasMore = await window.algo.nextStep();
+            updateStats();
+            return hasMore;
+        });
+        window.playback = playback;
+
+        window.algo = new LinearSearchAlgo(window.engine, playback, ui);
+
         function initArray(sorted = false) {
+            playback.stop();
             const arr = [];
-            for (let i = 0; i < 15; i++) arr.push(Math.floor(Math.random() * 90) + 10);
+            for (let i = 0; i < 15; i++) arr.push(Math.floor(Math.random() * 80) + 15);
             if (sorted) arr.sort((a, b) => a - b);
             window.engine.setArray(arr);
             window.algo.reset();
+            comparisonCount = 0;
+            updateStats();
         }
 
+        function updateStats() {
+            animStat('stat-mode', mode === 'linear' ? 'Linear' : 'Binary');
+            animStat('stat-size', window.engine.array.length);
+            animStat('stat-comps', comparisonCount);
+            animStat('stat-target', window.algo.target !== null ? window.algo.target : 'None');
+        }
+
+        function animStat(id, val) {
+            const el = document.getElementById(id);
+            if (el && el.innerText != val) {
+                el.innerText = val;
+                el.classList.remove('pulse-update');
+                void el.offsetWidth;
+                el.classList.add('pulse-update');
+            }
+        }
+
+        // Mode Toggles
         document.getElementById('linear-mode').onclick = () => {
+            if (playback.isRunning) playback.pause();
             mode = 'linear';
             document.getElementById('linear-mode').classList.add('active');
             document.getElementById('binary-mode').classList.remove('active');
+            document.getElementById('canvas-badge').innerText = 'LINEAR SEARCH';
+            
+            document.getElementById('comp-best').innerText = 'O(1)';
+            document.getElementById('comp-worst').innerText = 'O(n)';
+            
             window.algo = new LinearSearchAlgo(window.engine, playback, ui);
             window.algo.reset();
-            if (window.complexityTracker) window.complexityTracker.setComplexity("O(n)", "O(1)");
+            comparisonCount = 0;
+            updateStats();
         };
 
         document.getElementById('binary-mode').onclick = () => {
+            if (playback.isRunning) playback.pause();
             mode = 'binary';
             document.getElementById('binary-mode').classList.add('active');
             document.getElementById('linear-mode').classList.remove('active');
+            document.getElementById('canvas-badge').innerText = 'BINARY SEARCH (SORTED)';
+            
+            document.getElementById('comp-best').innerText = 'O(1)';
+            document.getElementById('comp-worst').innerText = 'O(log n)';
+
+            // Auto-sort array for binary search
+            const sorted = [...window.engine.array].sort((a, b) => a - b);
+            window.engine.setArray(sorted);
+
             window.algo = new BinarySearchAlgo(window.engine, playback, ui);
             window.algo.reset();
-            if (window.complexityTracker) window.complexityTracker.setComplexity("O(log n)", "O(1)");
+            comparisonCount = 0;
+            updateStats();
         };
 
-        document.getElementById('play-btn').onclick = () => {
-            const target = parseInt(document.getElementById('target-val').value);
-            window.algo.setTarget(target);
-            playback.play();
+        // Controls Hookup
+        const playBtn = document.getElementById('play-btn');
+        playBtn.onclick = () => {
+            if (playback.isRunning) {
+                playback.pause();
+                playBtn.innerHTML = '<i class="fas fa-play"></i> Search';
+            } else {
+                const target = parseInt(document.getElementById('target-val').value);
+                if (isNaN(target)) return;
+                
+                if (window.algo.target === null || window.algo.target !== target || window.algo.complete) {
+                    window.algo.setTarget(target);
+                    comparisonCount = 0;
+                }
+                playback.play();
+                playBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            }
         };
 
-        document.getElementById('next-btn').onclick = () => {
+        document.getElementById('step-btn').onclick = async () => {
+            playback.pause();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Search';
             const target = parseInt(document.getElementById('target-val').value);
-            if (window.algo.target === null) window.algo.setTarget(target);
-            window.algo.nextStep();
+            if (isNaN(target)) return;
+
+            if (window.algo.target === null || window.algo.target !== target || window.algo.complete) {
+                window.algo.setTarget(target);
+                comparisonCount = 0;
+            }
+            await playback.step();
         };
 
         document.getElementById('reset-btn').onclick = () => {
             playback.stop();
             window.algo.reset();
-            if (window.complexityTracker) window.complexityTracker.reset();
+            comparisonCount = 0;
+            updateStats();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Search';
         };
 
         document.getElementById('random-btn').onclick = () => {
             playback.stop();
             initArray(mode === 'binary');
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Search';
         };
 
         document.getElementById('sort-btn').onclick = () => {
+            playback.stop();
             const sorted = [...window.engine.array].sort((a, b) => a - b);
             window.engine.setArray(sorted);
             window.algo.reset();
+            comparisonCount = 0;
+            updateStats();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Search';
         };
+
+        // Custom Array Input Hookup
+        document.getElementById('set-array-btn').onclick = () => {
+            playback.stop();
+            const inputVal = document.getElementById('custom-array-input').value;
+            if (!inputVal) return;
+
+            const numbers = inputVal.split(',')
+                                    .map(x => parseInt(x.trim()))
+                                    .filter(x => !isNaN(x));
+
+            if (numbers.length === 0) {
+                alert("Please enter a valid comma-separated list of numbers.");
+                return;
+            }
+
+            if (mode === 'binary') {
+                numbers.sort((a, b) => a - b);
+            }
+
+            window.engine.setArray(numbers);
+            window.algo.reset();
+            comparisonCount = 0;
+            updateStats();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Search';
+        };
+
+        // Speed Slider
+        const speedSlider = document.getElementById('speed-slider');
+        speedSlider.oninput = (e) => playback.setSpeed(parseInt(e.target.value));
+        playback.setSpeed(parseInt(speedSlider.value));
 
         window.onload = () => {
             initArray(false);
-            if (window.complexityTracker) window.complexityTracker.setComplexity("O(n)", "O(1)");
         };
     </script>
-<script src="../../assets/js/brain-animation.js"></script></body>
-
-
+    <script src="../../assets/js/brain-animation.js"></script>
+</body>
 </html>

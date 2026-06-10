@@ -13,6 +13,7 @@ class PerceptronAlgo {
         this.bias = 0.1;
 
         this.points = []; // [{x, y, label}]
+        this.highlightedPoint = null;
 
         this.initResize();
     }
@@ -50,12 +51,12 @@ class PerceptronAlgo {
         const { width, height } = this.canvas;
         ctx.clearRect(0, 0, width, height);
 
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+
         // Draw decision boundary area
         const step = 4;
         for (let x = 0; x < width; x += step) {
             for (let y = 0; y < height; y += step) {
-                // Normalize coordinates to -1, 1 for consistent math if needed
-                // But let's just use raw pixels/offset for visual
                 const nx = (x / width) * 2 - 1;
                 const ny = (y / height) * 2 - 1;
 
@@ -66,23 +67,31 @@ class PerceptronAlgo {
         }
 
         // Draw the line: w1*x + w2*y + b = 0  => y = (-w1*x - b) / w2
+        // To handle division by zero (vertical line when w2 = 0)
         ctx.beginPath();
-        ctx.strokeStyle = '#333';
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = isDark ? '#fff' : '#111';
+        ctx.lineWidth = 3;
 
-        // Start and end points of the line in normalized space
-        const xStart = -1;
-        const yStart = (-this.w1 * xStart - this.bias) / this.w2;
-        const xEnd = 1;
-        const yEnd = (-this.w1 * xEnd - this.bias) / this.w2;
+        if (Math.abs(this.w2) < 0.001) {
+            // Vertical line: x = -b / w1
+            const nx = -this.bias / this.w1;
+            const canvasX = (nx + 1) / 2 * width;
+            ctx.moveTo(canvasX, 0);
+            ctx.lineTo(canvasX, height);
+        } else {
+            const xStart = -1;
+            const yStart = (-this.w1 * xStart - this.bias) / this.w2;
+            const xEnd = 1;
+            const yEnd = (-this.w1 * xEnd - this.bias) / this.w2;
 
-        const canvasXStart = (xStart + 1) / 2 * width;
-        const canvasYStart = (yStart + 1) / 2 * height;
-        const canvasXEnd = (xEnd + 1) / 2 * width;
-        const canvasYEnd = (yEnd + 1) / 2 * height;
+            const canvasXStart = (xStart + 1) / 2 * width;
+            const canvasYStart = (yStart + 1) / 2 * height;
+            const canvasXEnd = (xEnd + 1) / 2 * width;
+            const canvasYEnd = (yEnd + 1) / 2 * height;
 
-        ctx.moveTo(canvasXStart, canvasYStart);
-        ctx.lineTo(canvasXEnd, canvasYEnd);
+            ctx.moveTo(canvasXStart, canvasYStart);
+            ctx.lineTo(canvasXEnd, canvasYEnd);
+        }
         ctx.stroke();
 
         // Draw data points
@@ -90,11 +99,22 @@ class PerceptronAlgo {
             const px = (p.x + 1) / 2 * width;
             const py = (p.y + 1) / 2 * height;
 
+            // Pulsate highlighted point
+            if (this.highlightedPoint && Math.abs(this.highlightedPoint.x - p.x) < 0.001 && Math.abs(this.highlightedPoint.y - p.y) < 0.001) {
+                ctx.beginPath();
+                ctx.arc(px, py, 14, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(241, 196, 15, 0.4)';
+                ctx.fill();
+                ctx.strokeStyle = '#f1c40f';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+            }
+
             ctx.beginPath();
             ctx.arc(px, py, 6, 0, Math.PI * 2);
             ctx.fillStyle = p.label === 1 ? '#4a90e2' : '#ff4d4d';
             ctx.fill();
-            ctx.strokeStyle = '#fff';
+            ctx.strokeStyle = isDark ? '#1e293b' : '#fff';
             ctx.lineWidth = 2;
             ctx.stroke();
 
@@ -102,11 +122,11 @@ class PerceptronAlgo {
             if (this.predict(p.x, p.y) !== p.label) {
                 ctx.beginPath();
                 ctx.arc(px, py, 10, 0, Math.PI * 2);
-                ctx.strokeStyle = '#ffd700';
+                ctx.strokeStyle = '#f1c40f';
                 ctx.lineWidth = 2;
                 ctx.stroke();
             }
         });
     }
 }
-Riverside
+

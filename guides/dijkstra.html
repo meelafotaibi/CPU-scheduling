@@ -107,6 +107,244 @@
                     </div>
                 </div>
 
+                <div class="glass-card" style="margin-bottom: 60px; padding: 35px;">
+                    <h2>Code Implementation</h2>
+                    
+                    <style>
+                        .code-tabs-container {
+                            display: flex;
+                            gap: 12px;
+                            margin-bottom: 20px;
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                            padding-bottom: 12px;
+                        }
+                        .code-tab-btn {
+                            background: transparent;
+                            border: none;
+                            color: var(--text-muted);
+                            font-size: 0.95rem;
+                            font-weight: 600;
+                            padding: 8px 16px;
+                            cursor: pointer;
+                            border-radius: 8px;
+                            transition: all 0.3s ease;
+                            border: 1px solid transparent;
+                        }
+                        .code-tab-btn:hover {
+                            color: var(--text);
+                            background: rgba(255, 255, 255, 0.05);
+                        }
+                        .code-tab-btn.active {
+                            color: #fff;
+                            background: var(--gradient-primary);
+                            box-shadow: var(--glow-primary);
+                            border: 1px solid rgba(255, 255, 255, 0.15);
+                        }
+                        .code-viewer-container {
+                            position: relative;
+                        }
+                        .copy-code-btn {
+                            position: absolute;
+                            top: 15px;
+                            right: 15px;
+                            background: rgba(255, 255, 255, 0.05);
+                            border: 1px solid rgba(255, 255, 255, 0.1);
+                            color: var(--text-muted);
+                            padding: 6px 12px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-size: 0.8rem;
+                            font-weight: 600;
+                            transition: all 0.2s ease;
+                            z-index: 10;
+                        }
+                        .copy-code-btn:hover {
+                            background: rgba(255, 255, 255, 0.15);
+                            color: var(--text);
+                            border-color: rgba(255, 255, 255, 0.2);
+                        }
+                    </style>
+
+                    <div class="code-tabs-container">
+                        <button class="code-tab-btn active" onclick="switchGuideLang(this, 'python')">Python</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'java')">Java</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'cpp')">C++</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'c')">C</button>
+                    </div>
+
+                    <div class="code-viewer-container">
+                        <button class="copy-code-btn" onclick="copyCode()">
+                            <i class="far fa-copy" style="margin-right: 5px;"></i>Copy
+                        </button>
+                        <div class="code-card">
+                            <div class="code-viewer" style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+                                <pre><code id="guide-code-block" class="language-python" style="font-family:'JetBrains Mono', monospace; font-size:0.9rem; color:#e2e8f0; line-height:1.5; white-space: pre-wrap;"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        const codeTemplates = {
+                            python: `import heapq
+
+def dijkstra(graph, start):
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
+    pq = [(0, start)]  # (distance, node)
+    
+    while pq:
+        curr_dist, curr_node = heapq.heappop(pq)
+        
+        if curr_dist > distances[curr_node]:
+            continue
+            
+        for neighbor, weight in graph[curr_node].items():
+            dist = curr_dist + weight
+            if dist < distances[neighbor]:
+                distances[neighbor] = dist
+                heapq.heappush(pq, (dist, neighbor))
+                
+    return distances`,
+                            java: `import java.util.*;
+
+class DijkstraExample {
+    static class Node implements Comparable<Node> {
+        int id, distance;
+        Node(int id, int distance) {
+            this.id = id;
+            this.distance = distance;
+        }
+        public int compareTo(Node o) { return Integer.compare(this.distance, o.distance); }
+    }
+
+    Map<Integer, Integer> dijkstra(Map<Integer, List<Node>> graph, int start, int numNodes) {
+        Map<Integer, Integer> distances = new HashMap<>();
+        for (int i = 0; i < numNodes; i++) distances.put(i, Integer.MAX_VALUE);
+        distances.put(start, 0);
+
+        PriorityQueue<Node> pq = new PriorityQueue<>();
+        pq.add(new Node(start, 0));
+
+        while (!pq.isEmpty()) {
+            Node curr = pq.poll();
+            if (curr.distance > distances.get(curr.id)) continue;
+
+            for (Node neighbor : graph.getOrDefault(curr.id, new ArrayList<>())) {
+                int newDist = curr.distance + neighbor.distance;
+                if (newDist < distances.get(neighbor.id)) {
+                    distances.put(neighbor.id, newDist);
+                    pq.add(new Node(neighbor.id, newDist));
+                }
+            }
+        }
+        return distances;
+    }
+}`,
+                            cpp: `#include <iostream>
+#include <vector>
+#include <queue>
+#include <unordered_map>
+#include <utility>
+
+const int INF = 1e9;
+
+std::unordered_map<int, int> dijkstra(std::unordered_map<int, std::vector<std::pair<int, int>>>& graph, int start) {
+    std::unordered_map<int, int> distances;
+    for (auto& pair : graph) distances[pair.first] = INF;
+    distances[start] = 0;
+
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
+    pq.push({0, start}); // {distance, node}
+
+    while (!pq.empty()) {
+        int curr_dist = pq.top().first;
+        int curr_node = pq.top().second;
+        pq.pop();
+
+        if (curr_dist > distances[curr_node]) continue;
+
+        for (auto& edge : graph[curr_node]) {
+            int neighbor = edge.first;
+            int weight = edge.second;
+            int dist = curr_dist + weight;
+            if (dist < distances[neighbor]) {
+                distances[neighbor] = dist;
+                pq.push({dist, neighbor});
+            }
+        }
+    }
+    return distances;
+}`,
+                            c: `#include <stdio.h>
+#include <stdbool.h>
+
+#define INF 999999
+#define V 6
+
+int minDistance(int dist[], bool sptSet[]) {
+    int min = INF, min_index;
+    for (int v = 0; v < V; v++) {
+        if (!sptSet[v] && dist[v] <= min) {
+            min = dist[v];
+            min_index = v;
+        }
+    }
+    return min_index;
+}
+
+void dijkstra(int graph[V][V], int src) {
+    int dist[V];
+    bool sptSet[V] = {false};
+
+    for (int i = 0; i < V; i++) dist[i] = INF;
+    dist[src] = 0;
+
+    for (int count = 0; count < V - 1; count++) {
+        int u = minDistance(dist, sptSet);
+        sptSet[u] = true;
+
+        for (int v = 0; v < V; v++) {
+            if (!sptSet[v] && graph[u][v] && dist[u] != INF && dist[u] + graph[u][v] < dist[v]) {
+                dist[v] = dist[u] + graph[u][v];
+            }
+        }
+    }
+}`
+                        };
+
+                        function switchGuideLang(button, lang) {
+                            // Update active tab button style
+                            const container = button.parentElement;
+                            container.querySelectorAll('.code-tab-btn').forEach(btn => btn.classList.remove('active'));
+                            button.classList.add('active');
+
+                            // Update code content
+                            const codeBlock = document.getElementById('guide-code-block');
+                            codeBlock.textContent = codeTemplates[lang];
+                            
+                            // Update syntax highlighting class
+                            codeBlock.className = 'language-' + (lang === 'cpp' ? 'cpp' : lang);
+                        }
+
+                        function copyCode() {
+                            const codeBlock = document.getElementById('guide-code-block');
+                            navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+                                const btn = document.querySelector('.copy-code-btn');
+                                btn.innerHTML = '<i class="fas fa-check" style="margin-right: 5px;"></i>Copied!';
+                                setTimeout(() => {
+                                    btn.innerHTML = '<i class="far fa-copy" style="margin-right: 5px;"></i>Copy';
+                                }, 2000);
+                            });
+                        }
+
+                        // Initialize with default language (Python)
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const firstTab = document.querySelector('.code-tab-btn');
+                            if (firstTab) switchGuideLang(firstTab, 'python');
+                        });
+                    </script>
+                </div>
+
                 <div class="glass-card" style="margin-bottom: 60px;">
                     <h2>Worked Example</h2>
                     <p>Consider a graph with vertices A, B, C, D and weighted edges:</p>

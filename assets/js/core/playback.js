@@ -15,10 +15,22 @@ class Playback {
         this.delay = 2000 - (val * 19);
     }
 
+    updatePlayBtn() {
+        const btn = document.getElementById('play-btn');
+        if (btn) {
+            if (this.isRunning && !this.isPaused) {
+                btn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            } else {
+                btn.innerHTML = '<i class="fas fa-play"></i> Play';
+            }
+        }
+    }
+
     async play() {
         if (this.isRunning) return;
         this.isRunning = true;
         this.isPaused = false;
+        this.updatePlayBtn();
 
         while (this.isRunning && !this.isPaused) {
             if (this.isExecuting) {
@@ -31,6 +43,7 @@ class Playback {
             
             if (!hasMore) {
                 this.isRunning = false;
+                this.updatePlayBtn();
                 break;
             }
             await new Promise(r => setTimeout(r, this.delay));
@@ -40,12 +53,18 @@ class Playback {
     pause() {
         this.isPaused = true;
         this.isRunning = false;
+        this.updatePlayBtn();
     }
 
     reset() {
         this.isRunning = false;
         this.isPaused = false;
         this.isExecuting = false;
+        this.updatePlayBtn();
+    }
+
+    stop() {
+        this.reset();
     }
 
     async step() {
@@ -53,6 +72,7 @@ class Playback {
         this.isExecuting = true;
         this.isRunning = false;
         this.isPaused = true;
+        this.updatePlayBtn();
         await this.onStep();
         this.isExecuting = false;
     }

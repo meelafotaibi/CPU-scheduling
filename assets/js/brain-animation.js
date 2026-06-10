@@ -20,7 +20,7 @@ class BrainAnimation {
         this.canvas.style.width = '100vw';
         this.canvas.style.height = '100vh';
         this.canvas.style.zIndex = '0';
-        this.canvas.style.pointerEvents = 'all';
+        this.canvas.style.pointerEvents = 'none';
 
         this.ctx = this.canvas.getContext('2d');
         this.constellations = [];

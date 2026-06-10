@@ -158,8 +158,8 @@ main.container span.btn-primary {
     width: 100%;
     height: 100%;
     z-index: -1;
-    pointer-events: all;
-    /* Enable drag & throw interaction */
+    pointer-events: none;
+    /* Disable capturing pointers to allow underlying clicks */
 }
 
 body {
@@ -536,6 +536,7 @@ a.btn,
 .toggle-btn,
 .mode-btn,
 .class-btn,
+.mode-tab,
 .code-tab {
     border: 1px solid rgba(129, 140, 248, 0.48) !important;
     background: rgba(255, 255, 255, 0.045) !important;
@@ -553,6 +554,7 @@ a.btn-primary,
 .toggle-btn.active,
 .mode-btn.active,
 .class-btn.active,
+.mode-tab.active,
 .code-tab.active {
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.52), rgba(168, 85, 247, 0.36)) !important;
     border-color: rgba(167, 139, 250, 0.78) !important;
@@ -568,6 +570,7 @@ a.btn:hover,
 .toggle-btn:hover,
 .mode-btn:hover,
 .class-btn:hover,
+.mode-tab:hover,
 .code-tab:hover {
     background: rgba(99, 102, 241, 0.16) !important;
     border-color: rgba(216, 180, 254, 0.84) !important;
@@ -582,6 +585,7 @@ a.btn-primary:hover,
 .toggle-btn.active:hover,
 .mode-btn.active:hover,
 .class-btn.active:hover,
+.mode-tab.active:hover,
 .code-tab.active:hover {
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.62), rgba(168, 85, 247, 0.44)) !important;
 }
@@ -1104,7 +1108,7 @@ footer {
 }
 
 /* Card catalog alignment */
-#algo-grid > .glass-card {
+#algo-grid>.glass-card {
     display: flex !important;
     flex-direction: column;
     align-items: stretch;
@@ -1112,7 +1116,7 @@ footer {
 }
 
 /* Card sizing: wider and square-like, tall enough to contain all content */
-#algo-grid:not(.list-view) > .glass-card {
+#algo-grid:not(.list-view)>.glass-card {
     min-height: 330px;
     padding: 28px 24px !important;
 }
@@ -1131,25 +1135,27 @@ footer {
         grid-template-columns: repeat(3, 1fr) !important;
     }
 }
+
 @media (min-width: 900px) and (max-width: 1399px) {
     #algo-grid.grid-4:not(.list-view) {
         grid-template-columns: repeat(3, 1fr) !important;
     }
 }
+
 @media (max-width: 899px) {
     #algo-grid.grid-4:not(.list-view) {
         grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
     }
 }
 
-#algo-grid > .glass-card > h2 {
+#algo-grid>.glass-card>h2 {
     font-size: 1.35rem !important;
     margin-bottom: 12px !important;
     line-height: 1.3 !important;
     width: 100%;
 }
 
-#algo-grid > .glass-card > p {
+#algo-grid>.glass-card>p {
     font-size: 0.95rem !important;
     line-height: 1.5 !important;
     margin-bottom: 0 !important;
@@ -1157,37 +1163,42 @@ footer {
 }
 
 /* Action buttons container */
-#algo-grid > .glass-card > div:last-child {
+#algo-grid>.glass-card>div:last-child {
     display: flex !important;
-    justify-content: center !important; /* Center buttons horizontally */
+    justify-content: center !important;
+    /* Center buttons horizontally */
     align-items: center;
     gap: 12px !important;
-    flex-wrap: nowrap !important; /* Force side-by-side on desktop */
+    flex-wrap: nowrap !important;
+    /* Force side-by-side on desktop */
     width: 100%;
     margin-top: auto !important;
     padding-top: 20px;
 }
 
-#algo-grid > .glass-card > div:last-child > .btn {
+#algo-grid>.glass-card>div:last-child>.btn {
     flex: 0 0 auto !important;
-    padding: 14px 32px !important; /* A bit bigger button padding */
-    font-size: 0.98rem !important;  /* Slightly larger text size */
+    padding: 14px 32px !important;
+    /* A bit bigger button padding */
+    font-size: 0.98rem !important;
+    /* Slightly larger text size */
     border-radius: 12px !important;
     white-space: nowrap !important;
 }
 
 @media (max-width: 600px) {
-    #algo-grid > .glass-card > div:last-child {
+    #algo-grid>.glass-card>div:last-child {
         flex-wrap: wrap !important;
     }
-    #algo-grid > .glass-card > div:last-child > .btn {
+
+    #algo-grid>.glass-card>div:last-child>.btn {
         flex: 1 1 auto !important;
     }
 }
 
 /* Layout properties for card badges */
 .card-badge,
-#algo-grid > .glass-card > span.btn-primary:first-child {
+#algo-grid>.glass-card>span.btn-primary:first-child {
     align-self: flex-start !important;
     margin: 0 0 16px 0 !important;
     width: fit-content;
@@ -1210,7 +1221,7 @@ main.container span.btn-primary {
 
 /* Glassy style for all badges and tags (excluding graphics) */
 .card-badge,
-#algo-grid > .glass-card > span.btn-primary:first-child,
+#algo-grid>.glass-card>span.btn-primary:first-child,
 .page-hero span.btn-primary:not(.cg-card *),
 header span.btn-primary:not(.cg-card *),
 .premium-header span.btn-primary:not(.cg-card *),
@@ -1223,14 +1234,14 @@ main.container span.btn-primary:not(.cg-card *),
     letter-spacing: 1px !important;
     font-weight: 700 !important;
     cursor: default !important;
-    
+
     background: rgba(255, 255, 255, 0.06) !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
     color: #e2e8f0 !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
-    
+
     background-clip: padding-box !important;
     -webkit-background-clip: padding-box !important;
     filter: none !important;
@@ -1239,7 +1250,7 @@ main.container span.btn-primary:not(.cg-card *),
 
 /* Pink glow hover state for all tags (excluding graphics) */
 .card-badge:hover,
-#algo-grid > .glass-card > span.btn-primary:first-child:hover,
+#algo-grid>.glass-card>span.btn-primary:first-child:hover,
 .page-hero span.btn-primary:not(.cg-card *):hover,
 header span.btn-primary:not(.cg-card *):hover,
 .premium-header span.btn-primary:not(.cg-card *):hover,
@@ -1252,7 +1263,7 @@ main.container span.btn-primary:not(.cg-card *):hover,
     box-shadow: 0 8px 25px rgba(236, 72, 153, 0.35), 0 0 15px rgba(236, 72, 153, 0.2) !important;
 }
 
-#algo-grid.list-view > .glass-card {
+#algo-grid.list-view>.glass-card {
     min-height: unset;
     height: auto;
 }
@@ -1294,7 +1305,7 @@ main.container span.btn-primary:not(.cg-card *):hover,
 }
 
 .shimmer {
-    background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.03) 75%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 25%, rgba(255, 255, 255, 0.07) 50%, rgba(255, 255, 255, 0.03) 75%);
     background-size: 200% 100%;
     animation: shimmer 2s infinite;
 }

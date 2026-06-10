@@ -1,5 +1,6 @@
 /**
  * kruskal.js - Kruskal's Algorithm for MST using Union-Find.
+ * Works with GraphEngine where edges are arrays: [u, v, weight]
  */
 class KruskalAlgo {
     constructor(engine, playback, ui) {
@@ -7,7 +8,8 @@ class KruskalAlgo {
         this.playback = playback;
         this.ui = ui;
 
-        this.edges = []; // Sorted edges
+        this.sortedEdges = []; // Sorted copies of edges [u, v, w]
+        this.edgeIndex = 0;
         this.mstEdges = [];
         this.totalWeight = 0;
         this.complete = false;
@@ -18,14 +20,17 @@ class KruskalAlgo {
     }
 
     reset() {
-        this.edges = [];
+        this.sortedEdges = [];
+        this.edgeIndex = 0;
         this.mstEdges = [];
         this.totalWeight = 0;
         this.complete = false;
         this.parent = {};
         this.rank = {};
 
-        this.engine.clearHighlights();
+        // Reset node colors
+        this.engine.nodes.forEach(n => n.status = 'default');
+        this.engine.draw();
         this.ui.updateStats(0);
         this.ui.updateStatus("Click Run to start Kruskal's Algorithm.");
     }
@@ -33,46 +38,21 @@ class KruskalAlgo {
     start() {
         this.reset();
 
-        // 1. Collect all edges
-        // Note: GraphEngine edges are directed objects if directed=true. 
-        // For MST we usually treat as undirected. Duplicate edges (u->v, v->u) might exist.
-        // We need to filter unique undirected edges or handle duplicates.
-        // Simple approach: Use a set of sorted ID pairs to dedup.
-
-        const uniqueEdges = new Map();
-
-        this.engine.edges.forEach(e => {
-            // Create a unique key for undirected edge
-            const key = [e.from, e.to].sort().join('-');
-            if (!uniqueEdges.has(key)) {
-                uniqueEdges.set(key, e);
-            } else {
-                // If exists, keep smaller weight? Or just assume consistent.
-                if (e.weight < uniqueEdges.get(key).weight) {
-                    uniqueEdges.set(key, e);
-                }
-            }
+        // Initialize Union-Find for each node
+        this.engine.nodes.forEach(n => {
+            this.parent[n.id] = n.id;
+            this.rank[n.id] = 0;
         });
 
-        this.edges = Array.from(uniqueEdges.values());
+        // Make a sorted copy of edges (engine edges are [u, v, w])
+        this.sortedEdges = this.engine.edges.map(e => [...e]);
+        this.sortedEdges.sort((a, b) => (a[2] || 0) - (b[2] || 0));
+        this.edgeIndex = 0;
 
-        // 2. Sort by weight
-        this.edges.sort((a, b) => a.weight - b.weight);
-
-        // 3. Initialize Disjoint Set for all nodes
-        this.engine.nodes.forEach((_, id) => {
-            this.makeSet(id);
-        });
-
-        this.ui.updateStatus(`Sorted ${this.edges.length} unique edges. Starting selection...`);
+        this.ui.updateStatus(`Sorted ${this.sortedEdges.length} edges by weight. Starting selection...`);
     }
 
     // --- Union Find Helpers ---
-    makeSet(id) {
-        this.parent[id] = id;
-        this.rank[id] = 0;
-    }
-
     find(id) {
         if (this.parent[id] !== id) {
             this.parent[id] = this.find(this.parent[id]); // Path compression
@@ -85,7 +65,6 @@ class KruskalAlgo {
         const rootY = this.find(y);
 
         if (rootX !== rootY) {
-            // Union by rank
             if (this.rank[rootX] < this.rank[rootY]) {
                 this.parent[rootX] = rootY;
             } else if (this.rank[rootX] > this.rank[rootY]) {
@@ -102,39 +81,45 @@ class KruskalAlgo {
     async nextStep() {
         if (this.complete) return false;
 
-        // If we have V-1 edges, we strictly are done for a connected graph.
-        // But let's just run until edge list empty to be safe for disconnected graphs.
-        if (this.edges.length === 0) {
+        if (this.edgeIndex >= this.sortedEdges.length) {
             this.complete = true;
-            this.ui.updateStatus(`Kruskal's Complete! Total Weight: ${this.totalWeight}`);
+            this.ui.updateStatus(`Kruskal's Complete! MST Weight: ${this.totalWeight}`);
             return false;
         }
 
-        // Pick smallest edge
-        const edge = this.edges.shift();
+        const [u, v, w] = this.sortedEdges[this.edgeIndex];
+        this.edgeIndex++;
 
-        // Highlight assumed 'processing' state (maybe yellow/orange?)
-        // this.engine.highlight(edge.id, 'check'); // If engine supports 'check'
-
-        const root1 = this.find(edge.from);
-        const root2 = this.find(edge.to);
+        const root1 = this.find(u);
+        const root2 = this.find(v);
 
         if (root1 !== root2) {
-            this.union(edge.from, edge.to);
-            this.mstEdges.push(edge);
-            this.totalWeight += edge.weight;
+            this.union(u, v);
+            this.mstEdges.push([u, v, w]);
+            this.totalWeight += (w || 0);
 
-            // Visualize
-            this.engine.highlight(edge.id, 'path'); // Green/Final
-            this.engine.highlight(edge.from, 'visit');
-            this.engine.highlight(edge.to, 'visit');
+            // Highlight accepted nodes
+            this.engine.updateNodeStatus(u, 'visited');
+            this.engine.updateNodeStatus(v, 'visited');
 
             this.ui.updateStats(this.totalWeight);
-            this.ui.updateStatus(`Accepted edge (${edge.from}-${edge.to}). Weight: ${edge.weight}`);
+            this.ui.updateStatus(`✅ Accepted edge (${u}→${v}), weight=${w}. MST weight: ${this.totalWeight}`);
         } else {
-            // Cycle detected
-            this.ui.updateStatus(`Skipped edge (${edge.from}-${edge.to}) (Cycle detected).`);
-            // Optional: flash red?
+            // Cycle detected - highlight in current color momentarily
+            this.engine.updateNodeStatus(u, 'current');
+            this.engine.updateNodeStatus(v, 'current');
+            setTimeout(() => {
+                this.engine.updateNodeStatus(u, 'default');
+                this.engine.updateNodeStatus(v, 'default');
+            }, 400);
+            this.ui.updateStatus(`❌ Skipped edge (${u}→${v}) — would create cycle.`);
+        }
+
+        // Check if MST is complete (V-1 edges)
+        if (this.mstEdges.length >= this.engine.nodes.length - 1) {
+            this.complete = true;
+            this.ui.updateStatus(`🎉 MST Complete! Total Weight: ${this.totalWeight}`);
+            return false;
         }
 
         return true;

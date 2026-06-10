@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perceptron Visualizer Guide - AlgoVisual Hub</title>
+    <meta name="description"
+        content="The Perceptron is the fundamental building block of neural networks, modeling a single biological neuron. It is a linear binary classifier that takes ...">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css?v=mobile_fix_1">
+
+    <link rel="icon" href="../assets/img/logo.png" type="image/png">
+</head>
+
+<body><canvas id="brain-canvas"></canvas>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <a href="../index.html" class="logo">
+                    <img src="../assets/img/logo.png" alt="AlgoVisual Hub" style="height:48px;width:48px;">
+                    <span>AlgoVisual Hub</span>
+                </a>
+                <div class="nav-links">
+                    <a href="../index.html">Home</a>
+                    <a href="../dsa.html">DSA</a>
+                    <a href="../algorithms.html">Algorithms</a>
+                    <a href="../os.html">OS</a>
+                    <a href="../roadmap.html">Roadmap</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container" style="padding: 60px 24px;">
+            <article>
+                <header style="text-align: center; margin-bottom: 60px;">
+                    <span class="section-tag">Neural Networks</span>
+                    <h1
+                        style="font-size: 3rem; font-weight: 900; margin: 20px 0; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                        Perceptron Visualizer
+                    </h1>
+                    <p
+                        style="font-size: 1.3rem; color: var(--text-muted); max-width: 800px; margin: 0 auto; line-height: 1.6;">
+                        A single-neuron model implementing linear classification boundaries.
+                    </p>
+                </header>
+
+                <div class="grid grid-2" style="margin-bottom: 60px; gap: 30px;">
+                    <div class="glass-card" style="padding: 35px;">
+                        <h2>What is Perceptron Visualizer?</h2>
+                        <p>The Perceptron is the fundamental building block of neural networks, modeling a single biological neuron. It is a linear binary classifier that takes a vector of inputs, calculates their weighted sum, adds a bias, and applies an activation function (like step function) to produce an output (Class A or Class B). It learns by iteratively updating its weights whenever it makes a classification error.</p>
+
+                        <h3 style="margin-top: 25px; color: var(--primary);">Key Characteristics:</h3>
+                        <ul style="line-height: 1.8; padding-left: 20px; color: var(--text-muted); margin-top: 10px;">
+                            <li>First artificial single-layer neural network model</li><li>Calculates weighted sum: z = w1*x1 + w2*x2 + ... + bias</li><li>Step Activation: Output 1 if z >= 0, else 0</li><li>Learns only linearly separable datasets</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card" style="padding: 35px;">
+                        <h2>Complexity Analysis</h2>
+                        <div class="complexity-table" style="margin-top: 20px;">
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Avg Time Complexity:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:var(--primary);">O(Epochs * N * D) training, O(D) prediction</span>
+                            </div>
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Space Complexity:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:var(--accent);">O(D) weight dimension storage</span>
+                            </div>
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Best Case:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:#4ade80;">O(N) (dataset classified correctly on epoch 1)</span>
+                            </div>
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0;">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Worst Case:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:#f87171;">O(Epochs * N) (non-separable dataset loops infinitely)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px; padding: 35px;">
+                    <h2>How it Works Step-by-Step</h2>
+                    <ol style="margin: 20px 0; padding-left: 20px; line-height: 2.0; color: var(--text-muted);">
+                        <li><strong>Compute Input Sum:</strong> w1*x1 + w2*x2 + ... + bias.</li><li><strong>Activation:</strong> Pass sum through step function; output prediction.</li><li><strong>Calculate Error:</strong> error = target_label - predicted_label.</li><li><strong>Update Weights:</strong> If error exists, update: w_new = w + rate * error * x.</li>
+                    </ol>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px; padding: 35px;">
+                    <h2>Code Implementation</h2>
+                    
+                    <style>
+                        .code-tabs-container {
+                            display: flex;
+                            gap: 12px;
+                            margin-bottom: 20px;
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                            padding-bottom: 12px;
+                        }
+                        .code-tab-btn {
+                            background: transparent;
+                            border: none;
+                            color: var(--text-muted);
+                            font-size: 0.95rem;
+                            font-weight: 600;
+                            padding: 8px 16px;
+                            cursor: pointer;
+                            border-radius: 8px;
+                            transition: all 0.3s ease;
+                            border: 1px solid transparent;
+                        }
+                        .code-tab-btn:hover {
+                            color: var(--text);
+                            background: rgba(255, 255, 255, 0.05);
+                        }
+                        .code-tab-btn.active {
+                            color: #fff;
+                            background: var(--gradient-primary);
+                            box-shadow: var(--glow-primary);
+                            border: 1px solid rgba(255, 255, 255, 0.15);
+                        }
+                        .code-viewer-container {
+                            position: relative;
+                        }
+                        .copy-code-btn {
+                            position: absolute;
+                            top: 15px;
+                            right: 15px;
+                            background: rgba(255, 255, 255, 0.05);
+                            border: 1px solid rgba(255, 255, 255, 0.1);
+                            color: var(--text-muted);
+                            padding: 6px 12px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-size: 0.8rem;
+                            font-weight: 600;
+                            transition: all 0.2s ease;
+                            z-index: 10;
+                        }
+                        .copy-code-btn:hover {
+                            background: rgba(255, 255, 255, 0.15);
+                            color: var(--text);
+                            border-color: rgba(255, 255, 255, 0.2);
+                        }
+                    </style>
+
+                    <div class="code-tabs-container">
+                        <button class="code-tab-btn active" onclick="switchGuideLang(this, 'python')">Python</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'java')">Java</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'cpp')">C++</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'c')">C</button>
+                    </div>
+
+                    <div class="code-viewer-container">
+                        <button class="copy-code-btn" onclick="copyCode()">
+                            <i class="far fa-copy" style="margin-right: 5px;"></i>Copy
+                        </button>
+                        <div class="code-card">
+                            <div class="code-viewer" style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+                                <pre><code id="guide-code-block" class="language-python" style="font-family:'JetBrains Mono', monospace; font-size:0.9rem; color:#e2e8f0; line-height:1.5; white-space: pre-wrap;"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        const codeTemplates = {
+                            python: `class Perceptron:
+    def __init__(self, input_size, lr=0.1):
+        self.weights = [0.0] * input_size
+        self.bias = 0.0
+        self.lr = lr
+
+    def predict(self, inputs):
+        summation = sum(w * x for w, x in zip(self.weights, inputs)) + self.bias
+        return 1 if summation >= 0.0 else 0
+
+    def train(self, training_inputs, labels, epochs=100):
+        for _ in range(epochs):
+            for inputs, label in zip(training_inputs, labels):
+                prediction = self.predict(inputs)
+                error = label - prediction
+                if error != 0:
+                    for i in range(len(self.weights)):
+                        self.weights[i] += self.lr * error * inputs[i]
+                    self.bias += self.lr * error`,
+                            java: `class Perceptron {
+    private double[] weights;
+    private double bias;
+    private double lr;
+
+    public Perceptron(int inputSize, double lr) {
+        this.weights = new double[inputSize];
+        this.bias = 0.0;
+        this.lr = lr;
+    }
+
+    public int predict(double[] inputs) {
+        double sum = bias;
+        for (int i = 0; i < weights.length; i++) sum += weights[i] * inputs[i];
+        return sum >= 0.0 ? 1 : 0;
+    }
+
+    public void train(double[][] trainingInputs, int[] labels, int epochs) {
+        for (int e = 0; e < epochs; e++) {
+            for (int i = 0; i < trainingInputs.length; i++) {
+                int prediction = predict(trainingInputs[i]);
+                int error = labels[i] - prediction;
+                if (error != 0) {
+                    for (int j = 0; j < weights.length; j++) {
+                        weights[j] += lr * error * trainingInputs[i][j];
+                    }
+                    bias += lr * error;
+                }
+            }
+        }
+    }
+}`,
+                            cpp: `#include <vector>
+
+class Perceptron {
+private:
+    std::vector<double> weights;
+    double bias = 0.0;
+    double lr;
+
+public:
+    Perceptron(int inputSize, double learningRate) : lr(learningRate) {
+        weights.resize(inputSize, 0.0);
+    }
+
+    int predict(const std::vector<double>& inputs) {
+        double sum = bias;
+        for (size_t i = 0; i < weights.size(); i++) sum += weights[i] * inputs[i];
+        return sum >= 0.0 ? 1 : 0;
+    }
+
+    void train(const std::vector<std::vector<double>>& trainingInputs, const std::vector<int>& labels, int epochs) {
+        for (int e = 0; e < epochs; e++) {
+            for (size_t i = 0; i < trainingInputs.size(); i++) {
+                int prediction = predict(trainingInputs[i]);
+                int error = labels[i] - prediction;
+                if (error != 0) {
+                    for (size_t j = 0; j < weights.size(); j++) {
+                        weights[j] += lr * error * trainingInputs[i][j];
+                    }
+                    bias += lr * error;
+                }
+            }
+        }
+    }
+};`,
+                            c: `#include <stdio.h>
+
+struct Perceptron {
+    double weights[10];
+    double bias;
+    double lr;
+    int size;
+};
+
+int predict(struct Perceptron* p, double inputs[]) {
+    double sum = p->bias;
+    for (int i = 0; i < p->size; i++) sum += p->weights[i] * inputs[i];
+    return sum >= 0.0 ? 1 : 0;
+}
+
+void train(struct Perceptron* p, double inputs[][10], int labels[], int n, int epochs) {
+    for (int e = 0; e < epochs; e++) {
+        for (int i = 0; i < n; i++) {
+            int prediction = predict(p, inputs[i]);
+            int error = labels[i] - prediction;
+            if (error != 0) {
+                for (int j = 0; j < p->size; j++) {
+                    p->weights[j] += p->lr * error * inputs[i][j];
+                }
+                p->bias += p->lr * error;
+            }
+        }
+    }
+}`
+                        };
+
+                        function switchGuideLang(button, lang) {
+                            // Update active tab button style
+                            const container = button.parentElement;
+                            container.querySelectorAll('.code-tab-btn').forEach(btn => btn.classList.remove('active'));
+                            button.classList.add('active');
+
+                            // Update code content
+                            const codeBlock = document.getElementById('guide-code-block');
+                            codeBlock.textContent = codeTemplates[lang];
+                            
+                            // Update syntax highlighting class
+                            codeBlock.className = 'language-' + (lang === 'cpp' ? 'cpp' : lang);
+                        }
+
+                        function copyCode() {
+                            const codeBlock = document.getElementById('guide-code-block');
+                            navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+                                const btn = document.querySelector('.copy-code-btn');
+                                btn.innerHTML = '<i class="fas fa-check" style="margin-right: 5px;"></i>Copied!';
+                                setTimeout(() => {
+                                    btn.innerHTML = '<i class="far fa-copy" style="margin-right: 5px;"></i>Copy';
+                                }, 2000);
+                            });
+                        }
+
+                        // Initialize with default language (Python)
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const firstTab = document.querySelector('.code-tab-btn');
+                            if (firstTab) switchGuideLang(firstTab, 'python');
+                        });
+                    </script>
+                </div>
+
+                <div class="glass-card" style="padding: 35px;">
+                    <h2>Worked Trace Example</h2>
+                    <p style="color: var(--text-muted); line-height: 1.8; margin-top: 10px;">
+                        Training Perceptron on AND gate with inputs (1,1) [Target 1]:<br>1. Initial weights: w1=0.2, w2=0.2, bias=-0.5<br>2. Sum = 0.2(1) + 0.2(1) - 0.5 = -0.1 -> Prediction = 0<br>3. Error = 1 - 0 = 1 (Misclassified)<br>4. Update weights: w1 = w1 + 0.1(1)(1) = 0.3. New bias = -0.4.
+                    </p>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer style="margin-top:60px;">
+        <div class="container" style="text-align:center; padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.08);">
+            <p>© 2025 by Meelo 💙</p>
+        </div>
+    </footer>
+
+    <script src="../assets/js/brain-animation.js"></script>
+</body>
+</html>

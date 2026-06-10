@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D &amp; 3D Transformations Guide - AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+</head>
+<body>
+    <canvas id="brain-canvas"></canvas>
+    <nav>
+        <div class="container nav-content">
+            <a href="../../index.html" class="logo">
+                <img src="../../assets/img/logo.png" alt="AlgoVisual Hub" style="height:48px;width:48px;">
+                <span>AlgoVisual Hub</span>
+            </a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../cg.html">Back to Graphics</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container" style="padding: 60px 24px;">
+            <article>
+                <header style="text-align: center; margin-bottom: 60px;">
+                    <span class="section-tag">Vector Math</span>
+                    <h1 style="font-size: 3rem; font-weight: 900; margin: 20px 0; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                        2D &amp; 3D Transformations
+                    </h1>
+                    <p style="font-size: 1.3rem; color: var(--text-muted); max-width: 800px; margin: 0 auto; line-height: 1.6;">
+                        Homogeneous coordinate system math for scaling, translation, rotation, and shear matrices.
+                    </p>
+                </header>
+
+                <div class="grid grid-2" style="margin-bottom: 60px; gap: 30px;">
+                    <div class="glass-card" style="padding: 35px;">
+                        <h2>Homogeneous Coordinates</h2>
+                        <p>To combine translation (addition) with linear mappings like scaling and rotation (multiplication) into a single matrix, computer graphics uses homogeneous coordinates:
+                        - 2D vectors are represented as $[x, y, 1]^T$ using $3 \times 3$ matrices.
+                        - 3D vectors are represented as $[x, y, z, 1]^T$ using $4 \times 4$ matrices.</p>
+                    </div>
+
+                    <div class="glass-card" style="padding: 35px;">
+                        <h2>Composite Operations</h2>
+                        <p>Matrix multiplication is non-commutative ($A \cdot B \neq B \cdot A$), meaning the order of operations matters. 
+                        In column-major order (standard OpenGL):
+                        $$P' = T \cdot R \cdot S \cdot P$$
+                        Apply scaling ($S$) first, rotation ($R$) second, and translation ($T$) last.</p>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="padding: 50px; text-align: center; margin-top: 40px;">
+                    <h2 style="margin-bottom: 20px;">Ready to Visualize Matrix Math?</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">
+                        Launch our interactive visualizer to step through calculations in real-time.
+                    </p>
+                    <a href="../../visualizers/cg/transformations.html" class="btn btn-primary"
+                        style="font-size: 1.2rem; padding: 15px 30px; display: inline-block;">
+                        Launch Transformations Visualizer &rarr;
+                    </a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer style="margin-top:60px; padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.08); text-align:center;">
+        <p>© 2025 by Meelo 💙</p>
+    </footer>
+    <script src="../../assets/js/brain-animation.js"></script>
+</body>
+</html>

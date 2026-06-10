@@ -4,64 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bubble Sort Visualizer | AlgoVisual Hub</title>
+    <title>Bubble Sort Monster | AlgoVisual Hub</title>
+    <meta name="description" content="Bubble Sort algorithm visualizer. Master sorting principles with adjacent swaps, live bar comparisons, and interactive sorting challenge.">
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="../../assets/css/dsa-monster.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
     <style>
-        .visualizer-layout {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 30px;
-            margin-top: 30px;
-        }
-
         #array-canvas {
-            width: 100%;
             height: 400px;
-            border: 2px solid var(--glass-border);
-            border-radius: 12px;
-            background: rgba(255,255,255,0.02);
-        }
-
-        .side-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .stat-box {
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            border: 1px solid var(--glass-border);
-            background: rgba(255,255,255,0.03);
-        }
-
-        .stat-box h3 {
-            font-size: 1.5rem;
-            color: var(--primary);
-            margin-bottom: 5px;
-        }
-
-        .stat-box span {
-            font-size: 0.8rem;
-            color: #666;
-            text-transform: uppercase;
         }
     </style>
-
-    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
 </head>
 
-<body><canvas id="brain-canvas"></canvas>
+<body>
+    <canvas id="brain-canvas"></canvas>
 
     <nav>
         <div class="container nav-content">
@@ -74,64 +32,101 @@
     </nav>
 
     <main class="container">
-        <header style="margin-top: 40px;">
-            <span class="btn-primary"
-                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Sorting</span>
-            <h1>Bubble Sort Visualizer</h1>
-            <p>A simple comparison-based sorting algorithm that repeatedly steps through the list, compares adjacent
-                elements and swaps them if they are in the wrong order.</p>
+        <header class="monster-header">
+            <span class="category-badge">⚡ Sorting Algorithms</span>
+            <h1>Bubble Sort Monster</h1>
+            <p>A simple comparison-based sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.</p>
         </header>
 
-        <div class="visualizer-layout">
-            <div class="glass-card" style="padding: 30px;">
-                <canvas id="array-canvas"></canvas>
+        <!-- Stats Grid -->
+        <div class="stats-grid" style="margin-top: 24px;">
+            <div class="stat-card" style="--stat-color: hsl(258,89%,66%);">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="stat-size">0</div>
+                <div class="stat-label">Array Size</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(189,100%,52%);">
+                <div class="stat-icon">⚖️</div>
+                <div class="stat-value" id="stat-comps">0</div>
+                <div class="stat-label">Comparisons</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(45,100%,60%);">
+                <div class="stat-icon">🔄</div>
+                <div class="stat-value" id="stat-swaps">0</div>
+                <div class="stat-label">Swaps</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(145,75%,50%);">
+                <div class="stat-icon">🐾</div>
+                <div class="stat-value" id="stat-steps">0</div>
+                <div class="stat-label">Total Steps</div>
+            </div>
+        </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px; flex-wrap: wrap; gap: 15px;">
-                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                        <button class="btn btn-primary" id="play-btn" style="padding: 10px 20px;"><i class="fas fa-play"></i> Play</button>
-                        <button class="btn btn-secondary" id="step-btn" style="padding: 10px 20px; border: 1px solid var(--primary); color: var(--primary); background: transparent;"><i class="fas fa-step-forward"></i> Step</button>
-                        <button class="btn" id="reset-btn"
-                            style="padding: 10px 20px; border: 1px solid var(--accent); color: var(--accent); background: transparent;"><i class="fas fa-undo"></i>
-                            Reset</button>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-left: 10px;">
-                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;"><i class="fas fa-gauge-high"></i> Speed</span>
-                            <input type="range" id="speed-slider" min="1" max="100" value="50" style="width: 80px; height: 6px; cursor: pointer; padding: 0; border: none;">
-                        </div>
-                    </div>
+        <div class="monster-layout">
+            <div class="main-panel">
+                <div class="monster-canvas-container" id="visualizer-container">
+                    <canvas id="array-canvas"></canvas>
+                    <div class="canvas-badge">BUBBLE SORT</div>
+                </div>
 
-                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                        <button class="btn" id="challenge-btn" style="padding: 10px 20px; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none;"><i class="fas fa-gamepad"></i> Challenge Mode</button>
-                        <button class="btn" id="share-btn" style="padding: 10px 20px; border: 1px solid var(--secondary); color: var(--secondary); background: transparent;"><i class="fas fa-share-alt"></i> Share</button>
-                        <button class="btn" onclick="generateRandomArray()"
-                            style="padding: 10px 20px; background: var(--bg-surface); color: white; border: 1px solid var(--border);">🎲 Random</button>
-                    </div>
+                <div class="monster-controls">
+                    <button class="btn btn-primary" id="play-btn">
+                        <i class="fas fa-play"></i> Play
+                    </button>
+                    <button class="btn" id="step-btn" style="border: 1px solid rgba(255,255,255,0.2); color: white; background: transparent;">
+                        <i class="fas fa-step-forward"></i> Step
+                    </button>
+                    <button class="btn" id="reset-btn" style="border: 1px solid var(--monster-danger); color: var(--monster-danger); background: transparent;">
+                        <i class="fas fa-undo"></i> Reset
+                    </button>
+                    <div class="divider-v"></div>
+                    <label style="font-size: 0.75rem; color: #888; font-weight: 700; white-space: nowrap;">⚡ Speed</label>
+                    <input type="range" id="speed-slider" min="1" max="100" value="50">
+                    <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'Bubble Sort')">📸 Share</button>
                 </div>
             </div>
 
             <div class="side-panel">
-                <div class="glass-card" style="padding: 20px;">
-                    <h4>📜 Live Log</h4>
-                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 10px; min-height: 50px;">Ready to
-                        sort items.</p>
-
-                    <div class="stats-grid">
-                        <div class="stat-box">
-                            <h3 id="comp-count">0</h3>
-                            <span>Comparisons</span>
-                        </div>
-                        <div class="stat-box">
-                            <h3 id="swap-count">0</h3>
-                            <span>Swaps</span>
-                        </div>
-                    </div>
+                <div class="log-panel">
+                    <h4><i class="fas fa-terminal"></i> Execution Log</h4>
+                    <div class="log-text" id="explanation-text">Ready to sort items. Click Play to start.</div>
                 </div>
 
-                <div class="glass-card" style="padding: 20px;">
-                    <h4>💡 Complexity</h4>
-                    <div style="font-size: 0.85rem; margin-top: 10px;">
-                        <p><strong>Time:</strong> O(n²)</p>
-                        <p><strong>Space:</strong> O(1)</p>
-                        <p><strong>Stability:</strong> Stable</p>
+                <!-- Challenge Game Panel -->
+                <div class="game-panel">
+                    <div class="game-header">
+                        <span class="game-title"><i class="fas fa-gamepad"></i> Sorting Challenge</span>
+                    </div>
+                    <div class="game-prompt" id="game-prompt-custom">
+                        Can you sort the array manually with the optimal number of swaps? Click any two bars to swap them.
+                    </div>
+                    <button class="challenge-btn-monster" id="challenge-btn">
+                        <i class="fas fa-gamepad"></i> ACTIVATE CHALLENGE
+                    </button>
+                </div>
+
+                <!-- Array Controls -->
+                <div class="info-card">
+                    <h4>🛠️ Array Controls</h4>
+                    <button class="btn" id="random-btn" style="width: 100%; border: 1px solid rgba(255,255,255,0.15); color: white; background: transparent; font-weight: 700;">
+                        <i class="fas fa-random"></i> Generate Random Array
+                    </button>
+                </div>
+
+                <!-- Complexity -->
+                <div class="info-card">
+                    <h4>⚡ Algorithm Complexity</h4>
+                    <div class="complexity-row">
+                        <span class="op">Worst-case Time</span>
+                        <span class="complexity-badge bad">O(n²)</span>
+                    </div>
+                    <div class="complexity-row">
+                        <span class="op">Average Time</span>
+                        <span class="complexity-badge bad">O(n²)</span>
+                    </div>
+                    <div class="complexity-row">
+                        <span class="op">Space Complexity</span>
+                        <span class="complexity-badge optimal">O(1)</span>
                     </div>
                 </div>
             </div>
@@ -141,24 +136,49 @@
     <script src="../../assets/js/core/array-engine.js"></script>
     <script src="../../assets/js/core/playback.js"></script>
     <script src="../../assets/js/core/ComplexityTracker.js"></script>
-    <script src="../../../assets/js/core/ui-extras.js"></script>
+    <script src="../../assets/js/core/ui-extras.js"></script>
     <script src="../../assets/js/algos/algorithms/bubble.js"></script>
     <script>
         window.engine = new ArrayEngine('array-canvas');
         const playback = new Playback(() => window.algo.nextStep());
+        window.playback = playback;
+
+        let lastComp = 0;
+        let lastSwaps = 0;
 
         window.ui = {
-            updateStatus: (t) => { document.getElementById('explanation-text').innerHTML = t; },
+            updateStatus: (t) => {
+                const el = document.getElementById('explanation-text');
+                if (el) el.innerHTML = t;
+            },
             updateStats: (comp, swaps) => {
-                document.getElementById('comp-count').innerText = comp;
-                document.getElementById('swap-count').innerText = swaps;
+                lastComp = comp;
+                lastSwaps = swaps;
+                updateStatsDOM();
             }
         };
-        const ui = window.ui;
 
+        const ui = window.ui;
         window.algo = new BubbleSortAlgo(window.engine, playback, ui);
 
         let challengeGame = null;
+
+        function updateStatsDOM() {
+            animStat('stat-size', window.engine.array.length);
+            animStat('stat-comps', lastComp);
+            animStat('stat-swaps', lastSwaps);
+            animStat('stat-steps', lastComp + lastSwaps);
+        }
+
+        function animStat(id, val) {
+            const el = document.getElementById(id);
+            if (el && el.innerText != val) {
+                el.innerText = val;
+                el.classList.remove('pulse-update');
+                void el.offsetWidth;
+                el.classList.add('pulse-update');
+            }
+        }
 
         function generateRandomArray() {
             playback.pause();
@@ -166,26 +186,31 @@
                 challengeGame.stop();
                 challengeGame = null;
                 const cBtn = document.getElementById('challenge-btn');
-                cBtn.classList.remove('glow-active');
-                cBtn.innerHTML = '<i class="fas fa-gamepad"></i> Challenge Mode';
+                cBtn.classList.remove('active');
+                cBtn.innerHTML = '<i class="fas fa-gamepad"></i> ACTIVATE CHALLENGE';
+                document.getElementById('game-prompt-custom').innerHTML = "Can you sort the array manually with the optimal number of swaps? Click any two bars to swap them.";
             }
-            const arr = Array.from({ length: 15 }, () => Math.floor(Math.random() * 90) + 10);
+            const arr = Array.from({ length: 15 }, () => Math.floor(Math.random() * 80) + 15);
             window.engine.setArray(arr);
             window.algo.reset();
+            lastComp = 0;
+            lastSwaps = 0;
+            updateStatsDOM();
             document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Play';
         }
 
-        document.getElementById('play-btn').onclick = () => {
+        const playBtn = document.getElementById('play-btn');
+        playBtn.onclick = () => {
             if (challengeGame && challengeGame.active) {
                 alert("Exit Challenge Mode first to run standard auto simulation!");
                 return;
             }
             if (playback.isRunning) {
                 playback.pause();
-                document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Play';
+                playBtn.innerHTML = '<i class="fas fa-play"></i> Play';
             } else {
                 playback.play();
-                document.getElementById('play-btn').innerHTML = '<i class="fas fa-pause"></i> Pause';
+                playBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
             }
         };
 
@@ -195,7 +220,7 @@
                 return;
             }
             playback.pause();
-            document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Play';
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Play';
             await playback.step();
         };
 
@@ -205,68 +230,58 @@
                 challengeGame.stop();
                 challengeGame = null;
                 const cBtn = document.getElementById('challenge-btn');
-                cBtn.classList.remove('glow-active');
-                cBtn.innerHTML = '<i class="fas fa-gamepad"></i> Challenge Mode';
+                cBtn.classList.remove('active');
+                cBtn.innerHTML = '<i class="fas fa-gamepad"></i> ACTIVATE CHALLENGE';
+                document.getElementById('game-prompt-custom').innerHTML = "Can you sort the array manually with the optimal number of swaps? Click any two bars to swap them.";
             }
             window.algo.reset();
-            document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Play';
+            lastComp = 0;
+            lastSwaps = 0;
+            updateStatsDOM();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Play';
         };
 
-        // Speed slider hook
-        const speedSlider = document.getElementById('speed-slider');
-        speedSlider.oninput = (e) => {
-            playback.setSpeed(parseInt(e.target.value));
-        };
-        playback.setSpeed(parseInt(speedSlider.value));
+        document.getElementById('random-btn').onclick = generateRandomArray;
 
-        // Share button hook
-        document.getElementById('share-btn').onclick = function () {
-            if (typeof SharingSystem !== 'undefined') {
-                SharingSystem.copyLink({
-                    algo: 'bubble',
-                    array: window.engine.array.join(','),
-                    step: window.algo.complete ? 'complete' : window.algo.comparisons
-                }, this);
-            }
-        };
-
-        // Challenge mode hook
+        // Challenge Mode Hookup
         const challengeBtn = document.getElementById('challenge-btn');
         challengeBtn.onclick = () => {
             playback.pause();
-            document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Play';
-            
-            if (challengeBtn.classList.contains('glow-active')) {
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Play';
+
+            if (challengeGame && challengeGame.active) {
                 // Exit challenge
-                challengeBtn.classList.remove('glow-active');
-                challengeBtn.innerHTML = '<i class="fas fa-gamepad"></i> Challenge Mode';
-                if (challengeGame) challengeGame.stop();
+                challengeBtn.classList.remove('active');
+                challengeBtn.innerHTML = '<i class="fas fa-gamepad"></i> ACTIVATE CHALLENGE';
+                document.getElementById('game-prompt-custom').innerHTML = "Can you sort the array manually with the optimal number of swaps? Click any two bars to swap them.";
+                challengeGame.stop();
                 challengeGame = null;
                 generateRandomArray();
             } else {
                 // Enter challenge
-                challengeBtn.classList.add('glow-active');
-                challengeBtn.innerHTML = '<i class="fas fa-gamepad"></i> Exit Challenge';
-                
-                const arr = Array.from({ length: 10 }, () => Math.floor(Math.random() * 80) + 15);
+                challengeBtn.classList.add('active');
+                challengeBtn.innerHTML = '<i class="fas fa-stop"></i> STOP CHALLENGE';
+
+                const arr = Array.from({ length: 10 }, () => Math.floor(Math.random() * 70) + 20);
                 window.engine.setArray(arr);
-                
+
                 challengeGame = new SortingChallengeGame(window.engine, 'Bubble Sort',
                     (swaps, optimal) => {
-                        document.getElementById('explanation-text').innerHTML = 
-                            `🥋 Challenge Active! Sort the array manually.<br>Click any bar, then another to swap them.<br><strong>Your Swaps: ${swaps}</strong> (Optimal: ${optimal})`;
-                        document.getElementById('comp-count').innerText = '0';
-                        document.getElementById('swap-count').innerText = swaps;
+                        document.getElementById('game-prompt-custom').innerHTML =
+                            `🥋 Challenge Active! Sort the array manually.<br><strong>Your Swaps: ${swaps}</strong> (Optimal: ${optimal})`;
+                        lastComp = 0;
+                        lastSwaps = swaps;
+                        updateStatsDOM();
                     },
                     (swaps, optimal) => {
-                        document.getElementById('explanation-text').innerHTML = 
-                            `👑 Challenge Complete! You sorted the array in <strong>${swaps} swaps</strong> (Optimal: ${optimal}).`;
+                        document.getElementById('game-prompt-custom').innerHTML =
+                            `👑 Challenge Complete! Sorted in <strong>${swaps} swaps</strong> (Optimal: ${optimal}).`;
                         if (typeof GamificationSystem !== 'undefined') {
                             GamificationSystem.saveScore('bubble', 'manual_sort', swaps, optimal);
                             ProgressSystem.complete('sorting', 'Bubble Sort');
                         }
-                        challengeBtn.classList.remove('glow-active');
-                        challengeBtn.innerHTML = '<i class="fas fa-gamepad"></i> Challenge Mode';
+                        challengeBtn.classList.remove('active');
+                        challengeBtn.innerHTML = '<i class="fas fa-gamepad"></i> ACTIVATE CHALLENGE';
                         challengeGame = null;
                     }
                 );
@@ -274,28 +289,16 @@
             }
         };
 
+        // Speed Slider
+        const speedSlider = document.getElementById('speed-slider');
+        speedSlider.oninput = (e) => playback.setSpeed(parseInt(e.target.value));
+        playback.setSpeed(parseInt(speedSlider.value));
+
         window.onload = () => {
-            // URL State Loading
-            setTimeout(() => {
-                if (typeof SharingSystem !== 'undefined') {
-                    const params = SharingSystem.deserialize();
-                    if (params.array) {
-                        const arr = params.array.split(',').map(Number);
-                        window.engine.setArray(arr);
-                        window.algo.reset();
-                        if (params.step === 'complete') {
-                            const runAll = async () => {
-                                while (await window.algo.nextStep()) {}
-                            };
-                            runAll();
-                        }
-                        return;
-                    }
-                }
-                generateRandomArray();
-            }, 100);
+            generateRandomArray();
         };
     </script>
-<script src="../../assets/js/brain-animation.js"></script></body>
+    <script src="../../assets/js/brain-animation.js"></script>
+</body>
 
 </html>

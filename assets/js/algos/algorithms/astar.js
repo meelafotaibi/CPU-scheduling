@@ -134,7 +134,7 @@ class AStarAlgo {
         let curr = this.goalNode;
         while (this.prev[curr]) {
             // Highlight path in engine (Status: visited or special color)
-            this.engine.updateNodeStatus(curr, ' visited'); // Just keep it green/teal for now
+            this.engine.updateNodeStatus(curr, 'visited'); // Keep it green/teal
             curr = this.prev[curr];
         }
         this.engine.updateNodeStatus(this.startNode, 'current');

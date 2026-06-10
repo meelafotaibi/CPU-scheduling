@@ -4,100 +4,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DFS Visualizer | AlgoVisual Hub</title>
+    <title>DFS Exploration Monster | AlgoVisual Hub</title>
+    <meta name="description" content="Depth-First Search (DFS) graph exploration visualizer. Master stack-based traversal and backtracking with interactive controls.">
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="../../assets/css/dsa-monster.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
     <style>
-        .visualizer-layout {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 30px;
-            margin-top: 30px;
-        }
-
         #graph-canvas {
-            width: 100%;
-            height: 500px;
-
-            border: 2px solid #eee;
-            border-radius: 12px;
+            height: 440px;
         }
 
-        .side-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .stack-display {
-            display: flex;
-            flex-direction: column-reverse;
-            gap: 5px;
-            /* background: #eee; removed */
-            padding: 10px;
-            border-radius: 8px;
-            min-height: 200px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .stack-item {
-            padding: 10px;
-            background: var(--primary);
+        .stack-item-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--monster-primary) 0%, var(--neon-pink) 100%);
             color: white;
-            border-radius: 5px;
-            text-align: center;
-            font-weight: bold;
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .editor-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 500px;
-            z-index: 2000;
-            display: none;
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1999;
-            display: none;
-        }
-
-        textarea {
-            width: 100%;
-            height: 200px;
+            border-radius: 8px;
+            font-weight: 800;
             font-family: monospace;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
+            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.25);
+        }
+
+        .stack-display-area {
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            overflow-x: auto;
+            min-height: 60px;
+            align-items: center;
         }
     </style>
-    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
 </head>
 
-<body><canvas id="brain-canvas"></canvas>
+<body>
+    <canvas id="brain-canvas"></canvas>
 
     <nav>
         <div class="container nav-content">
@@ -110,195 +58,228 @@
     </nav>
 
     <main class="container">
-        <!-- Educational Header -->
-        <header style="margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
-            <div>
-                <span class="btn-primary"
-                    style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Graph Traversal</span>
-                <h1>Depth-First Search (DFS)</h1>
-                <p><strong>Depth-First Search</strong> is an algorithm for traversing or searching tree or graph data structures. The algorithm starts at the root node and explores as far as possible along each branch before backtracking.</p>
-            </div>
-            <a href="../../guide/dfs.html" class="btn" style="border: 2px solid var(--primary); color: var(--primary); font-weight: bold; padding: 10px 20px; border-radius: 12px; margin-top: 10px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
-                <i class="fas fa-book"></i> Read Guide
-            </a>
+        <header class="monster-header">
+            <span class="category-badge">⚡ Graph Traversal</span>
+            <h1>DFS Exploration Monster</h1>
+            <p>Depth-First Search goes deep into branches using a <strong>Stack (LIFO)</strong> before backtracking. It is core to cycle detection and topological sorting.</p>
         </header>
 
-        <div class="visualizer-layout">
-            <!-- Left Side: Canvas & Controls -->
-            <div class="glass-card" style="padding: 30px;">
-                <canvas id="graph-canvas"></canvas>
-
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px;">
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Play</button>
-                        <button class="btn" id="step-btn"
-                            style="border: 1px solid var(--primary); color: var(--primary);"><i
-                                class="fas fa-step-forward"></i> Step</button>
-                        <button class="btn" id="reset-btn"
-                            style="border: 1px solid var(--accent); color: var(--accent);"><i class="fas fa-undo"></i>
-                            Reset</button>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <input type="range" id="speed-slider" min="1" max="100" value="50">
-                    </div>
-                </div>
-
-                <div style="margin-top: 20px; text-align: center;">
-                    <button class="btn" onclick="toggleEditor()" style="background: var(--dark); color: white;"><i
-                            class="fas fa-edit"></i> Edit Custom Graph (HW Mode)</button>
-                </div>
+        <!-- Stats Grid -->
+        <div class="stats-grid" style="margin-top: 24px;">
+            <div class="stat-card" style="--stat-color: hsl(258,89%,66%);">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="stat-visited">0</div>
+                <div class="stat-label">Visited Nodes</div>
             </div>
-
-            <!-- Right Side: State Panel -->
-            <div class="side-panel">
-                <div class="glass-card" style="padding: 20px;">
-                    <h4>📜 Live Explanation</h4>
-                    <p id="explanation-text" style="font-size: 0.9rem; margin-top: 10px; min-height: 60px;">Click "Play"
-                        to start traversal from the first node.</p>
-                </div>
-
-                <div class="glass-card" style="padding: 20px;">
-                    <h4>📦 Call Stack (Visual)</h4>
-                    <div id="stack-container" class="stack-display">
-                        <span style="color: #999; text-align: center; margin-top: auto;">Stack is empty</span>
-                    </div>
-                </div>
-
-                <div class="glass-card" style="padding: 20px; opacity: 0.8;">
-                    <h4>🕒 Complexity</h4>
-                    <p style="font-size: 0.85rem; margin-top: 5px;">Time: <strong>O(V + E)</strong></p>
-                    <p style="font-size: 0.85rem;">Space: <strong>O(V)</strong></p>
-                </div>
+            <div class="stat-card" style="--stat-color: hsl(320,100%,65%);">
+                <div class="stat-icon">📦</div>
+                <div class="stat-value" id="stat-stack">0</div>
+                <div class="stat-label">Stack Size</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(45,100%,60%);">
+                <div class="stat-icon">🔵</div>
+                <div class="stat-value" id="stat-nodes">0</div>
+                <div class="stat-label">Total Nodes</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(145,75%,50%);">
+                <div class="stat-icon">🐾</div>
+                <div class="stat-value" id="stat-steps">0</div>
+                <div class="stat-label">Traversal Steps</div>
             </div>
         </div>
-        <div style="margin-top: 40px; text-align: center;">
-            
+
+        <div class="monster-layout">
+            <div class="main-panel">
+                <div class="monster-canvas-container" id="visualizer-container">
+                    <canvas id="graph-canvas"></canvas>
+                    <div class="canvas-badge">DEPTH-FIRST SEARCH</div>
+                </div>
+
+                <div class="monster-controls">
+                    <button class="btn btn-primary" id="play-btn">
+                        <i class="fas fa-play"></i> Run DFS
+                    </button>
+                    <button class="btn" id="step-btn" style="border: 1px solid rgba(255,255,255,0.2); color: white; background: transparent;">
+                        <i class="fas fa-step-forward"></i> Step
+                    </button>
+                    <button class="btn" id="reset-btn" style="border: 1px solid var(--monster-danger); color: var(--monster-danger); background: transparent;">
+                        <i class="fas fa-undo"></i> Reset
+                    </button>
+                    <button class="btn" id="grid-toggle-btn" style="border: 1px solid rgba(255,255,255,0.2); color: white; background: transparent;">
+                        <i class="fas fa-border-all"></i> Grid
+                    </button>
+                    <div class="divider-v"></div>
+                    <label style="font-size: 0.75rem; color: #888; font-weight: 700; white-space: nowrap;">⚡ Speed</label>
+                    <input type="range" id="speed-slider" min="1" max="100" value="50">
+                    <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'DFS Graph Exploration')">📸 Share</button>
+                </div>
+
+                <!-- Stack visualizer container -->
+                <div>
+                    <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--monster-accent); margin-bottom: 10px;">
+                        <i class="fas fa-layer-group"></i> LIFO Stack (Bottom ➔ Top)
+                    </div>
+                    <div class="stack-display-area" id="stack-container">
+                        <span style="color: #444; font-size: 0.85rem;">Stack is empty</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="log-panel">
+                    <h4><i class="fas fa-terminal"></i> Execution Log</h4>
+                    <div class="log-text" id="explanation-text">Click Run DFS to start. Double click canvas to add nodes. Drag to connect.</div>
+                </div>
+
+                <!-- Custom Graph Presets / HW editor -->
+                <div class="info-card">
+                    <h4>🛠️ Graph Controls</h4>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px;">
+                        <strong>Editor mode is active.</strong> Double click on canvas to add nodes. Drag from one node to another to create directed edges.
+                    </p>
+                    <button class="btn" id="load-preset-btn" style="width: 100%; border: 1px solid rgba(255,255,255,0.15); color: white; background: transparent; font-weight: 700;">
+                        <i class="fas fa-network-wired"></i> Reload Preset Graph
+                    </button>
+                </div>
+
+                <!-- DFS complexity -->
+                <div class="info-card">
+                    <h4>⚡ Traversal Complexity</h4>
+                    <div class="complexity-row">
+                        <span class="op">Time Complexity</span>
+                        <span class="complexity-badge good">O(V + E)</span>
+                    </div>
+                    <div class="complexity-row">
+                        <span class="op">Space Complexity</span>
+                        <span class="complexity-badge good">O(V)</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
-    <!-- Custom Graph Editor Modal -->
-    <div class="overlay" id="editor-overlay" onclick="toggleEditor()"></div>
-    <div class="glass-card editor-container" id="editor-modal">
-        <h3>Graph Editor (Adjacency List)</h3>
-        <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">Enter your graph structure here to test your
-            homework problems.</p>
-        <textarea id="adj-list-input">1: 2, 4, 7
-2: 3, 7
-3: 6
-4: 5
-5: 6
-7: 5</textarea>
-        <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <button class="btn btn-primary" onclick="applyCustomGraph()" style="flex: 1;">Apply & Generate</button>
-            <button class="btn" onclick="toggleEditor()" style="/* background: #eee; removed */">Cancel</button>
-        </div>
-    </div>
-
-    <!-- Scripts -->
     <script src="../../assets/js/core/graph-engine.js"></script>
     <script src="../../assets/js/core/playback.js"></script>
     <script src="../../assets/js/algos/algorithms/dfs.js"></script>
-
     <script>
         window.engine = new GraphEngine('graph-canvas');
-        const playback = new Playback(() => window.algo.nextStep());
+        window.engine.directed = true;
+        window.engine.setEditMode(true);
+
+        let stepCount = 0;
 
         window.ui = {
-            updateStatus: (txt) => { document.getElementById('explanation-text').innerText = txt; },
-            updateStack: (stack) => {
+            updateStatus: (t) => {
+                const el = document.getElementById('explanation-text');
+                if (el) el.innerHTML = t;
+            },
+            updateStack: (s) => {
                 const container = document.getElementById('stack-container');
-                if (stack.length === 0) {
-                    container.innerHTML = '<span style="color: #999; text-align: center; margin-top: auto;">Stack is empty</span>';
+                if (s.length === 0) {
+                    container.innerHTML = '<span style="color: #444; font-size: 0.85rem;">Stack is empty</span>';
                 } else {
-                    container.innerHTML = stack.map(id => `<div class="stack-item">Node ${id}</div>`).join('');
+                    container.innerHTML = s.map(id => `<div class="stack-item-badge">${id}</div>`).join(' <i class="fas fa-long-arrow-alt-right" style="color:var(--monster-primary); opacity:0.6;"></i> ');
                 }
             }
         };
+
         const ui = window.ui;
-        const engine = window.engine;
+        const playback = new Playback(async () => {
+            if (window.algo.complete) return false;
+            stepCount++;
+            const hasMore = await window.algo.nextStep();
+            updateStats();
+            return hasMore;
+        });
+        window.playback = playback;
 
         window.algo = new DFSAlgo(window.engine, playback, ui);
 
-        // Initial Data
-        const initialNodes = [
-            { id: 1, x: 100, y: 100 }, { id: 2, x: 250, y: 50 }, { id: 3, x: 400, y: 100 },
-            { id: 4, x: 100, y: 300 }, { id: 5, x: 250, y: 400 }, { id: 6, x: 400, y: 300 }, { id: 7, x: 250, y: 200 }
-        ];
-        const initialEdges = [[1, 2], [1, 4], [1, 7], [2, 3], [3, 6], [4, 5], [5, 6], [7, 5], [7, 2]];
+        function updateStats() {
+            animStat('stat-visited', window.algo.visited.size);
+            animStat('stat-stack', window.algo.stack.length);
+            animStat('stat-nodes', window.engine.nodes.length);
+            animStat('stat-steps', stepCount);
+        }
 
-        // Button Controls
-        document.getElementById('play-btn').onclick = () => {
+        function animStat(id, val) {
+            const el = document.getElementById(id);
+            if (el && el.innerText != val) {
+                el.innerText = val;
+                el.classList.remove('pulse-update');
+                void el.offsetWidth;
+                el.classList.add('pulse-update');
+            }
+        }
+
+        // Hook Controls
+        const playBtn = document.getElementById('play-btn');
+        playBtn.onclick = () => {
+            if (window.engine.nodes.length === 0) return alert("Graph is empty! Double click canvas to add nodes first.");
             if (playback.isRunning) {
                 playback.pause();
-                document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Play';
+                playBtn.innerHTML = '<i class="fas fa-play"></i> Run DFS';
             } else {
                 playback.play();
-                document.getElementById('play-btn').innerHTML = '<i class="fas fa-pause"></i> Pause';
+                playBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
             }
         };
-        document.getElementById('step-btn').onclick = () => playback.step();
-        document.getElementById('reset-btn').onclick = () => {
-            playback.reset();
-            window.algo.reset();
-            document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> Play';
+
+        document.getElementById('step-btn').onclick = async () => {
+            if (window.engine.nodes.length === 0) return alert("Graph is empty!");
+            playback.pause();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Run DFS';
+            await playback.step();
         };
-        document.getElementById('speed-slider').oninput = (e) => playback.setSpeed(e.target.value);
 
-        // Editor Functions
-        function toggleEditor() {
-            const m = document.getElementById('editor-modal');
-            const o = document.getElementById('editor-overlay');
-            const display = m.style.display === 'block' ? 'none' : 'block';
-            m.style.display = display;
-            o.style.display = display;
+        document.getElementById('reset-btn').onclick = () => {
+            playback.stop();
+            window.algo.reset();
+            stepCount = 0;
+            updateStats();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Run DFS';
+        };
+
+        document.getElementById('grid-toggle-btn').onclick = () => {
+            window.engine.showGrid = !window.engine.showGrid;
+            document.getElementById('grid-toggle-btn').classList.toggle('active');
+            window.engine.draw();
+        };
+
+        // Load Preset Graph
+        function loadPresetGraph() {
+            playback.stop();
+            const nodes = [
+                { id: 1, x: 150, y: 100 },
+                { id: 2, x: 350, y: 100 },
+                { id: 3, x: 550, y: 100 },
+                { id: 4, x: 150, y: 300 },
+                { id: 5, x: 350, y: 300 },
+                { id: 6, x: 550, y: 300 }
+            ];
+            const edges = [
+                [1, 2], [1, 4], [2, 3], [2, 5],
+                [3, 6], [4, 5], [5, 6], [5, 2]
+            ];
+            window.engine.setGraph(nodes, edges);
+            window.algo.reset();
+            stepCount = 0;
+            updateStats();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Run DFS';
         }
 
-        function applyCustomGraph() {
-            const input = document.getElementById('adj-list-input').value;
-            const lines = input.split('\n');
-            const newEdges = [];
-            const nodeIds = new Set();
+        document.getElementById('load-preset-btn').onclick = loadPresetGraph;
 
-            lines.forEach(line => {
-                const parts = line.split(':');
-                if (parts.length === 2) {
-                    const u = parseInt(parts[0].trim());
-                    const neighbors = parts[1].split(',').map(n => parseInt(n.trim()));
-                    nodeIds.add(u);
-                    neighbors.forEach(v => {
-                        if (!isNaN(v)) {
-                            newEdges.push([u, v]);
-                            nodeIds.add(v);
-                        }
-                    });
-                }
-            });
-
-            // Generate node positions in a circle/random for now
-            const newNodes = Array.from(nodeIds).map((id, idx, arr) => {
-                const angle = (idx / arr.length) * 2 * Math.PI;
-                const r = 150;
-                return {
-                    id: id,
-                    x: (engine.canvas.width / 2) + r * Math.cos(angle),
-                    y: (engine.canvas.height / 2) + r * Math.sin(angle)
-                };
-            });
-
-            engine.setGraph(newNodes, newEdges);
-            algo.reset();
-            toggleEditor();
-        }
+        // Speed Slider
+        const speedSlider = document.getElementById('speed-slider');
+        speedSlider.oninput = (e) => playback.setSpeed(parseInt(e.target.value));
+        playback.setSpeed(parseInt(speedSlider.value));
 
         window.onload = () => {
-            engine.setGraph(initialNodes, initialEdges);
-            algo.reset();
+            loadPresetGraph();
         };
     </script>
-
-    <script src='../../assets/js/core/ui-extras.js'></script>
-<script src="../../assets/js/brain-animation.js"></script></body>
+    <script src="../../assets/js/brain-animation.js"></script>
+</body>
 
 </html>
-

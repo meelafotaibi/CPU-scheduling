@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topological Sort Guide - AlgoVisual Hub</title>
+    <meta name="description"
+        content="Topological Sorting of a directed acyclic graph (DAG) is a linear ordering of its vertices such that for every directed edge u -> v, vertex u comes be...">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css?v=mobile_fix_1">
+
+    <link rel="icon" href="../assets/img/logo.png" type="image/png">
+</head>
+
+<body><canvas id="brain-canvas"></canvas>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <a href="../index.html" class="logo">
+                    <img src="../assets/img/logo.png" alt="AlgoVisual Hub" style="height:48px;width:48px;">
+                    <span>AlgoVisual Hub</span>
+                </a>
+                <div class="nav-links">
+                    <a href="../index.html">Home</a>
+                    <a href="../dsa.html">DSA</a>
+                    <a href="../algorithms.html">Algorithms</a>
+                    <a href="../os.html">OS</a>
+                    <a href="../roadmap.html">Roadmap</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container" style="padding: 60px 24px;">
+            <article>
+                <header style="text-align: center; margin-bottom: 60px;">
+                    <span class="section-tag">Scheduling</span>
+                    <h1
+                        style="font-size: 3rem; font-weight: 900; margin: 20px 0; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                        Topological Sort
+                    </h1>
+                    <p
+                        style="font-size: 1.3rem; color: var(--text-muted); max-width: 800px; margin: 0 auto; line-height: 1.6;">
+                        Linear ordering of vertices in a Directed Acyclic Graph (DAG) respecting dependency constraints.
+                    </p>
+                </header>
+
+                <div class="grid grid-2" style="margin-bottom: 60px; gap: 30px;">
+                    <div class="glass-card" style="padding: 35px;">
+                        <h2>What is Topological Sort?</h2>
+                        <p>Topological Sorting of a directed acyclic graph (DAG) is a linear ordering of its vertices such that for every directed edge u -> v, vertex u comes before v in the ordering. Kahn's Algorithm is a queue-based topological sort that iteratively removes vertices with zero in-degree (no incoming dependencies) and updates their neighbors.</p>
+
+                        <h3 style="margin-top: 25px; color: var(--primary);">Key Characteristics:</h3>
+                        <ul style="line-height: 1.8; padding-left: 20px; color: var(--text-muted); margin-top: 10px;">
+                            <li>Only works on Directed Acyclic Graphs (DAGs).</li><li>If a graph has cycles, topological sorting is impossible.</li><li>Kahn's Algorithm uses in-degree tracking.</li><li>Essential for task scheduling, compilers, and package managers.</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card" style="padding: 35px;">
+                        <h2>Complexity Analysis</h2>
+                        <div class="complexity-table" style="margin-top: 20px;">
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Avg Time Complexity:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:var(--primary);">O(V + E) where V is vertices and E is edges</span>
+                            </div>
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Space Complexity:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:var(--accent);">O(V) in-degree array and queue storage</span>
+                            </div>
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Best Case:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:#4ade80;">O(V + E)</span>
+                            </div>
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0;">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Worst Case:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:#f87171;">O(V + E)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px; padding: 35px;">
+                    <h2>How it Works Step-by-Step</h2>
+                    <ol style="margin: 20px 0; padding-left: 20px; line-height: 2.0; color: var(--text-muted);">
+                        <li><strong>Calculate In-Degrees:</strong> Compute the number of incoming edges for all vertices.</li><li><strong>Queue Init:</strong> Insert all vertices with in-degree equal to 0 into a queue.</li><li><strong>Extract & Record:</strong> Pop vertex u from queue, append it to result sequence.</li><li><strong>Relax Neighbors:</strong> For each outgoing edge u -> v, decrement in-degree of v. If in-degree of v becomes 0, push it into the queue.</li><li><strong>Acyclicity Check:</strong> If output contains fewer than V nodes, the graph has a cycle.</li>
+                    </ol>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px; padding: 35px;">
+                    <h2>Code Implementation</h2>
+                    
+                    <style>
+                        .code-tabs-container {
+                            display: flex;
+                            gap: 12px;
+                            margin-bottom: 20px;
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                            padding-bottom: 12px;
+                        }
+                        .code-tab-btn {
+                            background: transparent;
+                            border: none;
+                            color: var(--text-muted);
+                            font-size: 0.95rem;
+                            font-weight: 600;
+                            padding: 8px 16px;
+                            cursor: pointer;
+                            border-radius: 8px;
+                            transition: all 0.3s ease;
+                            border: 1px solid transparent;
+                        }
+                        .code-tab-btn:hover {
+                            color: var(--text);
+                            background: rgba(255, 255, 255, 0.05);
+                        }
+                        .code-tab-btn.active {
+                            color: #fff;
+                            background: var(--gradient-primary);
+                            box-shadow: var(--glow-primary);
+                            border: 1px solid rgba(255, 255, 255, 0.15);
+                        }
+                        .code-viewer-container {
+                            position: relative;
+                        }
+                        .copy-code-btn {
+                            position: absolute;
+                            top: 15px;
+                            right: 15px;
+                            background: rgba(255, 255, 255, 0.05);
+                            border: 1px solid rgba(255, 255, 255, 0.1);
+                            color: var(--text-muted);
+                            padding: 6px 12px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-size: 0.8rem;
+                            font-weight: 600;
+                            transition: all 0.2s ease;
+                            z-index: 10;
+                        }
+                        .copy-code-btn:hover {
+                            background: rgba(255, 255, 255, 0.15);
+                            color: var(--text);
+                            border-color: rgba(255, 255, 255, 0.2);
+                        }
+                    </style>
+
+                    <div class="code-tabs-container">
+                        <button class="code-tab-btn active" onclick="switchGuideLang(this, 'python')">Python</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'java')">Java</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'cpp')">C++</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'c')">C</button>
+                    </div>
+
+                    <div class="code-viewer-container">
+                        <button class="copy-code-btn" onclick="copyCode()">
+                            <i class="far fa-copy" style="margin-right: 5px;"></i>Copy
+                        </button>
+                        <div class="code-card">
+                            <div class="code-viewer" style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+                                <pre><code id="guide-code-block" class="language-python" style="font-family:'JetBrains Mono', monospace; font-size:0.9rem; color:#e2e8f0; line-height:1.5; white-space: pre-wrap;"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        const codeTemplates = {
+                            python: `from collections import deque
+
+def topological_sort(n, adj_list):
+    in_degree = [0] * n
+    for u in range(n):
+        for v in adj_list[u]:
+            in_degree[v] += 1
+            
+    queue = deque([i for i in range(n) if in_degree[i] == 0])
+    result = []
+    
+    while queue:
+        u = queue.popleft()
+        result.append(u)
+        for v in adj_list[u]:
+            in_degree[v] -= 1
+            if in_degree[v] == 0:
+                queue.append(v)
+                
+    if len(result) != n:
+        return [] # Cycle detected
+        
+    return result`,
+                            java: `import java.util.*;
+
+class TopologicalSort {
+    List<Integer> runSort(int n, List<List<Integer>> adj) {
+        int[] inDegree = new int[n];
+        for (int u = 0; u < n; u++) {
+            for (int v : adj.get(u)) inDegree[v]++;
+        }
+        
+        Queue<Integer> q = new LinkedList<>();
+        for (int i = 0; i < n; i++) {
+            if (inDegree[i] == 0) q.add(i);
+        }
+        
+        List<Integer> result = new ArrayList<>();
+        while (!q.isEmpty()) {
+            int u = q.poll();
+            result.add(u);
+            for (int v : adj.get(u)) {
+                inDegree[v]--;
+                if (inDegree[v] == 0) q.add(v);
+            }
+        }
+        
+        if (result.size() != n) return new ArrayList<>(); // Cycle detected
+        return result;
+    }
+}`,
+                            cpp: `#include <vector>
+#include <queue>
+
+std::vector<int> topologicalSort(int n, const std::vector<std::vector<int>>& adj) {
+    std::vector<int> inDegree(n, 0);
+    for (int u = 0; u < n; ++u) {
+        for (int v : adj[u]) inDegree[v]++;
+    }
+    
+    std::queue<int> q;
+    for (int i = 0; i < n; ++i) {
+        if (inDegree[i] == 0) q.push(i);
+    }
+    
+    std::vector<int> result;
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        result.push_back(u);
+        for (int v : adj[u]) {
+            inDegree[v]--;
+            if (inDegree[v] == 0) q.push(v);
+        }
+    }
+    
+    if (result.size() != n) return {}; // Cycle detected
+    return result;
+}`,
+                            c: `#include <stdio.h>
+#include <stdbool.h>
+
+bool topologicalSort(int n, int adj[][10], int counts[], int result[]) {
+    int inDegree[10] = {0};
+    for (int u = 0; u < n; u++) {
+        for (int i = 0; i < counts[u]; i++) {
+            inDegree[adj[u][i]]++;
+        }
+    }
+    
+    int queue[10];
+    int front = 0, rear = 0;
+    for (int i = 0; i < n; i++) {
+        if (inDegree[i] == 0) queue[rear++] = i;
+    }
+    
+    int count = 0;
+    while (front < rear) {
+        int u = queue[front++];
+        result[count++] = u;
+        for (int i = 0; i < counts[u]; i++) {
+            int v = adj[u][i];
+            inDegree[v]--;
+            if (inDegree[v] == 0) queue[rear++] = v;
+        }
+    }
+    
+    return count == n; // returns false if cycle exists
+}`
+                        };
+
+                        function switchGuideLang(button, lang) {
+                            // Update active tab button style
+                            const container = button.parentElement;
+                            container.querySelectorAll('.code-tab-btn').forEach(btn => btn.classList.remove('active'));
+                            button.classList.add('active');
+
+                            // Update code content
+                            const codeBlock = document.getElementById('guide-code-block');
+                            codeBlock.textContent = codeTemplates[lang];
+                            
+                            // Update syntax highlighting class
+                            codeBlock.className = 'language-' + (lang === 'cpp' ? 'cpp' : lang);
+                        }
+
+                        function copyCode() {
+                            const codeBlock = document.getElementById('guide-code-block');
+                            navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+                                const btn = document.querySelector('.copy-code-btn');
+                                btn.innerHTML = '<i class="fas fa-check" style="margin-right: 5px;"></i>Copied!';
+                                setTimeout(() => {
+                                    btn.innerHTML = '<i class="far fa-copy" style="margin-right: 5px;"></i>Copy';
+                                }, 2000);
+                            });
+                        }
+
+                        // Initialize with default language (Python)
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const firstTab = document.querySelector('.code-tab-btn');
+                            if (firstTab) switchGuideLang(firstTab, 'python');
+                        });
+                    </script>
+                </div>
+
+                <div class="glass-card" style="padding: 35px; margin-bottom: 60px;">
+                    <h2>Worked Trace Example</h2>
+                    <p style="color: var(--text-muted); line-height: 1.8; margin-top: 10px;">
+                        DAG with edges: A->B, A->C, B->D, C->D. 4 nodes:<br>1. In-degrees: A=0, B=1, C=1, D=2. Queue = [A].<br>2. Pop A: result = [A]. Decrement neighbors: B in-degree=0, C in-degree=0. Queue = [B, C].<br>3. Pop B: result = [A, B]. Decrement neighbor D: D in-degree=1.<br>4. Pop C: result = [A, B, C]. Decrement neighbor D: D in-degree=0. Queue = [D].<br>5. Pop D: result = [A, B, C, D]. Queue empty.<br>Result: Valid topological order A -> B -> C -> D.
+                    </p>
+                </div>
+
+                <div class="glass-card" style="padding: 50px; text-align: center; margin-top: 40px;">
+                    <h2 style="margin-bottom: 20px;">Ready to Understand Topological Sort Visually?</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">
+                        Don't just read about it. Launch our interactive, premium algorithm visualizer to step through calculations in real-time.
+                    </p>
+                    <a href="../visualizers/algorithms/topo.html" class="btn btn-primary"
+                        style="font-size: 1.2rem; padding: 15px 30px; display: inline-block;">
+                        Launch Topological Sort Visualizer &rarr;
+                    </a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer style="margin-top:60px;">
+        <div class="container" style="text-align:center; padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.08);">
+            <p>© 2025 by Meelo 💙</p>
+        </div>
+    </footer>
+
+    <script src="../assets/js/brain-animation.js"></script>
+</body>
+</html>

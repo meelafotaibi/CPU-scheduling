@@ -2,7 +2,9 @@
 class UIExtrasSystem {
     constructor() {
         window.UIExtrasInstance = this;
-        this.contentSystem = new AlgoContentSystem();
+        this.contentSystem = typeof AlgoContentSystem !== 'undefined'
+            ? new AlgoContentSystem()
+            : null;
         this.currentAlgo = null;
         this.init();
         this.injectGlobalFeatures();
@@ -13,7 +15,7 @@ class UIExtrasSystem {
     init() {
         // Get algorithm from page attribute
         this.currentAlgo = document.documentElement.getAttribute('data-algo');
-        if (this.currentAlgo) {
+        if (this.currentAlgo && this.contentSystem) {
             this.injectStandardLayout();
         }
     }

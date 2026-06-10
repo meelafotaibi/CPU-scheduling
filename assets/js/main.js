@@ -1,7 +1,7 @@
 // Advanced CPU Scheduler UI Controller
 class CPUSchedulerUI {
     constructor() {
-        this.currentTheme = 'light';
+        this.currentTheme = localStorage.getItem('theme') || 'dark';
         this.isSimulating = false;
         this.processes = [];
         this.init();
@@ -9,6 +9,7 @@ class CPUSchedulerUI {
 
     init() {
         this.setupEventListeners();
+        this.applyTheme();
         this.setupIntersectionObserver();
         this.setupParallaxEffects();
         this.preloadAnimations();
@@ -17,7 +18,7 @@ class CPUSchedulerUI {
     setupEventListeners() {
         // Theme toggle
         document.addEventListener('click', (e) => {
-            if (e.target.matches('[onclick*="toggleTheme"]')) {
+            if (e.target.closest('[onclick*="toggleTheme"]')) {
                 this.toggleTheme();
             }
         });
@@ -43,9 +44,13 @@ class CPUSchedulerUI {
     }
 
     toggleTheme() {
-        // Dark theme temporarily disabled
-        this.currentTheme = 'light';
-        document.documentElement.setAttribute('data-theme', 'light');
+        this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+        this.applyTheme();
+        localStorage.setItem('theme', this.currentTheme);
+    }
+
+    applyTheme() {
+        document.documentElement.setAttribute('data-theme', this.currentTheme);
     }
 
     smoothScrollTo(target) {
@@ -133,31 +138,31 @@ class CPUSchedulerUI {
         // Add hover effects to cards
         document.querySelectorAll('.glass-card').forEach(card => {
             card.addEventListener('mouseenter', (e) => {
-                this.addCardHoverEffect(e.target);
+                this.addCardHoverEffect(e.currentTarget);
             });
 
             card.addEventListener('mouseleave', (e) => {
-                this.removeCardHoverEffect(e.target);
+                this.removeCardHoverEffect(e.currentTarget);
             });
         });
 
-        // Toggle buttons
-        document.querySelectorAll('.toggle-btn').forEach(btn => {
+        // Toggle buttons (Algorithms, Modes, Views)
+        document.querySelectorAll('.toggle-btn, .mode-btn, .mode-tab, .class-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                this.handleToggle(e.target);
+                this.handleToggle(e.currentTarget);
             });
         });
 
         // Code tabs
         document.querySelectorAll('.code-tab').forEach(tab => {
             tab.addEventListener('click', (e) => {
-                this.switchCodeTab(e.target);
+                this.switchCodeTab(e.currentTarget);
             });
         });
     }
 
     createRipple(e) {
-        const button = e.currentTarget;
+        const button = e.currentTarget.closest('.btn');
         const rect = button.getBoundingClientRect();
         const size = Math.max(rect.width, rect.height);
         const x = e.clientX - rect.left - size / 2;
@@ -203,7 +208,7 @@ class CPUSchedulerUI {
 
     handleToggle(btn) {
         const group = btn.parentElement;
-        group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+        group.querySelectorAll('.toggle-btn, .mode-btn, .mode-tab, .class-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
         // Add visual feedback

@@ -4,71 +4,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A* Search Visualizer | AlgoVisual Hub</title>
+    <title>A* Pathfinding Monster | AlgoVisual Hub</title>
+    <meta name="description" content="A* Search pathfinding visualizer. Master heuristic-based graph searches using Euclidean distances and priority queues.">
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="../../assets/css/dsa-monster.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
     <style>
-        .visualizer-layout {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 30px;
-            margin-top: 30px;
-        }
-
         #graph-canvas {
             width: 100%;
-            height: 500px;
-
-            border: 2px solid #eee;
-            border-radius: 12px;
+            height: 450px;
             cursor: crosshair;
-        }
-
-        .side-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
         }
 
         .stats-table {
             width: 100%;
             font-size: 0.8rem;
             border-collapse: collapse;
-            margin-top: 10px;
+            font-family: monospace;
         }
 
         .stats-table th,
         .stats-table td {
-            border: 1px solid #eee;
+            border: 1px solid rgba(255,255,255,0.08);
             padding: 8px;
             text-align: center;
         }
 
         .stats-table th {
-            /* background: #f8f9fa; removed */
+            color: #888;
+            font-weight: 700;
         }
 
         .pq-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 10px;
+            gap: 6px;
         }
 
         .pq-item {
-            font-size: 0.75rem;
-            padding: 2px 8px;
-            background: #e6f0ff;
+            font-size: 0.72rem;
+            font-family: monospace;
+            padding: 4px 10px;
+            background: rgba(99, 102, 241, 0.12);
             border-radius: 12px;
-            border: 1px solid #cce0ff;
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            color: #a5b4fc;
+            font-weight: 700;
         }
     </style>
-    
-    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
 </head>
 
-<body><canvas id="brain-canvas"></canvas>
+<body>
+    <canvas id="brain-canvas"></canvas>
 
     <nav>
         <div class="container nav-content">
@@ -81,148 +70,279 @@
     </nav>
 
     <main class="container">
-        <header style="margin-top: 40px;">
-            <span class="btn-primary"
-                style="font-size: 0.8rem; padding: 5px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">Pathfinding</span>
-            <h1>A* Search Visualizer</h1>
-            <p>Heuristic-based search that finds the shortest path while prioritizing nodes closer to the goal.</p>
+        <header class="monster-header">
+            <span class="category-badge">⚡ Graph Algorithms</span>
+            <h1>A* Pathfinding Monster</h1>
+            <p>An intelligent best-first search algorithm that finds the shortest path between a start node and a goal. It uses the heuristic function f(n) = g(n) + h(n).</p>
         </header>
 
-        <div class="visualizer-layout">
-            <div class="glass-card" style="padding: 30px;">
-                <canvas id="graph-canvas"></canvas>
+        <!-- Stats Grid -->
+        <div class="stats-grid" style="margin-top: 24px;">
+            <div class="stat-card" style="--stat-color: hsl(258,89%,66%);">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="stat-nodes">0</div>
+                <div class="stat-label">Total Nodes</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(189,100%,52%);">
+                <div class="stat-icon">📥</div>
+                <div class="stat-value" id="stat-open">0</div>
+                <div class="stat-label">Open List (Queue)</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(45,100%,60%);">
+                <div class="stat-icon">🚫</div>
+                <div class="stat-value" id="stat-closed">0</div>
+                <div class="stat-label">Closed List (Visited)</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(145,75%,50%);">
+                <div class="stat-icon">🏁</div>
+                <div class="stat-value" id="stat-cost">-</div>
+                <div class="stat-label">Goal Path Cost</div>
+            </div>
+        </div>
 
-                <div style="margin-top: 25px; display: flex; justify-content: space-between;">
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Run A*</button>
-                        <button class="btn" id="next-btn" style="background: var(--dark); color: white;">Next
-                            Step</button>
-                        <button class="btn" id="reset-btn"
-                            style="border: 1px solid var(--accent); color: var(--accent);">Reset</button>
-                        <button class="btn" id="grid-toggle-btn" title="Toggle Grid"><i
-                                class="fas fa-border-all"></i></button>
-                    </div>
+        <div class="monster-layout">
+            <div class="main-panel">
+                <div class="monster-canvas-container" id="visualizer-container">
+                    <canvas id="graph-canvas"></canvas>
+                    <div class="canvas-badge">A* SEARCH GRAPH</div>
                 </div>
-                <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">A* uses Euclidean distance as its heuristic
-                    (hScore). Click to add nodes, drag to add edges.</p>
+
+                <div class="monster-controls">
+                    <button class="btn btn-primary" id="play-btn">
+                        <i class="fas fa-play"></i> Run A*
+                    </button>
+                    <button class="btn" id="step-btn" style="border: 1px solid rgba(255,255,255,0.2); color: white; background: transparent;">
+                        <i class="fas fa-step-forward"></i> Step
+                    </button>
+                    <button class="btn" id="reset-btn" style="border: 1px solid var(--monster-danger); color: var(--monster-danger); background: transparent;">
+                        <i class="fas fa-undo"></i> Reset
+                    </button>
+                    <button class="btn" id="grid-toggle-btn" style="border: 1px solid rgba(255,255,255,0.15); color: white; background: transparent;" title="Toggle Coordinates Grid">
+                        <i class="fas fa-border-all"></i> Grid
+                    </button>
+                    <div class="divider-v"></div>
+                    <label style="font-size: 0.75rem; color: #888; font-weight: 700; white-space: nowrap;">⚡ Speed</label>
+                    <input type="range" id="speed-slider" min="1" max="100" value="50">
+                    <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'A-Star Pathfinding')">📸 Share</button>
+                </div>
+                
+                <p style="font-size: 0.8rem; color: #888; margin-top: 12px; font-weight: 500;">
+                    💡 <strong>Editor Guide:</strong> Click empty space to add a node. Click and drag between nodes to connect them with a weighted edge.
+                </p>
             </div>
 
             <div class="side-panel">
-                <div class="glass-card" style="padding: 20px;">
-                    <h4>📜 Execution Log</h4>
-                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 10px; min-height: 50px;">Ready.
-                        Build a graph or use a preset.</p>
+                <div class="log-panel">
+                    <h4><i class="fas fa-terminal"></i> Execution Log</h4>
+                    <div class="log-text" id="explanation-text">Click Load Example Map or design a graph, then run A*.</div>
                 </div>
 
-                <div class="glass-card" style="padding: 20px;">
-                    <h4>📊 Status Table</h4>
-                    <div style="max-height: 200px; overflow-y: auto;">
+                <!-- Open Set Queue -->
+                <div class="info-card">
+                    <h4>📥 Open Set (Priority Queue)</h4>
+                    <div id="pq-list" class="pq-container">
+                        <span style="font-size: 0.78rem; color: #666;">Queue is empty.</span>
+                    </div>
+                </div>
+
+                <!-- Status Table -->
+                <div class="info-card">
+                    <h4>📊 Node Cost Tables</h4>
+                    <div style="max-height: 180px; overflow-y: auto;">
                         <table class="stats-table">
                             <thead>
                                 <tr>
                                     <th>Node</th>
-                                    <th>g</th>
-                                    <th>h</th>
-                                    <th>f</th>
+                                    <th>g(n)</th>
+                                    <th>h(n)</th>
+                                    <th>f(n)</th>
                                 </tr>
                             </thead>
-                            <tbody id="stats-body"></tbody>
+                            <tbody id="stats-body">
+                                <tr>
+                                    <td colspan="4" style="color: #666;">No nodes defined.</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
 
-                <div class="glass-card" style="padding: 20px;">
-                    <h4>📥 Open Set (Queue)</h4>
-                    <div id="pq-list" class="pq-container"></div>
+                <!-- Control panel presets -->
+                <div class="info-card">
+                    <h4>🛠️ Presets</h4>
+                    <button class="btn" id="preset-btn" style="width: 100%; border: 1px solid rgba(255,255,255,0.15); color: white; background: transparent; font-weight: 700;">
+                        <i class="fas fa-map"></i> Load Example Map
+                    </button>
                 </div>
 
-                <div class="glass-card" style="padding: 20px;">
-                    <button class="btn" onclick="loadAStarPreset()" style="width: 100%; border: 1px solid #ddd;">Load
-                        Example Map</button>
+                <!-- Complexity -->
+                <div class="info-card">
+                    <h4>⚡ Heuristic Metric</h4>
+                    <p style="font-size: 0.82rem; color: #aaa; line-height: 1.5; margin: 0;">
+                        A* uses Euclidean distance to the goal as its h(n) value. Nodes closer to the target are explored first.
+                    </p>
                 </div>
             </div>
         </div>
-
     </main>
 
     <script src="../../assets/js/core/graph-engine.js"></script>
     <script src="../../assets/js/core/playback.js"></script>
+    <script src="../../assets/js/core/ComplexityTracker.js"></script>
+    <script src="../../assets/js/core/ui-extras.js"></script>
     <script src="../../assets/js/algos/algorithms/astar.js"></script>
     <script>
         window.engine = new GraphEngine('graph-canvas');
+        window.engine.directed = false;
         window.engine.setEditMode(true);
 
         window.ui = {
-            updateStatus: (t) => document.getElementById('explanation-text').innerText = t,
+            updateStatus: (t) => {
+                const el = document.getElementById('explanation-text');
+                if (el) el.innerHTML = t;
+            },
             updateTable: (data, visited, goal) => {
                 const body = document.getElementById('stats-body');
+                if (!body) return;
                 body.innerHTML = Object.keys(data).map(id => `
-                    <tr style="${id == goal ? 'background: #fff3cd;' : ''}">
-                        <td>${id}</td>
-                        <td>${data[id].g === Infinity ? '∞' : data[id].g.toFixed(0)}</td>
+                    <tr style="${id == goal ? 'color: var(--monster-accent); font-weight: 800;' : ''}">
+                        <td>Node ${id}</td>
+                        <td>${data[id].g === Infinity ? '∞' : parseFloat(data[id].g).toFixed(0)}</td>
                         <td>${data[id].h}</td>
-                        <td>${data[id].f}</td>
+                        <td>${data[id].f === '∞' ? '∞' : parseFloat(data[id].f).toFixed(1)}</td>
                     </tr>
                 `).join('');
+                updateStatsDOM();
             },
             updatePQ: (pq) => {
                 const container = document.getElementById('pq-list');
-                container.innerHTML = pq.map(item => `
-                    <div class="pq-item">${item.id} (f=${item.f.toFixed(1)})</div>
-                `).join('');
+                if (!container) return;
+                if (pq.length === 0) {
+                    container.innerHTML = '<span style="font-size: 0.78rem; color: #666;">Queue is empty.</span>';
+                } else {
+                    container.innerHTML = pq.map(item => `
+                        <div class="pq-item">N${item.id} (f=${parseFloat(item.f).toFixed(1)})</div>
+                    `).join('');
+                }
+                updateStatsDOM();
             }
         };
-        const ui = window.ui;
-        const playback = new Playback(() => window.algo.nextStep());
-        window.playback = playback;
-        const engine = window.engine;
-        window.algo = new AStarAlgo(window.engine, playback, ui);
-        const algo = window.algo;
 
-        document.getElementById('play-btn').onclick = () => {
-            if (window.engine.nodes.length === 0) return alert("Please add nodes first");
-            window.algo.reset();
-            playback.play();
+        const ui = window.ui;
+        const playback = new Playback(async () => {
+            if (window.algo.complete) {
+                return false;
+            }
+            const hasMore = await window.algo.nextStep();
+            updateStatsDOM();
+            return hasMore;
+        });
+        window.playback = playback;
+
+        window.algo = new AStarAlgo(window.engine, playback, ui);
+
+        function updateStatsDOM() {
+            animStat('stat-nodes', window.engine.nodes.length);
+            animStat('stat-open', window.algo.openSet.length);
+            animStat('stat-closed', window.algo.visited.size);
+            
+            let costText = '-';
+            if (window.algo.complete) {
+                const goalG = window.algo.gScore[window.algo.goalNode];
+                costText = (goalG !== undefined && goalG !== Infinity) ? goalG.toFixed(0) : 'Unreachable';
+            } else if (window.algo.started && window.algo.openSet.length > 0) {
+                const minF = Math.min(...window.algo.openSet.map(x => x.f));
+                costText = `~${minF.toFixed(0)}`;
+            }
+            animStat('stat-cost', costText);
+        }
+
+        function animStat(id, val) {
+            const el = document.getElementById(id);
+            if (el && el.innerText != val) {
+                el.innerText = val;
+                el.classList.remove('pulse-update');
+                void el.offsetWidth;
+                el.classList.add('pulse-update');
+            }
+        }
+
+        const playBtn = document.getElementById('play-btn');
+        playBtn.onclick = () => {
+            if (window.engine.nodes.length === 0) {
+                alert("Please add nodes first or click Load Example Map.");
+                return;
+            }
+            if (playback.isRunning) {
+                playback.pause();
+                playBtn.innerHTML = '<i class="fas fa-play"></i> Run A*';
+            } else {
+                if (window.algo.complete || !window.algo.started) {
+                    window.algo.reset();
+                }
+                playback.play();
+                playBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            }
         };
 
-        document.getElementById('next-btn').onclick = () => {
-            if (engine.nodes.length === 0) return;
-            if (!algo.started) algo.reset();
-            algo.nextStep();
+        document.getElementById('step-btn').onclick = async () => {
+            if (window.engine.nodes.length === 0) {
+                alert("Please add nodes first.");
+                return;
+            }
+            playback.pause();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Run A*';
+            if (window.algo.complete || !window.algo.started) {
+                window.algo.reset();
+            }
+            await playback.step();
+            updateStatsDOM();
         };
 
         document.getElementById('reset-btn').onclick = () => {
-            playback.stop();
-            algo.reset();
+            playback.reset();
+            window.algo.reset();
+            updateStatsDOM();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Run A*';
         };
 
         document.getElementById('grid-toggle-btn').onclick = () => {
-            engine.showGrid = !engine.showGrid;
+            window.engine.showGrid = !window.engine.showGrid;
             document.getElementById('grid-toggle-btn').classList.toggle('active');
-            engine.draw();
+            window.engine.draw();
         };
 
+        document.getElementById('preset-btn').onclick = loadAStarPreset;
+
         function loadAStarPreset() {
-            engine.nodes = [
-                { id: 1, x: 100, y: 100, status: 'default' },
-                { id: 2, x: 300, y: 100, status: 'default' },
-                { id: 3, x: 100, y: 300, status: 'default' },
-                { id: 4, x: 300, y: 300, status: 'default' },
-                { id: 5, x: 500, y: 200, status: 'default' }
+            playback.pause();
+            window.engine.nodes = [
+                { id: 1, x: 100, y: 150, status: 'default' },
+                { id: 2, x: 280, y: 80, status: 'default' },
+                { id: 3, x: 280, y: 220, status: 'default' },
+                { id: 4, x: 460, y: 80, status: 'default' },
+                { id: 5, x: 460, y: 220, status: 'default' },
+                { id: 6, x: 620, y: 150, status: 'default' }
             ];
-            engine.edges = [
-                [1, 2, 4], [1, 3, 2], [2, 3, 1], [2, 4, 5], [3, 4, 8], [4, 5, 3], [2, 5, 10]
+            window.engine.edges = [
+                [1, 2, 4], [1, 3, 2], [2, 3, 1], [2, 4, 5], [3, 5, 6], [4, 5, 2], [4, 6, 3], [5, 6, 4]
             ];
-            algo.reset();
+            window.algo.reset();
+            window.engine.draw();
+            updateStatsDOM();
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Run A*';
         }
+
+        // Speed Slider
+        const speedSlider = document.getElementById('speed-slider');
+        speedSlider.oninput = (e) => playback.setSpeed(parseInt(e.target.value));
+        playback.setSpeed(parseInt(speedSlider.value));
 
         window.onload = () => {
             loadAStarPreset();
         };
     </script>
-
-    <script src='../../assets/js/core/ui-extras.js'></script>
-<script src="../../assets/js/brain-animation.js"></script></body>
+    <script src="../../assets/js/brain-animation.js"></script>
+</body>
 
 </html>
-

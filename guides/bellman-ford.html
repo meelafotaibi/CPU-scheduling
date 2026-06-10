@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bellman-Ford Algorithm Guide - AlgoVisual Hub</title>
+    <meta name="description"
+        content="The Bellman-Ford algorithm computes shortest paths from a single source vertex to all other vertices in a weighted graph. Unlike Dijkstra's algorithm,...">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css?v=mobile_fix_1">
+
+    <link rel="icon" href="../assets/img/logo.png" type="image/png">
+</head>
+
+<body><canvas id="brain-canvas"></canvas>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <a href="../index.html" class="logo">
+                    <img src="../assets/img/logo.png" alt="AlgoVisual Hub" style="height:48px;width:48px;">
+                    <span>AlgoVisual Hub</span>
+                </a>
+                <div class="nav-links">
+                    <a href="../index.html">Home</a>
+                    <a href="../dsa.html">DSA</a>
+                    <a href="../algorithms.html">Algorithms</a>
+                    <a href="../os.html">OS</a>
+                    <a href="../roadmap.html">Roadmap</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container" style="padding: 60px 24px;">
+            <article>
+                <header style="text-align: center; margin-bottom: 60px;">
+                    <span class="section-tag">Shortest Path</span>
+                    <h1
+                        style="font-size: 3rem; font-weight: 900; margin: 20px 0; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                        Bellman-Ford Algorithm
+                    </h1>
+                    <p
+                        style="font-size: 1.3rem; color: var(--text-muted); max-width: 800px; margin: 0 auto; line-height: 1.6;">
+                        Shortest path algorithm capable of handling negative edge weights and detecting negative cycles.
+                    </p>
+                </header>
+
+                <div class="grid grid-2" style="margin-bottom: 60px; gap: 30px;">
+                    <div class="glass-card" style="padding: 35px;">
+                        <h2>What is Bellman-Ford Algorithm?</h2>
+                        <p>The Bellman-Ford algorithm computes shortest paths from a single source vertex to all other vertices in a weighted graph. Unlike Dijkstra's algorithm, it supports negative edge weights. It works by repeatedly relaxing all edges V-1 times. On the V-th iteration, it checks for negative-weight cycles; if a path's cost decreases, a negative cycle exists, making a finite shortest path impossible.</p>
+
+                        <h3 style="margin-top: 25px; color: var(--primary);">Key Characteristics:</h3>
+                        <ul style="line-height: 1.8; padding-left: 20px; color: var(--text-muted); margin-top: 10px;">
+                            <li>Supports negative edge weights.</li><li>Detects negative-weight cycles.</li><li>Dynamic programming approach via bottom-up relaxation.</li><li>Slower than Dijkstra but more versatile.</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card" style="padding: 35px;">
+                        <h2>Complexity Analysis</h2>
+                        <div class="complexity-table" style="margin-top: 20px;">
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Avg Time Complexity:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:var(--primary);">O(V * E) where V is vertices count and E is edge count</span>
+                            </div>
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Space Complexity:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:var(--accent);">O(V) distance storage table</span>
+                            </div>
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Best Case:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:#4ade80;">O(E) (all shortest paths found in first iteration)</span>
+                            </div>
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0;">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Worst Case:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:#f87171;">O(V * E) (all iterations relaxed exhaustively)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px; padding: 35px;">
+                    <h2>How it Works Step-by-Step</h2>
+                    <ol style="margin: 20px 0; padding-left: 20px; line-height: 2.0; color: var(--text-muted);">
+                        <li><strong>Initialize:</strong> Set distance to source node to 0, and all other nodes to infinity.</li><li><strong>Relax Edges:</strong> Loop V-1 times. In each iteration, for every edge (u, v) with weight w, if dist[u] + w < dist[v], set dist[v] = dist[u] + w.</li><li><strong>Cycle Check:</strong> Loop through all edges one more time. If dist[u] + w < dist[v] for any edge, report that a negative cycle exists.</li>
+                    </ol>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px; padding: 35px;">
+                    <h2>Code Implementation</h2>
+                    
+                    <style>
+                        .code-tabs-container {
+                            display: flex;
+                            gap: 12px;
+                            margin-bottom: 20px;
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                            padding-bottom: 12px;
+                        }
+                        .code-tab-btn {
+                            background: transparent;
+                            border: none;
+                            color: var(--text-muted);
+                            font-size: 0.95rem;
+                            font-weight: 600;
+                            padding: 8px 16px;
+                            cursor: pointer;
+                            border-radius: 8px;
+                            transition: all 0.3s ease;
+                            border: 1px solid transparent;
+                        }
+                        .code-tab-btn:hover {
+                            color: var(--text);
+                            background: rgba(255, 255, 255, 0.05);
+                        }
+                        .code-tab-btn.active {
+                            color: #fff;
+                            background: var(--gradient-primary);
+                            box-shadow: var(--glow-primary);
+                            border: 1px solid rgba(255, 255, 255, 0.15);
+                        }
+                        .code-viewer-container {
+                            position: relative;
+                        }
+                        .copy-code-btn {
+                            position: absolute;
+                            top: 15px;
+                            right: 15px;
+                            background: rgba(255, 255, 255, 0.05);
+                            border: 1px solid rgba(255, 255, 255, 0.1);
+                            color: var(--text-muted);
+                            padding: 6px 12px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-size: 0.8rem;
+                            font-weight: 600;
+                            transition: all 0.2s ease;
+                            z-index: 10;
+                        }
+                        .copy-code-btn:hover {
+                            background: rgba(255, 255, 255, 0.15);
+                            color: var(--text);
+                            border-color: rgba(255, 255, 255, 0.2);
+                        }
+                    </style>
+
+                    <div class="code-tabs-container">
+                        <button class="code-tab-btn active" onclick="switchGuideLang(this, 'python')">Python</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'java')">Java</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'cpp')">C++</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'c')">C</button>
+                    </div>
+
+                    <div class="code-viewer-container">
+                        <button class="copy-code-btn" onclick="copyCode()">
+                            <i class="far fa-copy" style="margin-right: 5px;"></i>Copy
+                        </button>
+                        <div class="code-card">
+                            <div class="code-viewer" style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+                                <pre><code id="guide-code-block" class="language-python" style="font-family:'JetBrains Mono', monospace; font-size:0.9rem; color:#e2e8f0; line-height:1.5; white-space: pre-wrap;"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        const codeTemplates = {
+                            python: `def bellman_ford(vertices, edges, source):
+    # Step 1: Initialize distances
+    dist = {v: float('inf') for v in vertices}
+    dist[source] = 0
+    
+    # Step 2: Relax edges |V| - 1 times
+    for _ in range(len(vertices) - 1):
+        for u, v, w in edges:
+            if dist[u] != float('inf') and dist[u] + w < dist[v]:
+                dist[v] = dist[u] + w
+                
+    # Step 3: Check for negative-weight cycles
+    for u, v, w in edges:
+        if dist[u] != float('inf') and dist[u] + w < dist[v]:
+            raise ValueError("Graph contains negative cycle")
+            
+    return dist`,
+                            java: `import java.util.*;
+
+class BellmanFord {
+    static class Edge {
+        int u, v, w;
+        Edge(int u, int v, int w) { this.u = u; this.v = v; this.w = w; }
+    }
+
+    boolean runBellmanFord(int V, List<Edge> edges, int src, int[] dist) {
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        dist[src] = 0;
+        
+        for (int i = 0; i < V - 1; i++) {
+            for (Edge e : edges) {
+                if (dist[e.u] != Integer.MAX_VALUE && dist[e.u] + e.w < dist[e.v]) {
+                    dist[e.v] = dist[e.u] + e.w;
+                }
+            }
+        }
+        
+        for (Edge e : edges) {
+            if (dist[e.u] != Integer.MAX_VALUE && dist[e.u] + e.w < dist[e.v]) {
+                return false; // Negative cycle detected
+            }
+        }
+        return true;
+    }
+}`,
+                            cpp: `#include <vector>
+#include <climits>
+
+struct Edge {
+    int u, v, w;
+};
+
+bool bellmanFord(int V, const std::vector<Edge>& edges, int src, std::vector<int>& dist) {
+    dist.assign(V, INT_MAX);
+    dist[src] = 0;
+    
+    for (int i = 0; i < V - 1; ++i) {
+        for (const auto& e : edges) {
+            if (dist[e.u] != INT_MAX && dist[e.u] + e.w < dist[e.v]) {
+                dist[e.v] = dist[e.u] + e.w;
+            }
+        }
+    }
+    
+    for (const auto& e : edges) {
+        if (dist[e.u] != INT_MAX && dist[e.u] + e.w < dist[e.v]) {
+            return false; // Negative cycle detected
+        }
+    }
+    return true;
+}`,
+                            c: `#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+struct Edge {
+    int u, v, w;
+};
+
+bool bellmanFord(int V, int E, struct Edge edges[], int src, int dist[]) {
+    for (int i = 0; i < V; i++) dist[i] = INT_MAX;
+    dist[src] = 0;
+    
+    for (int i = 0; i < V - 1; i++) {
+        for (int j = 0; j < E; j++) {
+            int u = edges[j].u;
+            int v = edges[j].v;
+            int w = edges[j].w;
+            if (dist[u] != INT_MAX && dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+            }
+        }
+    }
+    
+    for (int j = 0; j < E; j++) {
+        int u = edges[j].u;
+        int v = edges[j].v;
+        int w = edges[j].w;
+        if (dist[u] != INT_MAX && dist[u] + w < dist[v]) {
+            return false; // Negative cycle
+        }
+    }
+    return true;
+}`
+                        };
+
+                        function switchGuideLang(button, lang) {
+                            // Update active tab button style
+                            const container = button.parentElement;
+                            container.querySelectorAll('.code-tab-btn').forEach(btn => btn.classList.remove('active'));
+                            button.classList.add('active');
+
+                            // Update code content
+                            const codeBlock = document.getElementById('guide-code-block');
+                            codeBlock.textContent = codeTemplates[lang];
+                            
+                            // Update syntax highlighting class
+                            codeBlock.className = 'language-' + (lang === 'cpp' ? 'cpp' : lang);
+                        }
+
+                        function copyCode() {
+                            const codeBlock = document.getElementById('guide-code-block');
+                            navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+                                const btn = document.querySelector('.copy-code-btn');
+                                btn.innerHTML = '<i class="fas fa-check" style="margin-right: 5px;"></i>Copied!';
+                                setTimeout(() => {
+                                    btn.innerHTML = '<i class="far fa-copy" style="margin-right: 5px;"></i>Copy';
+                                }, 2000);
+                            });
+                        }
+
+                        // Initialize with default language (Python)
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const firstTab = document.querySelector('.code-tab-btn');
+                            if (firstTab) switchGuideLang(firstTab, 'python');
+                        });
+                    </script>
+                </div>
+
+                <div class="glass-card" style="padding: 35px; margin-bottom: 60px;">
+                    <h2>Worked Trace Example</h2>
+                    <p style="color: var(--text-muted); line-height: 1.8; margin-top: 10px;">
+                        Graph with A->B (4), B->C (-2), A->C (5). Source A:<br>1. Initial: dist[A]=0, dist[B]=∞, dist[C]=∞.<br>2. Iteration 1: Relax A->B: dist[B]=4. Relax B->C: dist[C]=4-2=2. Relax A->C: dist[C]=min(2,5)=2.<br>3. Iteration 2: No changes. dist[A]=0, dist[B]=4, dist[C]=2.<br>Result: Optimal paths found.
+                    </p>
+                </div>
+
+                <div class="glass-card" style="padding: 50px; text-align: center; margin-top: 40px;">
+                    <h2 style="margin-bottom: 20px;">Ready to Understand Bellman-Ford Algorithm Visually?</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">
+                        Don't just read about it. Launch our interactive, premium algorithm visualizer to step through calculations in real-time.
+                    </p>
+                    <a href="../visualizers/algorithms/bellman-ford.html" class="btn btn-primary"
+                        style="font-size: 1.2rem; padding: 15px 30px; display: inline-block;">
+                        Launch Bellman-Ford Algorithm Visualizer &rarr;
+                    </a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer style="margin-top:60px;">
+        <div class="container" style="text-align:center; padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.08);">
+            <p>© 2025 by Meelo 💙</p>
+        </div>
+    </footer>
+
+    <script src="../assets/js/brain-animation.js"></script>
+</body>
+</html>

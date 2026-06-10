@@ -66,6 +66,9 @@ class DSAEngine {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.showGrid) this.drawGrid();
         // Specialized draw methods will be called by subclasses
+        if (window.algo && typeof window.algo.draw === 'function') {
+            window.algo.draw();
+        }
     }
 
     drawGrid() {

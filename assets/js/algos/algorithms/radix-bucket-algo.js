@@ -114,7 +114,7 @@ class AdvancedSortAlgo {
         const step = this.steps[this.currentStep];
 
         // Update ArrayEngine visual
-        this.engine.drawFullArray(step.arr);
+        this.engine.setArray(step.arr);
 
         // Custom Bucket visualization logic
         this.ui.drawBuckets(step);
@@ -135,4 +135,4 @@ class AdvancedSortAlgo {
         return this.currentStep < this.steps.length;
     }
 }
-Riverside
+

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KNN Classification Guide - AlgoVisual Hub</title>
+    <meta name="description"
+        content="K-Nearest Neighbors (KNN) is a simple, supervised machine learning algorithm used for both classification and regression. To classify an unlabeled que...">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css?v=mobile_fix_1">
+
+    <link rel="icon" href="../assets/img/logo.png" type="image/png">
+</head>
+
+<body><canvas id="brain-canvas"></canvas>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <a href="../index.html" class="logo">
+                    <img src="../assets/img/logo.png" alt="AlgoVisual Hub" style="height:48px;width:48px;">
+                    <span>AlgoVisual Hub</span>
+                </a>
+                <div class="nav-links">
+                    <a href="../index.html">Home</a>
+                    <a href="../dsa.html">DSA</a>
+                    <a href="../algorithms.html">Algorithms</a>
+                    <a href="../os.html">OS</a>
+                    <a href="../roadmap.html">Roadmap</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container" style="padding: 60px 24px;">
+            <article>
+                <header style="text-align: center; margin-bottom: 60px;">
+                    <span class="section-tag">Classification</span>
+                    <h1
+                        style="font-size: 3rem; font-weight: 900; margin: 20px 0; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                        KNN Classification
+                    </h1>
+                    <p
+                        style="font-size: 1.3rem; color: var(--text-muted); max-width: 800px; margin: 0 auto; line-height: 1.6;">
+                        A non-parametric classification algorithm predicting classes via local neighbors.
+                    </p>
+                </header>
+
+                <div class="grid grid-2" style="margin-bottom: 60px; gap: 30px;">
+                    <div class="glass-card" style="padding: 35px;">
+                        <h2>What is KNN Classification?</h2>
+                        <p>K-Nearest Neighbors (KNN) is a simple, supervised machine learning algorithm used for both classification and regression. To classify an unlabeled query point, KNN calculates its distance (typically Euclidean) to all points in the training set, identifies the K closest points (neighbors), and outputs the majority class.</p>
+
+                        <h3 style="margin-top: 25px; color: var(--primary);">Key Characteristics:</h3>
+                        <ul style="line-height: 1.8; padding-left: 20px; color: var(--text-muted); margin-top: 10px;">
+                            <li>Supervised: relies on labeled training points</li><li>Lazy learner: no training phase; lazy computation on query</li><li>Distance metric: Euclidean distance standard</li><li>K parameter dictates neighbor voting boundaries</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card" style="padding: 35px;">
+                        <h2>Complexity Analysis</h2>
+                        <div class="complexity-table" style="margin-top: 20px;">
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Avg Time Complexity:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:var(--primary);">O(1) Training, O(N * D) Classification (naive search)</span>
+                            </div>
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Space Complexity:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:var(--accent);">O(N * D) training data storage</span>
+                            </div>
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Best Case:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:#4ade80;">O(N) (single test point evaluation)</span>
+                            </div>
+                            <div class="complexity-row" style="display:flex; justify-content:space-between; padding: 12px 0;">
+                                <span class="complexity-label" style="font-weight:700; color:var(--text-muted);">Worst Case:</span>
+                                <span class="complexity-value" style="font-family:'Courier New', monospace; font-weight:bold; color:#f87171;">O(N * D) (expensive sorting/lookups)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px; padding: 35px;">
+                    <h2>How it Works Step-by-Step</h2>
+                    <ol style="margin: 20px 0; padding-left: 20px; line-height: 2.0; color: var(--text-muted);">
+                        <li><strong>Load Data:</strong> Store all labeled training points and coordinates.</li><li><strong>Calculate Distance:</strong> Compute distance between test point and all training points.</li><li><strong>Identify Neighbors:</strong> Select the K training points with the smallest distances.</li><li><strong>Vote Class:</strong> Perform majority vote among neighbors; output target label.</li>
+                    </ol>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 60px; padding: 35px;">
+                    <h2>Code Implementation</h2>
+                    
+                    <style>
+                        .code-tabs-container {
+                            display: flex;
+                            gap: 12px;
+                            margin-bottom: 20px;
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                            padding-bottom: 12px;
+                        }
+                        .code-tab-btn {
+                            background: transparent;
+                            border: none;
+                            color: var(--text-muted);
+                            font-size: 0.95rem;
+                            font-weight: 600;
+                            padding: 8px 16px;
+                            cursor: pointer;
+                            border-radius: 8px;
+                            transition: all 0.3s ease;
+                            border: 1px solid transparent;
+                        }
+                        .code-tab-btn:hover {
+                            color: var(--text);
+                            background: rgba(255, 255, 255, 0.05);
+                        }
+                        .code-tab-btn.active {
+                            color: #fff;
+                            background: var(--gradient-primary);
+                            box-shadow: var(--glow-primary);
+                            border: 1px solid rgba(255, 255, 255, 0.15);
+                        }
+                        .code-viewer-container {
+                            position: relative;
+                        }
+                        .copy-code-btn {
+                            position: absolute;
+                            top: 15px;
+                            right: 15px;
+                            background: rgba(255, 255, 255, 0.05);
+                            border: 1px solid rgba(255, 255, 255, 0.1);
+                            color: var(--text-muted);
+                            padding: 6px 12px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-size: 0.8rem;
+                            font-weight: 600;
+                            transition: all 0.2s ease;
+                            z-index: 10;
+                        }
+                        .copy-code-btn:hover {
+                            background: rgba(255, 255, 255, 0.15);
+                            color: var(--text);
+                            border-color: rgba(255, 255, 255, 0.2);
+                        }
+                    </style>
+
+                    <div class="code-tabs-container">
+                        <button class="code-tab-btn active" onclick="switchGuideLang(this, 'python')">Python</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'java')">Java</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'cpp')">C++</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'c')">C</button>
+                    </div>
+
+                    <div class="code-viewer-container">
+                        <button class="copy-code-btn" onclick="copyCode()">
+                            <i class="far fa-copy" style="margin-right: 5px;"></i>Copy
+                        </button>
+                        <div class="code-card">
+                            <div class="code-viewer" style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+                                <pre><code id="guide-code-block" class="language-python" style="font-family:'JetBrains Mono', monospace; font-size:0.9rem; color:#e2e8f0; line-height:1.5; white-space: pre-wrap;"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        const codeTemplates = {
+                            python: `import numpy as np
+from collections import Counter
+
+def knn_classify(train_x, train_y, query, k):
+    # Calculate Euclidean distances
+    distances = [np.linalg.norm(query - x) for x in train_x]
+    
+    # Get the indices of the K nearest neighbors
+    k_indices = np.argsort(distances)[:k]
+    
+    # Get the labels of the K nearest neighbors
+    k_labels = [train_y[i] for i in k_indices]
+    
+    # Return the majority vote
+    most_common = Counter(k_labels).most_common(1)
+    return most_common[0][0]`,
+                            java: `import java.util.*;
+
+class KNN {
+    static class Neighbor implements Comparable<Neighbor> {
+        double distance;
+        int label;
+        Neighbor(double d, int l) { distance = d; label = l; }
+        public int compareTo(Neighbor o) { return Double.compare(this.distance, o.distance); }
+    }
+
+    int classify(double[][] trainX, int[] trainY, double[] query, int k) {
+        List<Neighbor> neighbors = new ArrayList<>();
+        for (int i = 0; i < trainX.length; i++) {
+            double dist = 0;
+            for (int j = 0; j < query.length; j++) dist += Math.pow(trainX[i][j] - query[j], 2);
+            neighbors.add(new Neighbor(Math.sqrt(dist), trainY[i]));
+        }
+        Collections.sort(neighbors);
+
+        Map<Integer, Integer> votes = new HashMap<>();
+        for (int i = 0; i < k; i++) {
+            int lbl = neighbors.get(i).label;
+            votes.put(lbl, votes.getOrDefault(lbl, 0) + 1);
+        }
+
+        return Collections.max(votes.entrySet(), Map.Entry.comparingByValue()).getKey();
+    }
+}`,
+                            cpp: `#include <iostream>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+#include <unordered_map>
+
+struct Neighbor {
+    double distance;
+    int label;
+    bool operator<(const Neighbor& o) const { return distance < o.distance; }
+};
+
+int knnClassify(const std::vector<std::vector<double>>& trainX, const std::vector<int>& trainY, const std::vector<double>& query, int k) {
+    std::vector<Neighbor> neighbors;
+    for (size_t i = 0; i < trainX.size(); i++) {
+        double sum = 0;
+        for (size_t j = 0; j < query.size(); j++) sum += std::pow(trainX[i][j] - query[j], 2);
+        neighbors.push_back({std::sqrt(sum), trainY[i]});
+    }
+    std::sort(neighbors.begin(), neighbors.end());
+
+    std::unordered_map<int, int> votes;
+    for (int i = 0; i < k; i++) votes[neighbors[i].label]++;
+
+    int bestLabel = -1, maxVotes = -1;
+    for (auto& pair : votes) {
+        if (pair.second > maxVotes) { maxVotes = pair.second; bestLabel = pair.first; }
+    }
+    return bestLabel;
+}`,
+                            c: `#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+struct Neighbor { double distance; int label; };
+
+int compareNeighbors(const void* a, const void* b) {
+    double distA = ((struct Neighbor*)a)->distance;
+    double distB = ((struct Neighbor*)b)->distance;
+    return (distA > distB) - (distA < distB);
+}
+
+int knnClassify(double trainX[][2], int trainY[], int n, double query[2], int k) {
+    struct Neighbor* list = (struct Neighbor*)malloc(n * sizeof(struct Neighbor));
+    for (int i = 0; i < n; i++) {
+        double dx = trainX[i][0] - query[0];
+        double dy = trainX[i][1] - query[1];
+        list[i].distance = sqrt(dx*dx + dy*dy);
+        list[i].label = trainY[i];
+    }
+    qsort(list, n, sizeof(struct Neighbor), compareNeighbors);
+
+    int maxLabel = 100;
+    int* votes = (int*)calloc(maxLabel, sizeof(int));
+    for (int i = 0; i < k; i++) votes[list[i].label]++;
+
+    int bestLabel = -1, maxVotes = -1;
+    for (int i = 0; i < maxLabel; i++) {
+        if (votes[i] > maxVotes) { maxVotes = votes[i]; bestLabel = i; }
+    }
+    free(list);
+    free(votes);
+    return bestLabel;
+}`
+                        };
+
+                        function switchGuideLang(button, lang) {
+                            // Update active tab button style
+                            const container = button.parentElement;
+                            container.querySelectorAll('.code-tab-btn').forEach(btn => btn.classList.remove('active'));
+                            button.classList.add('active');
+
+                            // Update code content
+                            const codeBlock = document.getElementById('guide-code-block');
+                            codeBlock.textContent = codeTemplates[lang];
+                            
+                            // Update syntax highlighting class
+                            codeBlock.className = 'language-' + (lang === 'cpp' ? 'cpp' : lang);
+                        }
+
+                        function copyCode() {
+                            const codeBlock = document.getElementById('guide-code-block');
+                            navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+                                const btn = document.querySelector('.copy-code-btn');
+                                btn.innerHTML = '<i class="fas fa-check" style="margin-right: 5px;"></i>Copied!';
+                                setTimeout(() => {
+                                    btn.innerHTML = '<i class="far fa-copy" style="margin-right: 5px;"></i>Copy';
+                                }, 2000);
+                            });
+                        }
+
+                        // Initialize with default language (Python)
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const firstTab = document.querySelector('.code-tab-btn');
+                            if (firstTab) switchGuideLang(firstTab, 'python');
+                        });
+                    </script>
+                </div>
+
+                <div class="glass-card" style="padding: 35px;">
+                    <h2>Worked Trace Example</h2>
+                    <p style="color: var(--text-muted); line-height: 1.8; margin-top: 10px;">
+                        Query point Q (0,0) classified with K=3:<br>1. Neighbors: N1 (1,1) [Red], N2 (1,-1) [Red], N3 (2,2) [Blue]<br>2. Euclidean distances calculated and sorted.<br>3. Majority vote: 2 Red vs 1 Blue -> Classify Q as Red.
+                    </p>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer style="margin-top:60px;">
+        <div class="container" style="text-align:center; padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.08);">
+            <p>© 2025 by Meelo 💙</p>
+        </div>
+    </footer>
+
+    <script src="../assets/js/brain-animation.js"></script>
+</body>
+</html>

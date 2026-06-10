@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perspective &amp; Orthographic Projection | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="../../assets/css/dsa-monster.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+    <style>
+        :root {
+            --cg-primary: hsl(189, 100%, 52%);
+            --cg-accent: hsl(258, 89%, 66%);
+            --cg-glow: 0 0 25px rgba(6, 182, 212, 0.4);
+        }
+        .cg-viewport {
+            width: 100%;
+            height: 420px;
+            background: radial-gradient(circle at center, #1b0a3a 0%, #070214 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.15);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cg-viewport canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .pane-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 0.68rem;
+            background: rgba(0,0,0,0.6);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #ccc;
+            font-weight: 700;
+            z-index: 10;
+        }
+        .opengl-code-panel {
+            background: #080812;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .opengl-code-panel h4 {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--monster-accent);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .opengl-code-panel pre {
+            margin: 0;
+            overflow-x: auto;
+        }
+        .opengl-code-panel code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+        }
+        .slider-group {
+            display: grid;
+            grid-template-columns: 100px 1fr 40px;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+        }
+        .slider-group label {
+            color: #aaa;
+            font-weight: 600;
+        }
+        .slider-group span {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--cg-primary);
+            text-align: right;
+            font-weight: 700;
+        }
+        .slider-group input[type="range"] {
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.1);
+            outline: none;
+            cursor: pointer;
+        }
+        .slider-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--cg-primary);
+            cursor: pointer;
+            box-shadow: 0 0 6px var(--cg-primary);
+        }
+        .param-radio-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .param-radio-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #ccc;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        .param-radio-btn.active {
+            background: rgba(6, 182, 212, 0.15);
+            border-color: var(--cg-primary);
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="brain-canvas"></canvas>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="../../index.html" class="logo">
+                <img src="../../assets/img/logo.png" alt="AlgoVisual Hub" style="height: 48px; width: 48px;">
+                <span>AlgoVisual Hub</span>
+            </a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../cg.html">Back to Graphics</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="monster-header">
+            <span class="category-badge">🎥 Cameras &amp; Projections</span>
+            <h1>Perspective &amp; Orthographic Projection</h1>
+            <p>Compare how 3D space maps to 2D viewports. Examine parallel projection rays vs perspective division scaling.</p>
+        </header>
+
+        <div class="stats-grid" style="margin-top: 24px;">
+            <div class="stat-card" style="--stat-color: hsl(189,100%,52%);">
+                <div class="stat-icon">📐</div>
+                <div class="stat-value" id="stat-proj-type">Perspective</div>
+                <div class="stat-label">Projection Matrix</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(258,89%,66%);">
+                <div class="stat-icon">👁️</div>
+                <div class="stat-value" id="stat-fov">60°</div>
+                <div class="stat-label">Field of View (FOV)</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(45,100%,60%);">
+                <div class="stat-icon">🚪</div>
+                <div class="stat-value">Frustum</div>
+                <div class="stat-label">Viewing Volume</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(145,75%,50%);">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-value" id="stat-fps">60 FPS</div>
+                <div class="stat-label">Render Cycle</div>
+            </div>
+        </div>
+
+        <div class="monster-layout">
+            <div class="main-panel">
+                <div class="cg-viewport" id="viewport-container">
+                    <canvas id="cg-canvas"></canvas>
+                    <div class="pane-label" id="viewport-badge">Projection Viewport</div>
+                </div>
+
+                <div class="opengl-code-panel">
+                    <h4><i class="fas fa-code"></i> Live C++ OpenGL Code</h4>
+                    <pre><code id="opengl-code"></code></pre>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="info-card">
+                    <h4>Parameters</h4>
+                    <div class="color-picker-group" style="display: flex; gap: 8px; margin-top: 15px; margin-bottom: 15px; align-items: center;">
+                        <label style="font-size: 0.8rem; color: #aaa; font-weight: 600;">Color Choice:</label>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="color-dot active" style="background: #22d3ee; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; padding: 0;" onclick="setDrawColor('#22d3ee', this)"></button>
+                            <button class="color-dot" style="background: #a78bfa; width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;" onclick="setDrawColor('#a78bfa', this)"></button>
+                            <button class="color-dot" style="background: #ec4899; width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;" onclick="setDrawColor('#ec4899', this)"></button>
+                            <button class="color-dot" style="background: #22c55e; width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;" onclick="setDrawColor('#22c55e', this)"></button>
+                            <button class="color-dot" style="background: #eab308; width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;" onclick="setDrawColor('#eab308', this)"></button>
+                        </div>
+                    </div>
+                    <div class="param-radio-group">
+                        <button class="param-radio-btn active" id="btn-perspective" onclick="setProjMode('perspective')">Perspective</button>
+                        <button class="param-radio-btn" id="btn-ortho" onclick="setProjMode('ortho')">Orthographic</button>
+                    </div>
+
+                    <div class="slider-group" id="fov-slider-group">
+                        <label>FOV Angle:</label>
+                        <input type="range" id="param-fov" min="30" max="120" value="60" oninput="updateFOV()">
+                        <span id="val-fov">60°</span>
+                    </div>
+
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <a href="../../guides/cg/projections.html" id="open-guide-btn" class="btn btn-secondary" style="flex: 1; text-align: center; justify-content: center; font-size: 0.8rem; padding: 10px;"><i class="fas fa-book"></i> Read Guide</a>
+                    </div>
+                </div>
+
+                <div class="log-panel" style="min-height: 240px;">
+                    <h4><i class="fas fa-info-circle"></i> Mathematical Trace</h4>
+                    <div class="log-text" id="math-trace">Adjust project type and parameters to see mapping math.</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+
+        function getPrimaryColor() {
+            return getComputedStyle(document.documentElement).getPropertyValue('--cg-primary').trim() || '#22d3ee';
+        }
+        function getAccentColor() {
+            return getComputedStyle(document.documentElement).getPropertyValue('--cg-accent').trim() || '#a78bfa';
+        }
+        function hexToRgba(hex, alpha) {
+            if (hex.startsWith('hsl')) {
+                return hex.replace('hsl', 'hsla').replace(')', `, ${alpha})`);
+            }
+            let c;
+            if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+                c= hex.substring(1).split('');
+                if(c.length== 3){
+                    c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+                }
+                c= '0x'+c.join('');
+                return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';
+            }
+            return hex;
+        }
+        function getPrimaryColorRgba(alpha) {
+            return hexToRgba(getPrimaryColor(), alpha);
+        }
+        function getAccentColorRgba(alpha) {
+            return hexToRgba(getAccentColor(), alpha);
+        }
+        function getPrimaryColorRgb() {
+            let hex = getPrimaryColor();
+            let r = 34, g = 211, b = 238;
+            if (hex.startsWith('hsl')) {
+                let match = hex.match(/\d+/g);
+                if (match) {
+                    let h = parseInt(match[0]);
+                    let s = parseInt(match[1]) / 100;
+                    let l = parseInt(match[2]) / 100;
+                    let c = (1 - Math.abs(2 * l - 1)) * s;
+                    let x = c * (1 - Math.abs((h / 60) % 2 - 1));
+                    let m = l - c/2;
+                    let r_ = 0, g_ = 0, b_ = 0;
+                    if (h >= 0 && h < 60) { r_ = c; g_ = x; b_ = 0; }
+                    else if (h >= 60 && h < 120) { r_ = x; g_ = c; b_ = 0; }
+                    else if (h >= 120 && h < 180) { r_ = 0; g_ = c; b_ = x; }
+                    else if (h >= 180 && h < 240) { r_ = 0; g_ = x; b_ = c; }
+                    else if (h >= 240 && h < 300) { r_ = x; g_ = 0; b_ = c; }
+                    else if (h >= 300 && h < 360) { r_ = c; g_ = 0; b_ = x; }
+                    r = Math.round((r_ + m) * 255);
+                    g = Math.round((g_ + m) * 255);
+                    b = Math.round((b_ + m) * 255);
+                }
+            } else if (hex.startsWith('#')) {
+                let c = hex.substring(1).split('');
+                if (c.length === 3) {
+                    c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+                }
+                let val = parseInt(c.join(''), 16);
+                r = (val >> 16) & 255;
+                g = (val >> 8) & 255;
+                b = val & 255;
+            }
+            return { r, g, b };
+        }
+
+        let canvas, ctx;
+        let projMode = 'perspective';
+        let fov = 60;
+        let lastTime = 0;
+
+        window.addEventListener('load', () => {
+            canvas = document.getElementById('cg-canvas');
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            renderLoop(0);
+        });
+
+        function resizeCanvas() {
+            const container = document.getElementById('viewport-container');
+            if (container) {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+        }
+
+        function setProjMode(mode) {
+            projMode = mode;
+            document.getElementById('btn-perspective').classList.toggle('active', mode === 'perspective');
+            document.getElementById('btn-ortho').classList.toggle('active', mode === 'ortho');
+            document.getElementById('stat-proj-type').innerText = mode.toUpperCase();
+            document.getElementById('fov-slider-group').style.display = mode === 'perspective' ? 'grid' : 'none';
+        }
+
+        function updateFOV() {
+            fov = parseInt(document.getElementById('param-fov').value);
+            document.getElementById('val-fov').innerText = `${fov}°`;
+            document.getElementById('stat-fov').innerText = `${fov}°`;
+        }
+
+        function renderLoop(timestamp) {
+            const dt = timestamp - lastTime;
+            lastTime = timestamp;
+            const fps = Math.round(1000 / dt);
+            if (isFinite(fps)) {
+                document.getElementById('stat-fps').innerText = `${fps} FPS`;
+            }
+
+            drawProjections();
+            updateCode();
+
+            requestAnimationFrame(renderLoop);
+        }
+
+        function project3D(x, y, z, cx, cy, rotY) {
+            // Basic cube rotations
+            let rx = x * Math.cos(rotY) - z * Math.sin(rotY);
+            let rz = x * Math.sin(rotY) + z * Math.cos(rotY);
+            let ry = y;
+
+            // Center object in screen depth Z
+            let tz = rz + 250;
+
+            let scaleProj = 1.0;
+            if (projMode === 'perspective') {
+                // Perspective division: scale = d / z where d depends on FOV
+                let d = 200 / Math.tan((fov / 2) * Math.PI / 180);
+                scaleProj = d / tz;
+            } else {
+                // Orthographic scale remains constant (no depth foreshortening)
+                scaleProj = 1.0;
+            }
+
+            return {
+                x: cx + rx * scaleProj,
+                y: cy - ry * scaleProj
+            };
+        }
+
+        function drawProjections() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const xc = canvas.width / 2;
+            const yc = canvas.height / 2;
+
+            const vertices = [
+                {x: -60, y: -60, z: -60}, {x: 60, y: -60, z: -60},
+                {x: 60, y: 60, z: -60}, {x: -60, y: 60, z: -60},
+                {x: -60, y: -60, z: 60}, {x: 60, y: -60, z: 60},
+                {x: 60, y: 60, z: 60}, {x: -60, y: 60, z: 60}
+            ];
+
+            const edges = [
+                [0, 1], [1, 2], [2, 3], [3, 0], // back
+                [4, 5], [5, 6], [6, 7], [7, 4], // front
+                [0, 4], [1, 5], [2, 6], [3, 7]  // links
+            ];
+
+            const time = Date.now() * 0.0006;
+            const projected = vertices.map(v => project3D(v.x, v.y, v.z, xc, yc, time));
+
+            // Draw wireframe
+            ctx.strokeStyle = getPrimaryColor();
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            edges.forEach(edge => {
+                const p1 = projected[edge[0]];
+                const p2 = projected[edge[1]];
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+            });
+            ctx.stroke();
+
+            // Highlight vertices
+            ctx.fillStyle = getAccentColor();
+            projected.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Mathematical Trace Details
+            let mathTraceText = '';
+            if (projMode === 'perspective') {
+                mathTraceText = `
+                    <b>Perspective Projection (Depth Scaling):</b><br>
+                    - Perspective division factor: <code>scale = d / Z</code><br>
+                    - Distant features (larger Z) project to smaller dimensions on screen, simulating realistic depth cues.<br>
+                    - Field of View (FOV) controls the viewing frustum slope.
+                `;
+            } else {
+                mathTraceText = `
+                    <b>Orthographic Projection (Parallel Lines):</b><br>
+                    - Coordinate mapping: <code>x_screen = x_world</code>, <code>y_screen = y_world</code>.<br>
+                    - Project rays parallel to coordinate axes.<br>
+                    - Preserves exact distances and scales across depth (no perspective foreshortening). Common in CAD.
+                `;
+            }
+            document.getElementById('math-trace').innerHTML = mathTraceText;
+        }
+
+        function updateCode() {
+            let code = `// Projection Matrix configuration in C++ OpenGL\n`;
+            code += `void setProjection() {\n`;
+            code += `    glMatrixMode(GL_PROJECTION);\n`;
+            code += `    glLoadIdentity();\n`;
+            if (projMode === 'perspective') {
+                code += `    // Perspective Frustum: FOV, Aspect, Near, Far planes\n`;
+                code += `    gluPerspective(${fov}.0f, 1.33f, 0.1f, 100.0f);\n`;
+            } else {
+                code += `    // Parallel Ortho: Left, Right, Bottom, Top, Near, Far\n`;
+                code += `    glOrtho(-2.0, 2.0, -2.0, 2.0, 0.1, 10.0);\n`;
+            }
+            code += `    glMatrixMode(GL_MODELVIEW);\n`;
+            code += `}`;
+            document.getElementById('opengl-code').textContent = code;
+        }
+    
+        function setDrawColor(color, btn) {
+            document.documentElement.style.setProperty('--cg-primary', color);
+            if (btn) {
+                document.querySelectorAll('.color-dot').forEach(d => d.style.borderColor = 'transparent');
+                btn.style.borderColor = '#fff';
+            }
+        }
+    </script>
+    <script src="../../assets/js/brain-animation.js"></script>
+</body>
+</html>

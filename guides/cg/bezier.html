@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bézier Curves &amp; de Casteljau Guide - AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+</head>
+<body>
+    <canvas id="brain-canvas"></canvas>
+    <nav>
+        <div class="container nav-content">
+            <a href="../../index.html" class="logo">
+                <img src="../../assets/img/logo.png" alt="AlgoVisual Hub" style="height:48px;width:48px;">
+                <span>AlgoVisual Hub</span>
+            </a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../cg.html">Back to Graphics</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container" style="padding: 60px 24px;">
+            <article>
+                <header style="text-align: center; margin-bottom: 60px;">
+                    <span class="section-tag">Curves</span>
+                    <h1 style="font-size: 3rem; font-weight: 900; margin: 20px 0; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                        Bézier Curves &amp; de Casteljau's
+                    </h1>
+                    <p style="font-size: 1.3rem; color: var(--text-muted); max-width: 800px; margin: 0 auto; line-height: 1.6;">
+                        Parametric curve equations, control polygons, and linear interpolation subdivision.
+                    </p>
+                </header>
+
+                <div class="grid grid-2" style="margin-bottom: 60px; gap: 30px;">
+                    <div class="glass-card" style="padding: 35px;">
+                        <h2>Bernstein Polynomials</h2>
+                        <p>A Bézier curve of order $n$ is defined by $n+1$ control points $P_i$. The curve path $B(t)$ is weighted by Bernstein polynomials:
+                        $$B(t) = \sum_{i=0}^{n} \binom{n}{i} (1-t)^{n-i} t^i P_i$$
+                        for a parametric variable $t \in [0, 1]$.</p>
+                    </div>
+
+                    <div class="glass-card" style="padding: 35px;">
+                        <h2>de Casteljau's Algorithm</h2>
+                        <p>de Casteljau's algorithm evaluates Bézier curves geometrically. For any $t$, linearly interpolate between adjacent control points to find intermediate points. Repeat recursively until a single point remains, which lies exactly on the curve path.</p>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="padding: 50px; text-align: center; margin-top: 40px;">
+                    <h2 style="margin-bottom: 20px;">Ready to Visualize Bézier Curves?</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">
+                        Launch our interactive visualizer to step through calculations in real-time.
+                    </p>
+                    <a href="../../visualizers/cg/bezier.html" class="btn btn-primary"
+                        style="font-size: 1.2rem; padding: 15px 30px; display: inline-block;">
+                        Launch Bézier Curves Visualizer &rarr;
+                    </a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer style="margin-top:60px; padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.08); text-align:center;">
+        <p>© 2025 by Meelo 💙</p>
+    </footer>
+    <script src="../../assets/js/brain-animation.js"></script>
+</body>
+</html>

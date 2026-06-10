@@ -1,42 +1,49 @@
 /**
- * recursion-tree.js - Recursive algorithm implementations with step-by-step tree growth.
+ * recursion-tree.js - Recursive Fibonacci visualization with step-by-step tree growth.
+ * Uses RecursionEngine (recursion-engine.js) - NOT GraphEngine.
  */
 class RecursionTreeAlgo {
     constructor(engine, playback, ui) {
-        this.engine = engine;
+        this.engine = engine; // RecursionEngine instance
         this.playback = playback;
-        this.ui = ui;
+        this.ui = ui; // { updateStatus }
 
-        this.steps = []; // Queue of actions to perform
-        this.isRunning = false;
+        this.steps = [];    // Recorded actions
+        this.currentStep = 0;
+        this.idMap = {};    // Map from step index → actual engine node id
     }
 
     reset() {
         this.engine.reset();
         this.steps = [];
-        this.isRunning = false;
-        this.ui.updateStatus("Ready. Set N and click Start.");
+        this.currentStep = 0;
+        this.idMap = {};
+        this.ui.updateStatus("Ready. Set N and click Start Fibonacci.");
     }
 
-    // Fibonacci(n) with step recording
+    // Record all steps for Fibonacci(n) before animation
     generateFibSteps(n) {
         this.steps = [];
-        const record = (num, parentId = null) => {
-            const id = this.steps.length;
-            this.steps.push({ type: 'add', label: `F(${num})`, value: num, parentId });
+        this.idMap = {};
+        let stepCounter = 0;
+
+        const record = (num, parentStepId = null) => {
+            const myStepId = stepCounter++;
+            this.steps.push({ type: 'call', stepId: myStepId, n: num, parentStepId });
 
             if (num <= 1) {
-                this.steps.push({ type: 'done', id, result: num });
+                this.steps.push({ type: 'done', stepId: myStepId, result: num });
                 return num;
             }
 
-            const left = record(num - 1, id);
-            const right = record(num - 2, id);
+            const left = record(num - 1, myStepId);
+            const right = record(num - 2, myStepId);
             const res = left + right;
 
-            this.steps.push({ type: 'done', id, result: res });
+            this.steps.push({ type: 'done', stepId: myStepId, result: res });
             return res;
         };
+
         record(n);
         this.currentStep = 0;
     }
@@ -45,18 +52,22 @@ class RecursionTreeAlgo {
         if (this.currentStep >= this.steps.length) return false;
 
         const step = this.steps[this.currentStep];
-        if (step.type === 'add') {
-            const actualId = this.engine.addNode(step.label, undefined, step.parentId);
-            step.actualId = actualId; // Store for 'done' step
-            this.ui.updateStatus(`Calling ${step.label}...`);
+
+        if (step.type === 'call') {
+            // Get actual engine ID for the parent (if any)
+            const parentEngineId = step.parentStepId !== null ? this.idMap[step.parentStepId] : null;
+            // Add node to RecursionEngine
+            const engineId = this.engine.addNode(`F(${step.n})`, undefined, parentEngineId);
+            this.idMap[step.stepId] = engineId;
+            this.ui.updateStatus(`Calling F(${step.n})...`);
         } else if (step.type === 'done') {
-            // Find the original 'add' step to get the actual engine ID
-            const addStep = this.steps.find(s => s.type === 'add' && s.label === `F(${step.result === 0 || step.result === 1 ? step.result : '?'})`);
-            // Better logic: store ID mapping
-            const originalAdd = this.steps[step.id];
-            this.engine.updateNodeStatus(originalAdd.actualId, 'done');
-            this.engine.nodes[originalAdd.actualId].value = step.result;
-            this.ui.updateStatus(`${originalAdd.label} returned ${step.result}`);
+            const engineId = this.idMap[step.stepId];
+            if (engineId !== undefined) {
+                // Update value and mark done
+                this.engine.nodes[engineId].value = step.result;
+                this.engine.updateNodeStatus(engineId, 'done');
+            }
+            this.ui.updateStatus(`F returned ${step.result}`);
         }
 
         this.currentStep++;

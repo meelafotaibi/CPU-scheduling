@@ -77,35 +77,40 @@
             <div class="glass-card" id="visualizer-container" style="padding: 30px;">
                 <canvas id="ml-canvas"></canvas>
 
-                <div style="margin-top: 25px; display: flex; justify-content: space-between; align-items: center;">
-                    <div style="display: flex; gap: 10px; align-items: center;">
+                <div style="margin-top: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                         <button class="btn btn-primary" id="step-btn">Next Step</button>
-                        <button class="btn" id="run-btn" style="background: var(--dark); color: white;">Run
-                            Auto</button>
-                        <button class="btn" id="grid-toggle-btn" title="Toggle Grid"><i
-                                class="fas fa-border-all"></i></button>
-                        <button class="btn" id="reset-btn"
-                            style="border: 1px solid var(--accent); color: var(--accent);">Reset</button>
-                        <button class="btn btn-secondary"
-                            onclick="shareScreenshot('visualizer-container', 'K-Means Clustering')">📸 Share</button>
+                        <button class="btn" id="run-btn" style="background: var(--dark); color: white;">Run Auto</button>
+                        <button class="btn btn-success" id="verify-btn" style="display: none; padding: 10px 15px;">Verify Placement</button>
+                        <button class="btn" id="challenge-btn" style="padding: 10px 15px; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none;">Challenge Mode</button>
+                        <button class="btn" id="grid-toggle-btn" title="Toggle Grid"><i class="fas fa-border-all"></i></button>
+                        <button class="btn" id="reset-btn" style="border: 1px solid var(--accent); color: var(--accent);">Reset</button>
+                        <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', 'K-Means Clustering')">📸 Share</button>
                     </div>
 
-                    <div style="display: flex; gap: 10px; align-items: center;">
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                         <label>K (Clusters):</label>
                         <input type="number" id="k-value" value="3" min="2" max="6" style="width: 50px; padding: 5px;">
-                        <button class="btn" onclick="generateRandomData()" style="background: #6c757d; color: white;">🎲
-                            Random Data</button>
+                        <button class="btn" onclick="generateRandomData()" style="background: #6c757d; color: white;">🎲 Random Data</button>
                     </div>
                 </div>
-                <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">Click on the canvas to add custom data
-                    points.</p>
+                <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">Click on the canvas to add custom data points.</p>
             </div>
 
             <div class="side-panel">
                 <div class="glass-card" style="padding: 20px;">
                     <h4>📜 Algorithm State</h4>
-                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 10px; min-height: 50px;">Ready. Add
-                        points or generate random ones, then click Next Step.</p>
+                    <p id="explanation-text" style="font-size: 0.85rem; margin-top: 10px; min-height: 50px;">Ready. Add points or generate random ones, then click Next Step.</p>
+                    <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                            <span>Iterations:</span>
+                            <span id="iteration-counter" style="font-weight: bold; color: var(--primary);">0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-top: 5px;">
+                            <span>WCSS:</span>
+                            <span id="wcss-display" style="font-weight: bold; color: var(--success);">0</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="glass-card" style="padding: 20px;">
@@ -119,8 +124,7 @@
                         <ol style="padding-left: 15px;">
                             <li>Initialize K centroids randomly.</li>
                             <li><strong>Assignment:</strong> Each point joins the nearest centroid's cluster.</li>
-                            <li><strong>Update:</strong> Centroids move to the center (mean) of their assigned points.
-                            </li>
+                            <li><strong>Update:</strong> Centroids move to the center (mean) of their assigned points.</li>
                             <li>Repeat until centroids stop moving.</li>
                         </ol>
                     </div>
@@ -136,6 +140,106 @@
         const colors = ['#e74c3c', '#2ecc71', '#3498db', '#f1c40f', '#9b59b6', '#e67e22'];
         let state = 'init'; // init, assign, update, convergent
         let isAutoRunning = false;
+        let iterations = 0;
+
+        // Challenge mode state
+        let challengeActive = false;
+        let draggedCentroidIdx = null;
+
+        // Override engine draw to render connection lines from points to assigned centroids
+        const originalDraw = engine.draw.bind(engine);
+        engine.draw = () => {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            if (engine.centroids.length > 0 && (state === 'update' || state === 'convergent' || challengeActive)) {
+                engine.points.forEach(p => {
+                    let minDist = Infinity;
+                    let nearest = null;
+                    engine.centroids.forEach(c => {
+                        const d = engine.getDistance(p, c);
+                        if (d < minDist) {
+                            minDist = d;
+                            nearest = c;
+                        }
+                    });
+                    if (nearest) {
+                        engine.ctx.beginPath();
+                        engine.ctx.moveTo(p.x, p.y);
+                        engine.ctx.lineTo(nearest.x, nearest.y);
+                        engine.ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+                        engine.ctx.lineWidth = 1;
+                        ctx = engine.ctx;
+                        engine.ctx.stroke();
+                    }
+                });
+            }
+            originalDraw();
+        };
+
+        // Centroid drag handlers on canvas
+        let dragActive = false;
+        engine.canvas.addEventListener('mousedown', (e) => {
+            if (!challengeActive) return;
+            const rect = engine.canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            // Find clicked centroid
+            engine.centroids.forEach((c, idx) => {
+                const dist = Math.sqrt((c.x - mouseX) ** 2 + (c.y - mouseY) ** 2);
+                if (dist <= 15) { // Centroid radius is 8
+                    draggedCentroidIdx = idx;
+                    dragActive = true;
+                }
+            });
+        });
+
+        engine.canvas.addEventListener('mousemove', (e) => {
+            if (!challengeActive || !dragActive || draggedCentroidIdx === null) return;
+            const rect = engine.canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            engine.centroids[draggedCentroidIdx].x = mouseX;
+            engine.centroids[draggedCentroidIdx].y = mouseY;
+
+            // Recalculate cluster colors dynamically during drag
+            engine.points.forEach(p => {
+                let minDist = Infinity;
+                let nearest = engine.centroids[0];
+                engine.centroids.forEach(c => {
+                    const d = engine.getDistance(p, c);
+                    if (d < minDist) {
+                        minDist = d;
+                        nearest = c;
+                    }
+                });
+                p.color = nearest.color;
+            });
+
+            engine.draw();
+            updateUI();
+        });
+
+        const stopDrag = () => {
+            dragActive = false;
+            draggedCentroidIdx = null;
+        };
+        engine.canvas.addEventListener('mouseup', stopDrag);
+        engine.canvas.addEventListener('mouseleave', stopDrag);
+
+        function calculateWCSS() {
+            if (engine.centroids.length === 0 || engine.points.length === 0) return 0;
+            let sum = 0;
+            engine.points.forEach(p => {
+                let minDist = Infinity;
+                engine.centroids.forEach(c => {
+                    const d = engine.getDistance(p, c);
+                    if (d < minDist) minDist = d;
+                });
+                sum += minDist * minDist;
+            });
+            return sum;
+        }
 
         function updateUI() {
             const list = document.getElementById('centroids-list');
@@ -145,26 +249,135 @@
                     <span>Cluster ${i + 1}: (${Math.round(c.x)}, ${Math.round(c.y)})</span>
                 </div>
             `).join('');
+
+            document.getElementById('iteration-counter').innerText = iterations;
+            document.getElementById('wcss-display').innerText = Math.round(calculateWCSS());
         }
 
         function generateRandomData() {
+            if (challengeActive) {
+                // Keep challenge data locked to same clusters but reset centroid positions
+                startChallenge();
+                return;
+            }
             engine.clear();
             state = 'init';
+            iterations = 0;
             const k = parseInt(document.getElementById('k-value').value);
 
-            // Random points in groups
             for (let i = 0; i < k; i++) {
                 const cx = Math.random() * (engine.canvas.width - 200) + 100;
                 const cy = Math.random() * (engine.canvas.height - 200) + 100;
                 for (let j = 0; j < 10; j++) {
                     engine.addPoint(
-                        cx + (Math.random() - 0.5) * 150,
-                        cy + (Math.random() - 0.5) * 150
+                        cx + (Math.random() - 0.5) * 120,
+                        cy + (Math.random() - 0.5) * 120
                     );
                 }
             }
             document.getElementById('explanation-text').innerText = "Data generated. Click Next Step to initialize centroids.";
+            updateUI();
         }
+
+        function startChallenge() {
+            challengeActive = true;
+            iterations = 0;
+            state = 'convergent'; // Set to convergent to allow lines rendering
+
+            // Clear any centroids and randomise positions
+            const k = parseInt(document.getElementById('k-value').value);
+            engine.centroids = [];
+            for (let i = 0; i < k; i++) {
+                // Put them in random spaces away from clusters
+                engine.centroids.push({
+                    x: Math.random() * (engine.canvas.width - 100) + 50,
+                    y: Math.random() * (engine.canvas.height - 100) + 50,
+                    color: colors[i]
+                });
+            }
+
+            // Assign initial colors
+            engine.points.forEach(p => {
+                let minDist = Infinity;
+                let nearest = engine.centroids[0];
+                engine.centroids.forEach(c => {
+                    const d = engine.getDistance(p, c);
+                    if (d < minDist) {
+                        minDist = d;
+                        nearest = c;
+                    }
+                });
+                p.color = nearest.color;
+            });
+
+            document.getElementById('explanation-text').innerHTML = `🎯 Centroid Balancer! Drag the centroids to the center of clusters manually.<br>Click and drag to position them, then click Verify.`;
+            document.getElementById('step-btn').style.display = 'none';
+            document.getElementById('run-btn').style.display = 'none';
+            document.getElementById('verify-btn').style.display = 'inline-block';
+
+            engine.draw();
+            updateUI();
+        }
+
+        function stopChallenge() {
+            challengeActive = false;
+            document.getElementById('step-btn').style.display = 'inline-block';
+            document.getElementById('run-btn').style.display = 'inline-block';
+            document.getElementById('verify-btn').style.display = 'none';
+            generateRandomData();
+        }
+
+        document.getElementById('verify-btn').onclick = () => {
+            const userWCSS = calculateWCSS();
+
+            // Run optimal K-Means to find convergence from user's current cluster distributions
+            // We clone centroids to see optimal fit
+            const tempCentroids = engine.centroids.map(c => ({ ...c }));
+            let moved = true;
+            let iter = 0;
+            while (moved && iter < 100) {
+                iter++;
+                moved = false;
+                tempCentroids.forEach(c => {
+                    const assigned = engine.points.filter(p => p.color === c.color);
+                    if (assigned.length > 0) {
+                        const avgX = assigned.reduce((s, p) => s + p.x, 0) / assigned.length;
+                        const avgY = assigned.reduce((s, p) => s + p.y, 0) / assigned.length;
+                        if (Math.abs(c.x - avgX) > 1 || Math.abs(c.y - avgY) > 1) moved = true;
+                        c.x = avgX;
+                        c.y = avgY;
+                    }
+                });
+            }
+
+            let optWCSS = 0;
+            engine.points.forEach(p => {
+                let minDist = Infinity;
+                tempCentroids.forEach(c => {
+                    const d = engine.getDistance(p, c);
+                    if (d < minDist) minDist = d;
+                });
+                optWCSS += minDist * minDist;
+            });
+
+            // Calculate accuracy percentage
+            const difference = (userWCSS - optWCSS) / optWCSS;
+            if (difference <= 0.1) {
+                document.getElementById('explanation-text').innerHTML = `👑 Balanced! Your WCSS (${Math.round(userWCSS)}) is within 10% of optimal (${Math.round(optWCSS)}). You won!`;
+                if (typeof GamificationSystem !== 'undefined') {
+                    GamificationSystem.saveScore('kmeans', 'centroid_balancer', Math.round(userWCSS), Math.round(optWCSS));
+                    ProgressSystem.complete('ai', 'K-Means Clustering');
+                }
+                challengeActive = false;
+                document.getElementById('verify-btn').style.display = 'none';
+                document.getElementById('step-btn').style.display = 'inline-block';
+                document.getElementById('run-btn').style.display = 'inline-block';
+                document.getElementById('challenge-btn').classList.remove('glow-active');
+                document.getElementById('challenge-btn').innerHTML = 'Challenge Mode';
+            } else {
+                document.getElementById('explanation-text').innerHTML = `❌ Try again! Your WCSS is ${Math.round(userWCSS)}, but optimal is ${Math.round(optWCSS)} (${Math.round(difference * 100)}% off). Move centroids closer to dense areas!`;
+            }
+        };
 
         async function nextStep() {
             if (engine.points.length === 0) {
@@ -180,6 +393,7 @@
                     engine.centroids.push({ x: randomPoint.x, y: randomPoint.y, color: colors[i] });
                 }
                 state = 'assign';
+                iterations = 1;
                 document.getElementById('explanation-text').innerText = "Centroids initialized randomly. Click Next to assign points.";
             } else if (state === 'assign') {
                 engine.points.forEach(p => {
@@ -215,6 +429,7 @@
                     document.getElementById('run-btn').innerText = "Run Auto";
                 } else {
                     state = 'assign';
+                    iterations++;
                     document.getElementById('explanation-text').innerText = "Centroids moved to the mean of their clusters. Click Next to re-assign.";
                 }
             }
@@ -226,6 +441,12 @@
         document.getElementById('reset-btn').onclick = () => {
             engine.clear();
             state = 'init';
+            iterations = 0;
+            if (challengeActive) {
+                stopChallenge();
+                document.getElementById('challenge-btn').classList.remove('glow-active');
+                document.getElementById('challenge-btn').innerHTML = 'Challenge Mode';
+            }
             updateUI();
             document.getElementById('explanation-text').innerText = "Cleared. Click to add points or 'Random Data'.";
         };
@@ -244,6 +465,22 @@
             }
         };
 
+        document.getElementById('challenge-btn').onclick = () => {
+            isAutoRunning = false;
+            document.getElementById('run-btn').innerText = "Run Auto";
+
+            const btn = document.getElementById('challenge-btn');
+            if (btn.classList.contains('glow-active')) {
+                btn.classList.remove('glow-active');
+                btn.innerHTML = 'Challenge Mode';
+                stopChallenge();
+            } else {
+                btn.classList.add('glow-active');
+                btn.innerHTML = 'Exit Challenge';
+                startChallenge();
+            }
+        };
+
         document.getElementById('grid-toggle-btn').onclick = () => {
             engine.showGrid = !engine.showGrid;
             document.getElementById('grid-toggle-btn').classList.toggle('active');
@@ -252,11 +489,10 @@
 
         window.onload = () => {
             generateRandomData();
-            setTimeout(() => { }, 1000);
         };
     </script>
 
-    <script src='../../assets/js/core/ui-extras.js'></script>
+    <script src="../../assets/js/core/ui-extras.js"></script>
 <script src="../../assets/js/brain-animation.js"></script></body>
 
 </html>

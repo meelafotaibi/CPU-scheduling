@@ -104,6 +104,178 @@
                     </div>
                 </div>
 
+                <div class="glass-card" style="margin-bottom: 60px; padding: 35px;">
+                    <h2>Code Implementation</h2>
+                    
+                    <style>
+                        .code-tabs-container {
+                            display: flex;
+                            gap: 12px;
+                            margin-bottom: 20px;
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                            padding-bottom: 12px;
+                        }
+                        .code-tab-btn {
+                            background: transparent;
+                            border: none;
+                            color: var(--text-muted);
+                            font-size: 0.95rem;
+                            font-weight: 600;
+                            padding: 8px 16px;
+                            cursor: pointer;
+                            border-radius: 8px;
+                            transition: all 0.3s ease;
+                            border: 1px solid transparent;
+                        }
+                        .code-tab-btn:hover {
+                            color: var(--text);
+                            background: rgba(255, 255, 255, 0.05);
+                        }
+                        .code-tab-btn.active {
+                            color: #fff;
+                            background: var(--gradient-primary);
+                            box-shadow: var(--glow-primary);
+                            border: 1px solid rgba(255, 255, 255, 0.15);
+                        }
+                        .code-viewer-container {
+                            position: relative;
+                        }
+                        .copy-code-btn {
+                            position: absolute;
+                            top: 15px;
+                            right: 15px;
+                            background: rgba(255, 255, 255, 0.05);
+                            border: 1px solid rgba(255, 255, 255, 0.1);
+                            color: var(--text-muted);
+                            padding: 6px 12px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-size: 0.8rem;
+                            font-weight: 600;
+                            transition: all 0.2s ease;
+                            z-index: 10;
+                        }
+                        .copy-code-btn:hover {
+                            background: rgba(255, 255, 255, 0.15);
+                            color: var(--text);
+                            border-color: rgba(255, 255, 255, 0.2);
+                        }
+                    </style>
+
+                    <div class="code-tabs-container">
+                        <button class="code-tab-btn active" onclick="switchGuideLang(this, 'python')">Python</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'java')">Java</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'cpp')">C++</button>
+                        <button class="code-tab-btn" onclick="switchGuideLang(this, 'c')">C</button>
+                    </div>
+
+                    <div class="code-viewer-container">
+                        <button class="copy-code-btn" onclick="copyCode()">
+                            <i class="far fa-copy" style="margin-right: 5px;"></i>Copy
+                        </button>
+                        <div class="code-card">
+                            <div class="code-viewer" style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+                                <pre><code id="guide-code-block" class="language-python" style="font-family:'JetBrains Mono', monospace; font-size:0.9rem; color:#e2e8f0; line-height:1.5; white-space: pre-wrap;"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        const codeTemplates = {
+                            python: `def dfs_recursive(graph, curr, visited=None):
+    if visited is None:
+        visited = set()
+    visited.add(curr)
+    print(curr)  # Process node
+    
+    for neighbor in graph[curr]:
+        if neighbor not in visited:
+            dfs_recursive(graph, neighbor, visited)`,
+                            java: `import java.util.*;
+
+class DFSExample {
+    void dfs(Map<Integer, List<Integer>> graph, int curr, Set<Integer> visited) {
+        visited.add(curr);
+        System.out.println(curr);  // Process node
+        
+        for (int neighbor : graph.getOrDefault(curr, new ArrayList<>())) {
+            if (!visited.contains(neighbor)) {
+                dfs(graph, neighbor, visited);
+            }
+        }
+    }
+}`,
+                            cpp: `#include <iostream>
+#include <vector>
+#include <unordered_set>
+#include <unordered_map>
+
+void dfs(std::unordered_map<int, std::vector<int>>& graph, int curr, std::unordered_set<int>& visited) {
+    visited.insert(curr);
+    std::cout << curr << std::endl; // Process node
+    
+    for (int neighbor : graph[curr]) {
+        if (visited.find(neighbor) == visited.end()) {
+            dfs(graph, neighbor, visited);
+        }
+    }
+}`,
+                            c: `#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_VERTICES 100
+
+void dfs_helper(int graph[MAX_VERTICES][MAX_VERTICES], int numVertices, int curr, bool visited[MAX_VERTICES]) {
+    visited[curr] = true;
+    printf("%d ", curr); // Process node
+    
+    for (int i = 0; i < numVertices; i++) {
+        if (graph[curr][i] == 1 && !visited[i]) {
+            dfs_helper(graph, numVertices, i, visited);
+        }
+    }
+}
+
+void dfs(int graph[MAX_VERTICES][MAX_VERTICES], int numVertices, int startVertex) {
+    bool visited[MAX_VERTICES] = {false};
+    dfs_helper(graph, numVertices, startVertex, visited);
+}`
+                        };
+
+                        function switchGuideLang(button, lang) {
+                            // Update active tab button style
+                            const container = button.parentElement;
+                            container.querySelectorAll('.code-tab-btn').forEach(btn => btn.classList.remove('active'));
+                            button.classList.add('active');
+
+                            // Update code content
+                            const codeBlock = document.getElementById('guide-code-block');
+                            codeBlock.textContent = codeTemplates[lang];
+                            
+                            // Update syntax highlighting class
+                            codeBlock.className = 'language-' + (lang === 'cpp' ? 'cpp' : lang);
+                        }
+
+                        function copyCode() {
+                            const codeBlock = document.getElementById('guide-code-block');
+                            navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+                                const btn = document.querySelector('.copy-code-btn');
+                                btn.innerHTML = '<i class="fas fa-check" style="margin-right: 5px;"></i>Copied!';
+                                setTimeout(() => {
+                                    btn.innerHTML = '<i class="far fa-copy" style="margin-right: 5px;"></i>Copy';
+                                }, 2000);
+                            });
+                        }
+
+                        // Initialize with default language (Python)
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const firstTab = document.querySelector('.code-tab-btn');
+                            if (firstTab) switchGuideLang(firstTab, 'python');
+                        });
+                    </script>
+                </div>
+
                 <div class="glass-card">
                     <h2>DFS vs BFS</h2>
                     <div class="grid grid-2">

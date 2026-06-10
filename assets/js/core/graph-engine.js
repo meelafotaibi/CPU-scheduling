@@ -225,4 +225,11 @@ class GraphEngine {
         });
         return neighbors;
     }
+
+    // Utility: reset all node statuses to 'default' (compatible with ArrayEngine API callers)
+    clearHighlights() {
+        this.nodes.forEach(n => n.status = 'default');
+        this.draw();
+    }
 }
+

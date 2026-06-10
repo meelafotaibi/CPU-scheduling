@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cohen-Sutherland Clipping | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="../../assets/css/dsa-monster.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+    <style>
+        :root {
+            --cg-primary: hsl(189, 100%, 52%);
+            --cg-accent: hsl(258, 89%, 66%);
+            --cg-glow: 0 0 25px rgba(6, 182, 212, 0.4);
+        }
+        .cg-viewport {
+            width: 100%;
+            height: 420px;
+            background: radial-gradient(circle at center, #1b0a3a 0%, #070214 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.15);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cg-viewport canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .pane-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 0.68rem;
+            background: rgba(0,0,0,0.6);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #ccc;
+            font-weight: 700;
+            z-index: 10;
+        }
+        .opengl-code-panel {
+            background: #080812;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .opengl-code-panel h4 {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--monster-accent);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .opengl-code-panel pre {
+            margin: 0;
+            overflow-x: auto;
+        }
+        .opengl-code-panel code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+        }
+        .slider-group {
+            display: grid;
+            grid-template-columns: 100px 1fr 40px;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+        }
+        .slider-group label {
+            color: #aaa;
+            font-weight: 600;
+        }
+        .slider-group span {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--cg-primary);
+            text-align: right;
+            font-weight: 700;
+        }
+        .slider-group input[type="range"] {
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.1);
+            outline: none;
+            cursor: pointer;
+        }
+        .slider-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--cg-primary);
+            cursor: pointer;
+            box-shadow: 0 0 6px var(--cg-primary);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="brain-canvas"></canvas>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="../../index.html" class="logo">
+                <img src="../../assets/img/logo.png" alt="AlgoVisual Hub" style="height: 48px; width: 48px;">
+                <span>AlgoVisual Hub</span>
+            </a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../cg.html">Back to Graphics</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="monster-header">
+            <span class="category-badge">✂️ Geometry Clipping</span>
+            <h1>Cohen-Sutherland Clipping</h1>
+            <p>Clip line segments to a rectangular window using 4-bit region outcodes (Top, Bottom, Right, Left) to determine intersection points.</p>
+        </header>
+
+        <div class="stats-grid" style="margin-top: 24px;">
+            <div class="stat-card" style="--stat-color: hsl(189,100%,52%);">
+                <div class="stat-icon">📟</div>
+                <div class="stat-value" id="stat-outcodes">0000 / 0000</div>
+                <div class="stat-label">Outcodes P1 / P2</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(258,89%,66%);">
+                <div class="stat-icon">✂️</div>
+                <div class="stat-value" id="stat-status">Accept</div>
+                <div class="stat-label">Clip Decision</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(45,100%,60%);">
+                <div class="stat-icon">🔲</div>
+                <div class="stat-value">Region-Based</div>
+                <div class="stat-label">Clipping Type</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(145,75%,50%);">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-value" id="stat-fps">60 FPS</div>
+                <div class="stat-label">Render Cycle</div>
+            </div>
+        </div>
+
+        <div class="monster-layout">
+            <div class="main-panel">
+                <div class="cg-viewport" id="viewport-container">
+                    <canvas id="cg-canvas"></canvas>
+                    <div class="pane-label" id="viewport-badge">Cohen-Sutherland Viewport</div>
+                </div>
+
+                <div class="opengl-code-panel">
+                    <h4><i class="fas fa-code"></i> Live C++ OpenGL Code</h4>
+                    <pre><code id="opengl-code"></code></pre>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="info-card">
+                    <h4>Parameters</h4>
+                    <div class="color-picker-group" style="display: flex; gap: 8px; margin-top: 15px; margin-bottom: 15px; align-items: center;">
+                        <label style="font-size: 0.8rem; color: #aaa; font-weight: 600;">Color Choice:</label>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="color-dot active" style="background: #22d3ee; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; padding: 0;" onclick="setDrawColor('#22d3ee', this)"></button>
+                            <button class="color-dot" style="background: #a78bfa; width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;" onclick="setDrawColor('#a78bfa', this)"></button>
+                            <button class="color-dot" style="background: #ec4899; width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;" onclick="setDrawColor('#ec4899', this)"></button>
+                            <button class="color-dot" style="background: #22c55e; width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;" onclick="setDrawColor('#22c55e', this)"></button>
+                            <button class="color-dot" style="background: #eab308; width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;" onclick="setDrawColor('#eab308', this)"></button>
+                        </div>
+                    </div>
+                    <div class="slider-group">
+                        <label>P1 X:</label>
+                        <input type="range" id="param-x1" min="1" max="23" value="2" oninput="updateParams()">
+                        <span id="val-x1">2</span>
+                    </div>
+                    <div class="slider-group">
+                        <label>P1 Y:</label>
+                        <input type="range" id="param-y1" min="1" max="23" value="3" oninput="updateParams()">
+                        <span id="val-y1">3</span>
+                    </div>
+                    <div class="slider-group">
+                        <label>P2 X:</label>
+                        <input type="range" id="param-x2" min="1" max="23" value="22" oninput="updateParams()">
+                        <span id="val-x2">22</span>
+                    </div>
+                    <div class="slider-group">
+                        <label>P2 Y:</label>
+                        <input type="range" id="param-y2" min="1" max="23" value="15" oninput="updateParams()">
+                        <span id="val-y2">15</span>
+                    </div>
+
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <a href="../../guides/cg/cohen-sutherland.html" id="open-guide-btn" class="btn btn-secondary" style="flex: 1; text-align: center; justify-content: center; font-size: 0.8rem; padding: 10px;"><i class="fas fa-book"></i> Read Guide</a>
+                    </div>
+                </div>
+
+                <div class="log-panel" style="min-height: 240px;">
+                    <h4><i class="fas fa-info-circle"></i> Mathematical Trace</h4>
+                    <div class="log-text" id="math-trace">Adjust points to calculate Cohen-Sutherland outcode region checks.</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+
+        function getPrimaryColor() {
+            return getComputedStyle(document.documentElement).getPropertyValue('--cg-primary').trim() || '#22d3ee';
+        }
+        function getAccentColor() {
+            return getComputedStyle(document.documentElement).getPropertyValue('--cg-accent').trim() || '#a78bfa';
+        }
+        function hexToRgba(hex, alpha) {
+            if (hex.startsWith('hsl')) {
+                return hex.replace('hsl', 'hsla').replace(')', `, ${alpha})`);
+            }
+            let c;
+            if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+                c= hex.substring(1).split('');
+                if(c.length== 3){
+                    c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+                }
+                c= '0x'+c.join('');
+                return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';
+            }
+            return hex;
+        }
+        function getPrimaryColorRgba(alpha) {
+            return hexToRgba(getPrimaryColor(), alpha);
+        }
+        function getAccentColorRgba(alpha) {
+            return hexToRgba(getAccentColor(), alpha);
+        }
+        function getPrimaryColorRgb() {
+            let hex = getPrimaryColor();
+            let r = 34, g = 211, b = 238;
+            if (hex.startsWith('hsl')) {
+                let match = hex.match(/\d+/g);
+                if (match) {
+                    let h = parseInt(match[0]);
+                    let s = parseInt(match[1]) / 100;
+                    let l = parseInt(match[2]) / 100;
+                    let c = (1 - Math.abs(2 * l - 1)) * s;
+                    let x = c * (1 - Math.abs((h / 60) % 2 - 1));
+                    let m = l - c/2;
+                    let r_ = 0, g_ = 0, b_ = 0;
+                    if (h >= 0 && h < 60) { r_ = c; g_ = x; b_ = 0; }
+                    else if (h >= 60 && h < 120) { r_ = x; g_ = c; b_ = 0; }
+                    else if (h >= 120 && h < 180) { r_ = 0; g_ = c; b_ = x; }
+                    else if (h >= 180 && h < 240) { r_ = 0; g_ = x; b_ = c; }
+                    else if (h >= 240 && h < 300) { r_ = x; g_ = 0; b_ = c; }
+                    else if (h >= 300 && h < 360) { r_ = c; g_ = 0; b_ = x; }
+                    r = Math.round((r_ + m) * 255);
+                    g = Math.round((g_ + m) * 255);
+                    b = Math.round((b_ + m) * 255);
+                }
+            } else if (hex.startsWith('#')) {
+                let c = hex.substring(1).split('');
+                if (c.length === 3) {
+                    c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+                }
+                let val = parseInt(c.join(''), 16);
+                r = (val >> 16) & 255;
+                g = (val >> 8) & 255;
+                b = val & 255;
+            }
+            return { r, g, b };
+        }
+
+        let canvas, ctx;
+        let x1 = 2, y1 = 3, x2 = 22, y2 = 15;
+        let lastTime = 0;
+
+        // Clip window boundaries
+        const clipMinX = 5, clipMinY = 5, clipMaxX = 20, clipMaxY = 17;
+
+        // Outcode bits
+        const INSIDE = 0, LEFT = 1, RIGHT = 2, BOTTOM = 4, TOP = 8;
+
+        function getCode(x, y) {
+            let code = INSIDE;
+            if (x < clipMinX) code |= LEFT;
+            else if (x > clipMaxX) code |= RIGHT;
+            if (y < clipMinY) code |= BOTTOM;
+            else if (y > clipMaxY) code |= TOP;
+            return code;
+        }
+
+        window.addEventListener('load', () => {
+            canvas = document.getElementById('cg-canvas');
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            renderLoop(0);
+        });
+
+        function resizeCanvas() {
+            const container = document.getElementById('viewport-container');
+            if (container) {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+        }
+
+        function updateParams() {
+            x1 = parseInt(document.getElementById('param-x1').value);
+            y1 = parseInt(document.getElementById('param-y1').value);
+            x2 = parseInt(document.getElementById('param-x2').value);
+            y2 = parseInt(document.getElementById('param-y2').value);
+
+            document.getElementById('val-x1').innerText = x1;
+            document.getElementById('val-y1').innerText = y1;
+            document.getElementById('val-x2').innerText = x2;
+            document.getElementById('val-y2').innerText = y2;
+        }
+
+        function renderLoop(timestamp) {
+            const dt = timestamp - lastTime;
+            lastTime = timestamp;
+            const fps = Math.round(1000 / dt);
+            if (isFinite(fps)) {
+                document.getElementById('stat-fps').innerText = `${fps} FPS`;
+            }
+
+            drawClipping();
+            updateCode();
+
+            requestAnimationFrame(renderLoop);
+        }
+
+        function drawClipping() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const gridCells = 25;
+            const size = Math.min(canvas.width, canvas.height) - 40;
+            const cellSize = Math.floor(size / gridCells);
+            const offsetX = (canvas.width - size) / 2;
+            const offsetY = (canvas.height - size) / 2;
+
+            // Draw grid
+            ctx.strokeStyle = 'rgba(168, 85, 247, 0.08)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= gridCells; i++) {
+                ctx.beginPath();
+                ctx.moveTo(offsetX + i * cellSize, offsetY);
+                ctx.lineTo(offsetX + i * cellSize, offsetY + size);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(offsetX, offsetY + i * cellSize);
+                ctx.lineTo(offsetX + size, offsetY + i * cellSize);
+                ctx.stroke();
+            }
+
+            // Draw outcode bounds text labels
+            ctx.fillStyle = 'rgba(255,255,255,0.15)';
+            ctx.font = 'bold 9px monospace';
+            ctx.fillText('1001 (TOP-LEFT)', offsetX + 10, offsetY + 20);
+            ctx.fillText('1000 (TOP)', offsetX + (clipMinX + clipMaxX)/2 * cellSize, offsetY + 20);
+            ctx.fillText('1010 (TOP-RIGHT)', offsetX + clipMaxX * cellSize + 20, offsetY + 20);
+
+            // Draw clipping window boundaries
+            ctx.fillStyle = getPrimaryColorRgba(0.08);
+            ctx.fillRect(
+                offsetX + clipMinX * cellSize,
+                offsetY + (gridCells - clipMaxY) * cellSize,
+                (clipMaxX - clipMinX) * cellSize,
+                (clipMaxY - clipMinY) * cellSize
+            );
+            ctx.strokeStyle = getPrimaryColor();
+            ctx.lineWidth = 2;
+            ctx.strokeRect(
+                offsetX + clipMinX * cellSize,
+                offsetY + (gridCells - clipMaxY) * cellSize,
+                (clipMaxX - clipMinX) * cellSize,
+                (clipMaxY - clipMinY) * cellSize
+            );
+
+            // Calculate codes
+            const code1 = getCode(x1, y1);
+            const code2 = getCode(x2, y2);
+            document.getElementById('stat-outcodes').innerText = `${code1.toString(2).padStart(4, '0')} / ${code2.toString(2).padStart(4, '0')}`;
+
+            // Draw original line in dotted red
+            ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(offsetX + (x1 + 0.5) * cellSize, offsetY + (gridCells - y1 - 0.5) * cellSize);
+            ctx.lineTo(offsetX + (x2 + 0.5) * cellSize, offsetY + (gridCells - y2 - 0.5) * cellSize);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Cohen-Sutherland Clipping loop
+            let cx1 = x1, cy1 = y1, cx2 = x2, cy2 = y2;
+            let c1 = code1, c2 = code2;
+            let accept = false;
+            let clipSteps = [];
+
+            while (true) {
+                if ((c1 | c2) === 0) {
+                    accept = true;
+                    clipSteps.push(`Both points inside. Accepted.`);
+                    break;
+                } else if ((c1 & c2) !== 0) {
+                    clipSteps.push(`Trivial reject (both share outcode region). Discarded.`);
+                    break;
+                } else {
+                    let codeOut = c1 !== 0 ? c1 : c2;
+                    let x, y;
+
+                    if (codeOut & TOP) {
+                        x = cx1 + (cx2 - cx1) * (clipMaxY - cy1) / (cy2 - cy1);
+                        y = clipMaxY;
+                        clipSteps.push(`Clip against TOP: Y=${clipMaxY} -> X=${x.toFixed(1)}`);
+                    } else if (codeOut & BOTTOM) {
+                        x = cx1 + (cx2 - cx1) * (clipMinY - cy1) / (cy2 - cy1);
+                        y = clipMinY;
+                        clipSteps.push(`Clip against BOTTOM: Y=${clipMinY} -> X=${x.toFixed(1)}`);
+                    } else if (codeOut & RIGHT) {
+                        y = cy1 + (cy2 - cy1) * (clipMaxX - cx1) / (cx2 - cx1);
+                        x = clipMaxX;
+                        clipSteps.push(`Clip against RIGHT: X=${clipMaxX} -> Y=${y.toFixed(1)}`);
+                    } else if (codeOut & LEFT) {
+                        y = cy1 + (cy2 - cy1) * (clipMinX - cx1) / (cx2 - cx1);
+                        x = clipMinX;
+                        clipSteps.push(`Clip against LEFT: X=${clipMinX} -> Y=${y.toFixed(1)}`);
+                    }
+
+                    if (codeOut === c1) {
+                        cx1 = x; cy1 = y;
+                        c1 = getCode(cx1, cy1);
+                    } else {
+                        cx2 = x; cy2 = y;
+                        c2 = getCode(cx2, cy2);
+                    }
+                }
+            }
+
+            // Draw clipped line in solid green if accepted
+            if (accept) {
+                ctx.strokeStyle = getPrimaryColor();
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(offsetX + (cx1 + 0.5) * cellSize, offsetY + (gridCells - cy1 - 0.5) * cellSize);
+                ctx.lineTo(offsetX + (cx2 + 0.5) * cellSize, offsetY + (gridCells - cy2 - 0.5) * cellSize);
+                ctx.stroke();
+                document.getElementById('stat-status').innerText = 'Clipped';
+                document.getElementById('stat-status').style.color = 'var(--monster-success)';
+            } else {
+                document.getElementById('stat-status').innerText = 'Rejected';
+                document.getElementById('stat-status').style.color = 'var(--monster-danger)';
+            }
+
+            // Trace text output
+            document.getElementById('math-trace').innerHTML = `
+                <b>Cohen-Sutherland clipping trace:</b><br>
+                P1(${x1}, ${y1}) Outcode: <b>${code1.toString(2).padStart(4, '0')}</b><br>
+                P2(${x2}, ${y2}) Outcode: <b>${code2.toString(2).padStart(4, '0')}</b><br><br>
+                <b>Clipping iterations:</b><br>
+                ${clipSteps.map(s => `- ${s}`).join('<br>')}
+            `;
+        }
+
+        function updateCode() {
+            let code = `// Cohen-Sutherland Outcode calculations\n`;
+            code += `const int INSIDE = 0; // 0000\n`;
+            code += `const int LEFT = 1;   // 0001\n`;
+            code += `const int RIGHT = 2;  // 0010\n`;
+            code += `const int BOTTOM = 4; // 0100\n`;
+            code += `const int TOP = 8;    // 1000\n\n`;
+            code += `int computeOutCode(double x, double y) {\n`;
+            code += `    int code = INSIDE;\n`;
+            code += `    if (x < xmin)      code |= LEFT;\n`;
+            code += `    else if (x > xmax) code |= RIGHT;\n`;
+            code += `    if (y < ymin)      code |= BOTTOM;\n`;
+            code += `    else if (y > ymax) code |= TOP;\n`;
+            code += `    return code;\n`;
+            code += `}`;
+            document.getElementById('opengl-code').textContent = code;
+        }
+    
+        function setDrawColor(color, btn) {
+            document.documentElement.style.setProperty('--cg-primary', color);
+            if (btn) {
+                document.querySelectorAll('.color-dot').forEach(d => d.style.borderColor = 'transparent');
+                btn.style.borderColor = '#fff';
+            }
+        }
+    </script>
+    <script src="../../assets/js/brain-animation.js"></script>
+</body>
+</html>

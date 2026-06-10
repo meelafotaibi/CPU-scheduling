@@ -12,7 +12,7 @@ class MinimaxAlgo {
         this.currentStep = 0;
     }
 
-    generateTree(depth, branchFactor) {
+    generateTree(depth = 3, branchFactor = 2) {
         let nodeId = 1;
         const createNode = (d) => {
             const node = {
@@ -23,6 +23,8 @@ class MinimaxAlgo {
                 alpha: -Infinity,
                 beta: Infinity,
                 highlight: false,
+                pruned: false,
+                guessPruned: false,
                 finalValue: null
             };
             if (d < depth) {
@@ -41,23 +43,78 @@ class MinimaxAlgo {
     layout() {
         if (!this.root) return;
         const canvasWidth = this.engine.canvas.width;
-        const depthHeight = 80;
+        const depthHeight = 110;
 
         const computePos = (node, x, y, width) => {
             node.x = x;
             node.y = y;
-            const childWidth = width / node.children.length;
-            node.children.forEach((child, i) => {
-                computePos(child, x - width / 2 + childWidth * i + childWidth / 2, y + depthHeight, childWidth);
-            });
+            if (node.children.length > 0) {
+                const childWidth = width / node.children.length;
+                node.children.forEach((child, i) => {
+                    computePos(child, x - width / 2 + childWidth * i + childWidth / 2, y + depthHeight, childWidth);
+                });
+            }
         };
-        computePos(this.root, canvasWidth / 2, 50, canvasWidth * 0.8);
+        computePos(this.root, canvasWidth / 2, 60, canvasWidth * 0.75);
         this.engine.draw();
+    }
+
+    getAllNodes() {
+        const list = [];
+        const traverse = (n) => {
+            if (!n) return;
+            list.push(n);
+            n.children.forEach(traverse);
+        };
+        traverse(this.root);
+        return list;
+    }
+
+    // Runs minimax internally for analysis (returns visited node count)
+    analyzeTree(node, isMaximizing, usePruning, alpha, beta, visitedList = []) {
+        if (!node) return 0;
+        visitedList.push(node.id);
+
+        if (node.children.length === 0) {
+            return visitedList.length;
+        }
+
+        if (isMaximizing) {
+            let bestVal = -Infinity;
+            for (let child of node.children) {
+                this.analyzeTree(child, false, usePruning, alpha, beta, visitedList);
+                bestVal = Math.max(bestVal, child.value !== null ? child.value : 0);
+                alpha = Math.max(alpha, bestVal);
+                if (usePruning && beta <= alpha) {
+                    break;
+                }
+            }
+            return visitedList.length;
+        } else {
+            let bestVal = Infinity;
+            for (let child of node.children) {
+                this.analyzeTree(child, true, usePruning, alpha, beta, visitedList);
+                bestVal = Math.min(bestVal, child.value !== null ? child.value : 0);
+                beta = Math.min(beta, bestVal);
+                if (usePruning && beta <= alpha) {
+                    break;
+                }
+            }
+            return visitedList.length;
+        }
     }
 
     run(isAlphaBeta) {
         this.isAlphaBeta = isAlphaBeta;
         this.steps = [];
+        
+        // Reset node pruned states before running
+        this.getAllNodes().forEach(n => {
+            n.pruned = false;
+            n.highlight = false;
+            if (n.depth < 3) n.value = null; // Clear intermediate values
+        });
+
         this._minimax(this.root, true, -Infinity, Infinity);
         this.currentStep = 0;
     }
@@ -78,7 +135,11 @@ class MinimaxAlgo {
                 bestVal = Math.max(bestVal, val);
                 alpha = Math.max(alpha, bestVal);
                 if (this.isAlphaBeta && beta <= alpha) {
-                    this.steps.push({ type: 'prune', node: child, alpha, beta });
+                    // Find remaining children to prune
+                    const idx = node.children.indexOf(child);
+                    for (let j = idx + 1; j < node.children.length; j++) {
+                        this.steps.push({ type: 'prune', node: node.children[j], alpha, beta });
+                    }
                     break;
                 }
             }
@@ -92,7 +153,10 @@ class MinimaxAlgo {
                 bestVal = Math.min(bestVal, val);
                 beta = Math.min(beta, bestVal);
                 if (this.isAlphaBeta && beta <= alpha) {
-                    this.steps.push({ type: 'prune', node: child, alpha, beta });
+                    const idx = node.children.indexOf(child);
+                    for (let j = idx + 1; j < node.children.length; j++) {
+                        this.steps.push({ type: 'prune', node: node.children[j], alpha, beta });
+                    }
                     break;
                 }
             }
@@ -106,16 +170,16 @@ class MinimaxAlgo {
         if (this.currentStep >= this.steps.length) return false;
 
         const step = this.steps[this.currentStep++];
-        this.engine.nodes.forEach(n => n.highlight = false);
+        this.getAllNodes().forEach(n => n.highlight = false);
         step.node.highlight = true;
 
         if (step.type === 'visit') {
-            this.ui.updateStatus(`Visiting node ${step.node.id}. Alpha: ${step.alpha}, Beta: ${step.beta}`);
+            this.ui.updateStatus(`Visiting node ${step.node.id}. Alpha: ${step.alpha === -Infinity ? '-∞' : step.alpha}, Beta: ${step.beta === Infinity ? '∞' : step.beta}`);
         } else if (step.type === 'return') {
             step.node.value = step.value;
-            this.ui.updateStatus(`Node ${step.node.id} returned value ${step.value}`);
+            this.ui.updateStatus(`Node ${step.node.id} evaluated. Selected value: ${step.value}`);
         } else if (step.type === 'prune') {
-            this.ui.updateStatus(`PRUNING remaining branches under node ${step.node.id} becuase beta <= alpha`);
+            this.ui.updateStatus(`PRUNED branch at node ${step.node.id} because beta <= alpha.`);
             this._prune(step.node);
         }
 
@@ -135,21 +199,75 @@ class MinimaxAlgo {
     }
 
     _drawConnections(node) {
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
         node.children.forEach(child => {
+            const ctx = this.engine.ctx;
             if (node.pruned || child.pruned) {
-                this.engine.ctx.setLineDash([5, 5]);
-                this.engine.drawArrow(node.x, node.y, child.x, child.y);
-                this.engine.ctx.setLineDash([]);
+                ctx.strokeStyle = '#555';
+                ctx.setLineDash([4, 4]);
+            } else if (node.guessPruned || child.guessPruned) {
+                ctx.strokeStyle = 'rgba(168, 85, 247, 0.5)';
+                ctx.setLineDash([3, 3]);
             } else {
-                this.engine.drawArrow(node.x, node.y, child.x, child.y);
+                ctx.strokeStyle = isDark ? '#666' : '#bbb';
+                ctx.setLineDash([]);
             }
+            this.engine.drawArrow(node.x, node.y, child.x, child.y);
+            ctx.setLineDash([]);
             this._drawConnections(child);
         });
     }
 
     _drawNodes(node) {
-        const color = node.highlight ? '#ff6b6b' : (node.pruned ? '#ccc' : '#fff');
-        this.engine.drawNode(node.x, node.y, node.value !== null ? node.value : '?', node.highlight);
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        const ctx = this.engine.ctx;
+        
+        let fillColor = isDark ? '#2d2d44' : '#fff';
+        let strokeColor = '#4a90e2';
+        let strokeWidth = 3;
+
+        if (node.highlight) {
+            fillColor = '#ff6b6b';
+            strokeColor = '#ff4d4d';
+        } else if (node.pruned) {
+            fillColor = isDark ? '#1e1e2d' : '#e0e0e0';
+            strokeColor = '#666';
+        } else if (node.guessPruned) {
+            fillColor = isDark ? '#1f1635' : '#f5eefd';
+            strokeColor = '#a855f7';
+        }
+
+        ctx.fillStyle = fillColor;
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = strokeWidth;
+
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 22, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = node.highlight ? '#fff' : (isDark ? '#e0e0e0' : '#333');
+        ctx.font = 'bold 14px Arial';
+        ctx.textAlign = 'center';
+        
+        const textVal = node.value !== null ? node.value : '?';
+        ctx.fillText(textVal, node.x, node.y + 5);
+
+        // Helper text for depths
+        if (node.depth === 0) {
+            ctx.fillStyle = 'rgba(120, 120, 150, 0.6)';
+            ctx.font = 'bold 9px Arial';
+            ctx.fillText("MAX (AI)", node.x, node.y - 28);
+        } else if (node.depth === 1) {
+            ctx.fillStyle = 'rgba(120, 120, 150, 0.6)';
+            ctx.font = 'bold 9px Arial';
+            ctx.fillText("MIN (OPP)", node.x, node.y - 28);
+        } else if (node.depth === 2) {
+            ctx.fillStyle = 'rgba(120, 120, 150, 0.6)';
+            ctx.font = 'bold 9px Arial';
+            ctx.fillText("MAX (AI)", node.x, node.y - 28);
+        }
+
         node.children.forEach(child => this._drawNodes(child));
     }
 }
