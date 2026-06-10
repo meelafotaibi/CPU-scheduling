@@ -335,9 +335,31 @@
                         </div>
                     </div>
 
+                    <div style="margin-top: 15px; margin-bottom: 15px;">
+                        <label style="font-size: 0.8rem; color: #aaa; font-weight: 600; display: block; margin-bottom: 8px;">Animation Source:</label>
+                        <div class="param-radio-group">
+                            <button class="param-radio-btn active" id="btn-anim-timer" onclick="setAnimationSource('timer')">glutTimerFunc</button>
+                            <button class="param-radio-btn" id="btn-anim-idle" onclick="setAnimationSource('idle')">glutIdleFunc</button>
+                        </div>
+                    </div>
+
                     <div class="timer-wheel-container">
                         <div class="timer-wheel" id="timer-wheel"></div>
                         <span style="font-size: 0.78rem; color: #ccc;" id="timer-status">Timer active: Tick every 300ms</span>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 15px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 15px;">
+                        <label style="font-size: 0.8rem; color: #aaa; font-weight: 600; margin-bottom: 8px; display: block; width: 100%;">glutSpecialFunc (Arrows to Move):</label>
+                        <div style="display: grid; grid-template-columns: repeat(3, 36px); gap: 6px; justify-content: center; width: 100%;">
+                            <div></div>
+                            <button class="param-radio-btn" style="padding: 6px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="triggerSpecialKey('ArrowUp')">▲</button>
+                            <div></div>
+                            <button class="param-radio-btn" style="padding: 6px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="triggerSpecialKey('ArrowLeft')">◀</button>
+                            <button class="param-radio-btn" style="padding: 6px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--cg-primary);" onclick="triggerSpecialKey('Reset')">⟲</button>
+                            <button class="param-radio-btn" style="padding: 6px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="triggerSpecialKey('ArrowRight')">▶</button>
+                            <div></div>
+                            <button class="param-radio-btn" style="padding: 6px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="triggerSpecialKey('ArrowDown')">▼</button>
+                        </div>
                     </div>
 
                     <div style="margin-top: 15px; display: flex; gap: 10px;">
@@ -427,6 +449,9 @@
         let timerInterval = 300;
         let activeColor = '#22d3ee';
         let glutLogs = [`[GLUT Console] Timer loop running.`];
+        let animationSource = 'timer'; // 'timer' or 'idle'
+        let xOffset = 0;
+        let yOffset = 0;
         let lastTime = 0;
         let rotationAngle = 0;
         let lastTimerTick = 0;
@@ -514,27 +539,40 @@
             dragPoints.forEach(p => p.age--);
             dragPoints = dragPoints.filter(p => p.age > 0);
 
-            // glutTimerFunc simulation
-            if (timestamp - lastTimerTick > timerInterval) {
-                lastTimerTick = timestamp;
-                rotationAngle += 0.2;
-                logGlutEvent(`[glutTimerFunc] callback triggered (rotation: ${(rotationAngle * 180 / Math.PI).toFixed(0)}°)`);
-
+            // glutIdleFunc vs glutTimerFunc animation updates
+            if (animationSource === 'idle') {
+                rotationAngle += 0.05;
+                if (Math.random() < 0.02) {
+                    logGlutEvent(`[glutIdleFunc] loop running (rotation: ${(rotationAngle * 180 / Math.PI).toFixed(0)}°)`);
+                }
                 if (bufferingMode === 'double') {
-                    // Trigger Swap Buffers animation
-                    const frontViewport = document.getElementById('viewport-front');
-                    const backViewport = document.getElementById('viewport-back');
-                    frontViewport.classList.add('swap-active');
-                    backViewport.classList.add('swap-active');
-                    setTimeout(() => {
-                        frontViewport.classList.remove('swap-active');
-                        backViewport.classList.remove('swap-active');
-                    }, 150);
-
-                    // Swap back to front
+                    // In idle mode, copy back to front immediately for a smooth framerate
                     ctxFront.clearRect(0, 0, canvasFront.width, canvasFront.height);
                     ctxFront.drawImage(canvasBack, 0, 0);
-                    logGlutEvent(`[glutSwapBuffers] Swapping front & back buffers.`);
+                }
+            } else {
+                // glutTimerFunc simulation
+                if (timestamp - lastTimerTick > timerInterval) {
+                    lastTimerTick = timestamp;
+                    rotationAngle += 0.2;
+                    logGlutEvent(`[glutTimerFunc] callback triggered (rotation: ${(rotationAngle * 180 / Math.PI).toFixed(0)}°)`);
+
+                    if (bufferingMode === 'double') {
+                        // Trigger Swap Buffers animation
+                        const frontViewport = document.getElementById('viewport-front');
+                        const backViewport = document.getElementById('viewport-back');
+                        frontViewport.classList.add('swap-active');
+                        backViewport.classList.add('swap-active');
+                        setTimeout(() => {
+                            frontViewport.classList.remove('swap-active');
+                            backViewport.classList.remove('swap-active');
+                        }, 150);
+
+                        // Swap back to front
+                        ctxFront.clearRect(0, 0, canvasFront.width, canvasFront.height);
+                        ctxFront.drawImage(canvasBack, 0, 0);
+                        logGlutEvent(`[glutSwapBuffers] Swapping front & back buffers.`);
+                    }
                 }
             }
 
@@ -568,8 +606,8 @@
             const drawAll = !isSingle;
 
             // Simulated teapot center
-            const xc = canvas.width / 2;
-            const yc = canvas.height / 2 + 10;
+            const xc = (canvas.width / 2) + xOffset;
+            const yc = (canvas.height / 2 + 10) + yOffset;
             const size = 60;
 
             ctx.strokeStyle = activeColor;
@@ -768,7 +806,10 @@
                 }, 1200);
 
                 const keyLower = e.key.toLowerCase();
-                if (keyLower === 'c') {
+                if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    triggerSpecialKey(e.key);
+                } else if (keyLower === 'c') {
                     glutLogs = [`[GLUT Console] Console cleared.`];
                     logGlutEvent(`[glutKeyboardFunc] Key 'c' pressed -> Cleared logs`);
                 } else if (keyLower === 'd') {
@@ -841,6 +882,48 @@
             }
         }
 
+        function setAnimationSource(source) {
+            animationSource = source;
+            document.getElementById('btn-anim-timer').classList.toggle('active', source === 'timer');
+            document.getElementById('btn-anim-idle').classList.toggle('active', source === 'idle');
+            logGlutEvent(`[GLUT] Animation source changed to: ${source === 'timer' ? 'glutTimerFunc' : 'glutIdleFunc'}`);
+            if (source === 'idle') {
+                document.getElementById('timer-status').innerText = "Idle loop active: Updates every frame";
+                document.getElementById('timer-wheel').style.animationDuration = '0.3s';
+            } else {
+                updateTimerInterval();
+            }
+        }
+
+        function triggerSpecialKey(key) {
+            document.getElementById('stat-last-event').innerText = 'Special Key';
+            if (key === 'Reset') {
+                xOffset = 0;
+                yOffset = 0;
+                logGlutEvent(`[glutSpecialFunc] Offset reset to (0,0)`);
+                return;
+            }
+            if (key === 'ArrowUp') {
+                yOffset -= 10;
+                logGlutEvent(`[glutSpecialFunc] GLUT_KEY_UP pressed -> Offset Y: ${yOffset}`);
+            } else if (key === 'ArrowDown') {
+                yOffset += 10;
+                logGlutEvent(`[glutSpecialFunc] GLUT_KEY_DOWN pressed -> Offset Y: ${yOffset}`);
+            } else if (key === 'ArrowLeft') {
+                xOffset -= 10;
+                logGlutEvent(`[glutSpecialFunc] GLUT_KEY_LEFT pressed -> Offset X: ${xOffset}`);
+            } else if (key === 'ArrowRight') {
+                xOffset += 10;
+                logGlutEvent(`[glutSpecialFunc] GLUT_KEY_RIGHT pressed -> Offset X: ${xOffset}`);
+            }
+
+            keypressIndicator = `Special Key: ${key.replace('Arrow', 'GLUT_KEY_')}`;
+            if (keypressTimeout) clearTimeout(keypressTimeout);
+            keypressTimeout = setTimeout(() => {
+                keypressIndicator = "";
+            }, 1200);
+        }
+
         function logGlutEvent(msg) {
             glutLogs.push(msg);
             if (glutLogs.length > 8) glutLogs.shift();
@@ -854,6 +937,9 @@
         function updateCode() {
             let code = `// GLUT Event Hooks & Menu Configuration (C++)\n`;
             code += `#include <GL/glut.h>\n\n`;
+            code += `// Global offsets changed via glutSpecialFunc\n`;
+            code += `int xOffset = ${xOffset}, yOffset = ${yOffset};\n`;
+            code += `float rotationAngle = 0.0f;\n\n`;
             code += `// Keyboard callback: catches character inputs\n`;
             code += `void myKeyboard(unsigned char key, int x, int y) {\n`;
             code += `    if (key == 'c' || key == 'C') clearLogs();\n`;
@@ -861,6 +947,37 @@
             code += `    if (key == 's' || key == 'S') drawStyle = SOLID;\n`;
             code += `    if (key == 'p' || key == 'P') drawStyle = POINTS;\n`;
             code += `}\n\n`;
+            code += `// Special keys callback: catches arrows, F-keys, etc.\n`;
+            code += `void mySpecial(int key, int x, int y) {\n`;
+            code += `    switch(key) {\n`;
+            code += `        case GLUT_KEY_UP:    yOffset -= 10; break;\n`;
+            code += `        case GLUT_KEY_DOWN:  yOffset += 10; break;\n`;
+            code += `        case GLUT_KEY_LEFT:  xOffset -= 10; break;\n`;
+            code += `        case GLUT_KEY_RIGHT: xOffset += 10; break;\n`;
+            code += `    }\n`;
+            code += `    glutPostRedisplay();\n`;
+            code += `}\n\n`;
+            code += `// Reshape callback: recalculates viewport on window resize\n`;
+            code += `void myReshape(int w, int h) {\n`;
+            code += `    glViewport(0, 0, w, h);\n`;
+            code += `    glMatrixMode(GL_PROJECTION);\n`;
+            code += `    glLoadIdentity();\n`;
+            code += `    gluPerspective(45.0, (double)w/(double)h, 1.0, 200.0);\n`;
+            code += `}\n\n`;
+            if (animationSource === 'idle') {
+                code += `// Idle callback: runs continuously when free\n`;
+                code += `void myIdle() {\n`;
+                code += `    rotationAngle += 0.05f;\n`;
+                code += `    glutPostRedisplay();\n`;
+                code += `}\n\n`;
+            } else {
+                code += `// Timer callback: runs every N milliseconds\n`;
+                code += `void timerCallback(int value) {\n`;
+                code += `    rotationAngle += 0.2f;\n`;
+                code += `    glutPostRedisplay();\n`;
+                code += `    glutTimerFunc(${timerInterval}, timerCallback, 0);\n`;
+                code += `}\n\n`;
+            }
             code += `// Mouse click callback: catches button, state, coords\n`;
             code += `void myMouse(int button, int state, int x, int y) {\n`;
             code += `    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {\n`;
@@ -894,11 +1011,18 @@
             code += `    glutInitWindowSize(800, 600);\n`;
             code += `    glutCreateWindow("GLUT Interaction & Menus");\n\n`;
             code += `    // Register User Interaction callbacks\n`;
+            code += `    glutReshapeFunc(myReshape);\n`;
             code += `    glutMouseFunc(myMouse);\n`;
             code += `    glutMotionFunc(myMotion);\n`;
             code += `    glutPassiveMotionFunc(myPassiveMotion);\n`;
             code += `    glutKeyboardFunc(myKeyboard);\n`;
-            code += `    glutTimerFunc(${timerInterval}, timerCallback, 0);\n\n`;
+            code += `    glutSpecialFunc(mySpecial);\n`;
+            if (animationSource === 'idle') {
+                code += `    glutIdleFunc(myIdle);\n`;
+            } else {
+                code += `    glutTimerFunc(${timerInterval}, timerCallback, 0);\n`;
+            }
+            code += `\n`;
             code += `    // Setup Right-Click Menu and Submenus\n`;
             code += `    int styleSub = glutCreateMenu(rightClickMenu);\n`;
             code += `    glutAddMenuEntry("Wireframe", 1);\n`;
