@@ -3,10 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GLUT Interactive Event Loop Guide - AlgoVisual Hub</title>
+    <title>GLUT &amp; Double Buffering Guide - AlgoVisual Hub</title>
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
     <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+    <!-- MathJax Setup -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <canvas id="brain-canvas"></canvas>
@@ -29,37 +39,42 @@
                 <header style="text-align: center; margin-bottom: 60px;">
                     <span class="section-tag">Interactive</span>
                     <h1 style="font-size: 3rem; font-weight: 900; margin: 20px 0; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
-                        Interactive GLUT Callback Pipeline
+                        GLUT &amp; Double Buffering
                     </h1>
                     <p style="font-size: 1.3rem; color: var(--text-muted); max-width: 800px; margin: 0 auto; line-height: 1.6;">
-                        Understanding window management, callback registration, and main event loops.
+                        Understanding front and back display buffers, swapping mechanics, and GLUT event-loop pipelines.
                     </p>
                 </header>
 
                 <div class="grid grid-2" style="margin-bottom: 60px; gap: 30px;">
                     <div class="glass-card" style="padding: 35px;">
-                        <h2>What is GLUT?</h2>
-                        <p>The **OpenGL Utility Toolkit (GLUT)** is a system-independent library for handling window creation, user keyboard/mouse events, and screen refresh loop triggers. It hides OS-specific window management tasks.</p>
+                        <h2>Double Buffering Concept</h2>
+                        <p>In real-time rendering, drawing directly to the screen (Single Buffering) causes visible flickering because the rendering steps are shown as they happen. To solve this, **Double Buffering** uses two buffers:</p>
+                        <ul>
+                            <li><strong>Front Buffer</strong>: Currently displayed on the screen.</li>
+                            <li><strong>Back Buffer</strong>: Offscreen buffer where drawing commands are executed incrementally.</li>
+                        </ul>
+                        <p>Once rendering is complete, the buffers are swapped instantaneously via <code>glutSwapBuffers()</code>.</p>
                     </div>
 
                     <div class="glass-card" style="padding: 35px;">
-                        <h2>Event Loop &amp; Hooks</h2>
-                        <p>User interactions are captured via event handler hooks:
-                        - `glutMouseFunc(myMouse)`: Clicks (DOWN/UP, LEFT/RIGHT).
-                        - `glutMotionFunc(myMotion)`: Clicks &amp; drags.
-                        - `glutKeyboardFunc(myKeyboard)`: Key taps.
-                        - `glutMainLoop()`: Starts the infinite OS event monitoring execution.</p>
+                        <h2>Timer &amp; Idle Callbacks</h2>
+                        <p>To animate frames smoothly, GLUT provides loop mechanisms:</p>
+                        <ul>
+                            <li><code>glutTimerFunc(delay, callback, value)</code>: Triggers a rendering tick every N milliseconds, calling itself recursively to maintain a fixed update interval.</li>
+                            <li><code>glutIdleFunc(callback)</code>: Triggers updates continuously whenever the CPU is idle, yielding maximum possible frame rates.</li>
+                        </ul>
                     </div>
                 </div>
 
                 <div class="glass-card" style="padding: 50px; text-align: center; margin-top: 40px;">
-                    <h2 style="margin-bottom: 20px;">Ready to Test GLUT callbacks?</h2>
+                    <h2 style="margin-bottom: 20px;">Ready to Test GLUT &amp; Double Buffering?</h2>
                     <p style="color: var(--text-muted); margin-bottom: 30px;">
-                        Launch our interactive visualizer to step through calculations in real-time.
+                        Launch our interactive visualizer to swap buffers and compare Single vs Double buffering flickering properties in real-time.
                     </p>
                     <a href="../../visualizers/cg/glut.html" class="btn btn-primary"
                         style="font-size: 1.2rem; padding: 15px 30px; display: inline-block;">
-                        Launch GLUT Visualizer &rarr;
+                        Launch GLUT &amp; Buffering Visualizer &rarr;
                     </a>
                 </div>
             </article>

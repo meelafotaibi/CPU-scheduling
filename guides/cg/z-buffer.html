@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
     <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+    <!-- MathJax Setup -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <canvas id="brain-canvas"></canvas>
@@ -39,15 +49,17 @@
                 <div class="grid grid-2" style="margin-bottom: 60px; gap: 30px;">
                     <div class="glass-card" style="padding: 35px;">
                         <h2>Depth Buffers</h2>
-                        <p>A **Z-Buffer** contains a depth value for each screen pixel, initialized to maximum distance (1.0). 
-                        When rendering a new fragment at coordinate $(x, y)$ with depth $z$:
-                        - If $z < Z\_Buffer[x, y]$, the new pixel is closer. Write color to Color Buffer and update $Z\_Buffer[x, y] = z$.
-                        - Otherwise, discard the fragment.</p>
+                        <p>A <strong>Z-Buffer</strong> contains a depth value for each screen pixel, initialized to maximum distance (1.0). 
+                        When rendering a new fragment at coordinate $(x, y)$ with depth $z$:</p>
+<ul>
+    <li>If $z < Z_Buffer[x, y]$, the new pixel is closer. Write color to Color Buffer and update $Z_Buffer[x, y] = z$.</li>
+    <li>Otherwise, discard the fragment.</li>
+</ul>
                     </div>
 
                     <div class="glass-card" style="padding: 35px;">
                         <h2>Why it's crucial</h2>
-                        <p>Without Z-buffering (or manual sorting like Painters algorithm), surfaces overlap incorrectly based on the order they were processed. Enabling `glEnable(GL_DEPTH_TEST)` enforces correct visibility sorting automatically on modern GPUs.</p>
+                        <p>Without Z-buffering (or manual sorting like Painters algorithm), surfaces overlap incorrectly based on the order they were processed. Enabling <code>glEnable(GL_DEPTH_TEST)</code> enforces correct visibility sorting automatically on modern GPUs.</p>
                     </div>
                 </div>
 

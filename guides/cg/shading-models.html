@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
     <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+    <!-- MathJax Setup -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <canvas id="brain-canvas"></canvas>
@@ -39,17 +49,21 @@
                 <div class="grid grid-2" style="margin-bottom: 60px; gap: 30px;">
                     <div class="glass-card" style="padding: 35px;">
                         <h2>Phong Reflection Model</h2>
-                        <p>Calculates material lighting intensity $I$ by combining three terms:
-                        - **Ambient**: General background glow.
-                        - **Diffuse**: Lambertian cosine law reflection depending on the angle between normal and light ($N \cdot L$).
-                        - **Specular**: Shiny highlights ($R \cdot V^n$) based on shininess exponent $n$.</p>
+                        <p>Calculates material lighting intensity $I$ by combining three terms:</p>
+<ul>
+    <li><strong>Ambient</strong>: General background glow.</li>
+    <li><strong>Diffuse</strong>: Lambertian cosine law reflection depending on the angle between normal and light ($N \cdot L$).</li>
+    <li><strong>Specular</strong>: Shiny highlights ($R \cdot V^n$) based on shininess exponent $n$.</li>
+</ul>
                     </div>
 
                     <div class="glass-card" style="padding: 35px;">
                         <h2>Interpolation Styles</h2>
-                        <p>- **Flat Shading**: Evaluates color once per polygon face (causes faceted appearance).
-                        - **Gouraud Shading**: Computes color at vertices and interpolates across the polygon face.
-                        - **Phong Shading**: Interpolates normals across the face and computes illumination per pixel (produces best specular highlights).</p>
+                        <ul>
+    <li><strong>Flat Shading</strong>: Evaluates color once per polygon face (causes faceted appearance).</li>
+    <li><strong>Gouraud Shading</strong>: Computes color at vertices and interpolates across the polygon face.</li>
+    <li><strong>Phong Shading</strong>: Interpolates normals across the face and computes illumination per pixel (produces best specular highlights).</li>
+</ul>
                     </div>
                 </div>
 

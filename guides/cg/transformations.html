@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
     <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+    <!-- MathJax Setup -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <canvas id="brain-canvas"></canvas>
@@ -39,9 +49,11 @@
                 <div class="grid grid-2" style="margin-bottom: 60px; gap: 30px;">
                     <div class="glass-card" style="padding: 35px;">
                         <h2>Homogeneous Coordinates</h2>
-                        <p>To combine translation (addition) with linear mappings like scaling and rotation (multiplication) into a single matrix, computer graphics uses homogeneous coordinates:
-                        - 2D vectors are represented as $[x, y, 1]^T$ using $3 \times 3$ matrices.
-                        - 3D vectors are represented as $[x, y, z, 1]^T$ using $4 \times 4$ matrices.</p>
+                        <p>To combine translation (addition) with linear mappings like scaling and rotation (multiplication) into a single matrix, computer graphics uses homogeneous coordinates:</p>
+<ul>
+    <li>2D vectors are represented as $[x, y, 1]^T$ using $3 \times 3$ matrices.</li>
+    <li>3D vectors are represented as $[x, y, z, 1]^T$ using $4 \times 4$ matrices.</li>
+</ul>
                     </div>
 
                     <div class="glass-card" style="padding: 35px;">

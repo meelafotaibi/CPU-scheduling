@@ -507,6 +507,68 @@
                 </div>
             </div>
         </div>
+        <!-- ===== MODULE EXTRAS ===== -->
+        <div class="topic-group">
+            <div class="topic-group-header">
+                <div class="topic-group-icon" style="background: linear-gradient(135deg, #a855f7, #ec4899);">
+                    <i class="fas fa-puzzle-piece"></i>
+                </div>
+                <h2>Module Extras</h2>
+                <span class="badge" style="background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3);">Live</span>
+            </div>
+            <div class="cg-grid">
+
+                <!-- Mouse Responsiveness -->
+                <div class="cg-card">
+                    <span class="card-topic-badge badge-fundamentals">Interaction</span>
+                    <h3>GLUT Mouse Interaction</h3>
+                    <p>Track coordinates, capture mouse click states, and draw dynamic particle trails using GLUT's active and passive motion callbacks.</p>
+                    <div class="concept-tags">
+                        <span class="concept-tag">glutMouseFunc</span>
+                        <span class="concept-tag">glutMotionFunc</span>
+                        <span class="concept-tag">glutPassiveMotionFunc</span>
+                    </div>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/glut-mouse.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/glut-mouse.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
+                </div>
+
+                <!-- Keyboard Interaction -->
+                <div class="cg-card">
+                    <span class="card-topic-badge badge-fundamentals">Interaction</span>
+                    <h3>GLUT Keyboard Interaction</h3>
+                    <p>Capture ASCII character strokes and special function keys like arrows to rotate, translate, and interact with the teapot model dynamically.</p>
+                    <div class="concept-tags">
+                        <span class="concept-tag">glutKeyboardFunc</span>
+                        <span class="concept-tag">glutSpecialFunc</span>
+                    </div>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/glut-keyboard.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/glut-keyboard.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
+                </div>
+
+                <!-- Menus & Colors -->
+                <div class="cg-card">
+                    <span class="card-topic-badge badge-fundamentals">Interaction</span>
+                    <h3>GLUT Menus &amp; Colors</h3>
+                    <p>Build custom hierarchical right-click context menus. Dynamically register new color options and see the C++ code update on the fly.</p>
+                    <div class="concept-tags">
+                        <span class="concept-tag">glutCreateMenu</span>
+                        <span class="concept-tag">glutAddMenuEntry</span>
+                        <span class="concept-tag">glutAddSubMenu</span>
+                        <span class="concept-tag">glutAttachMenu</span>
+                    </div>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/glut-menu.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/glut-menu.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
         <!-- ===== MODULE 1: FUNDAMENTALS ===== -->
         <div class="topic-group">
             <div class="topic-group-header">
@@ -597,6 +659,24 @@
                     <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
                         <a href="visualizers/cg/sutherland-hodgman.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
                         <a href="guides/cg/sutherland-hodgman.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
+                    </div>
+                </div>
+
+                <!-- GLUT & Double Buffering -->
+                <div class="cg-card">
+                    <span class="card-topic-badge badge-fundamentals">Fundamentals</span>
+                    <h3>GLUT &amp; Double Buffering</h3>
+                    <p>Observe Front/Back buffer swapping, analyze C++ timer loops, and compare Single vs Double buffering flickering properties interactively.</p>
+                    <div class="concept-tags">
+                        <span class="concept-tag">event loop</span>
+                        <span class="concept-tag">double buffering</span>
+                        <span class="concept-tag">callbacks</span>
+                        <span class="concept-tag">swap buffers</span>
+                    </div>
+                    <div class="formula-preview">glutSwapBuffers()</div>
+                    <div class="card-actions" style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                        <a href="visualizers/cg/glut.html" class="card-action btn-visualize" style="flex: 1.2; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-play"></i> Visualize</a>
+                        <a href="guides/cg/glut.html" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 11px 16px; font-size: 0.82rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-book"></i> Guide</a>
                     </div>
                 </div>
 

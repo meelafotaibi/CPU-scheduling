@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
     <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+    <!-- MathJax Setup -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <canvas id="brain-canvas"></canvas>
@@ -39,20 +49,24 @@
                 <div class="grid grid-2" style="margin-bottom: 60px; gap: 30px;">
                     <div class="glass-card" style="padding: 35px;">
                         <h2>Boundary Checking Cases</h2>
-                        <p>For each polygon edge from vertex $S$ to $P$ against a clip edge:
-                        - **Both Inside**: Add $P$ to output.
-                        - **Out to In**: Add intersection $I$ and then $P$ to output.
-                        - **In to Out**: Add intersection $I$ to output.
-                        - **Both Outside**: Add nothing.</p>
+                        <p>For each polygon edge from vertex $S$ to $P$ against a clip edge:</p>
+<ul>
+    <li><strong>Both Inside</strong>: Add $P$ to output.</li>
+    <li><strong>Out to In</strong>: Add intersection $I$ and then $P$ to output.</li>
+    <li><strong>In to Out</strong>: Add intersection $I$ to output.</li>
+    <li><strong>Both Outside</strong>: Add nothing.</li>
+</ul>
                     </div>
 
                     <div class="glass-card" style="padding: 35px;">
                         <h2>Sequential Pipeline</h2>
-                        <p>Clips vertices progressively:
-                        1. Clip against **Left** boundary.
-                        2. Pass intermediate list to **Right** boundary.
-                        3. Pass result to **Bottom** boundary.
-                        4. Pass result to **Top** boundary to yield final polygon vertices.</p>
+                        <p>Clips vertices progressively:</p>
+<ol>
+    <li>Clip against <strong>Left</strong> boundary.</li>
+    <li>Pass intermediate list to <strong>Right</strong> boundary.</li>
+    <li>Pass result to <strong>Bottom</strong> boundary.</li>
+    <li>Pass result to <strong>Top</strong> boundary to yield final polygon vertices.</li>
+</ol>
                     </div>
                 </div>
 

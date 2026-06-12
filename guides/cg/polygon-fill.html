@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
     <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+    <!-- MathJax Setup -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <canvas id="brain-canvas"></canvas>
@@ -39,15 +49,17 @@
                 <div class="grid grid-2" style="margin-bottom: 60px; gap: 30px;">
                     <div class="glass-card" style="padding: 35px;">
                         <h2>Edge Tables (ET &amp; AET)</h2>
-                        <p>The **Edge Table (ET)** lists all polygon edges sorted by their minimum Y coordinate. The **Active Edge Table (AET)** contains only the edges intersecting the current scanline row, sorted by their active X coordinates.</p>
+                        <p>The <strong>Edge Table (ET)</strong> lists all polygon edges sorted by their minimum Y coordinate. The <strong>Active Edge Table (AET)</strong> contains only the edges intersecting the current scanline row, sorted by their active X coordinates.</p>
                     </div>
 
                     <div class="glass-card" style="padding: 35px;">
                         <h2>Parity Rule</h2>
-                        <p>For each scanline row:
-                        1. Find all intersection points with edges in the AET.
-                        2. Sort intersections in increasing X order.
-                        3. Fill pixels between odd and even index intersection pairs (e.g. between 1st &amp; 2nd, 3rd &amp; 4th points).</p>
+                        <p>For each scanline row:</p>
+<ol>
+    <li>Find all intersection points with edges in the AET.</li>
+    <li>Sort intersections in increasing X order.</li>
+    <li>Fill pixels between odd and even index intersection pairs (e.g. between 1st &amp; 2nd, 3rd &amp; 4th points).</li>
+</ol>
                     </div>
                 </div>
 

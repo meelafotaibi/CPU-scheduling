@@ -354,6 +354,9 @@ const pages = [
   { path: 'visualizers/cg/shading-models.html', checks: commonChecks },
   { path: 'visualizers/cg/texture-mapping.html', checks: commonChecks },
   { path: 'visualizers/cg/glut.html', checks: commonChecks },
+  { path: 'visualizers/cg/glut-mouse.html', checks: commonChecks },
+  { path: 'visualizers/cg/glut-keyboard.html', checks: commonChecks },
+  { path: 'visualizers/cg/glut-menu.html', checks: commonChecks },
 ];
 
 const serverPort = await listen(server);

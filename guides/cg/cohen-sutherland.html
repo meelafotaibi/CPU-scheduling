@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
     <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+    <!-- MathJax Setup -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <canvas id="brain-canvas"></canvas>
@@ -39,18 +49,22 @@
                 <div class="grid grid-2" style="margin-bottom: 60px; gap: 30px;">
                     <div class="glass-card" style="padding: 35px;">
                         <h2>Outcode Regions</h2>
-                        <p>Divide the coordinate space into 9 regions using 4 bits: **Top, Bottom, Right, Left (TBRL)**.
-                        - Inside window: `0000`
-                        - Left of window: `0001`
-                        - Right of window: `0010`
-                        - Bottom of window: `0100`
-                        - Top of window: `1000`</p>
+                        <p>Divide the coordinate space into 9 regions using 4 bits: <strong>Top, Bottom, Right, Left (TBRL)</strong>.</p>
+<ul>
+    <li>Inside window: <code>0000</code></li>
+    <li>Left of window: <code>0001</code></li>
+    <li>Right of window: <code>0010</code></li>
+    <li>Bottom of window: <code>0100</code></li>
+    <li>Top of window: <code>1000</code></li>
+</ul>
                     </div>
 
                     <div class="glass-card" style="padding: 35px;">
                         <h2>Trivial Tests</h2>
-                        <p>- **Trivial Accept**: Both endpoint codes are `0000` (line is completely inside).
-                        - **Trivial Reject**: Logical AND of both codes is NOT zero (both points share an outside region, so line is entirely outside).</p>
+                        <ul>
+    <li><strong>Trivial Accept</strong>: Both endpoint codes are <code>0000</code> (line is completely inside).</li>
+    <li><strong>Trivial Reject</strong>: Logical AND of both codes is NOT zero (both points share an outside region, so line is entirely outside).</li>
+</ul>
                     </div>
                 </div>
 

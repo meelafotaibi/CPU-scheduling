@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
     <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+    <!-- MathJax Setup -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <canvas id="brain-canvas"></canvas>
@@ -39,10 +49,12 @@
                 <div class="grid grid-2" style="margin-bottom: 60px; gap: 30px;">
                     <div class="glass-card" style="padding: 35px;">
                         <h2>Camera Coordinate Axes</h2>
-                        <p>Given eye ($E$), target center ($C$), and up ($U$), the camera system axes are:
-                        - Forward vector: $F = \frac{C - E}{\|C - E\|}$
-                        - Right vector: $R = \frac{F \times U}{\|F \times U\|}$
-                        - Orthogonal Up: $U' = R \times F$</p>
+                        <p>Given eye ($E$), target center ($C$), and up ($U$), the camera system axes are:</p>
+<ul>
+    <li>Forward vector: $F = \frac{C - E}{\|C - E\|}$</li>
+    <li>Right vector: $R = \frac{F \times U}{\|F \times U\|}$</li>
+    <li>Orthogonal Up: $U' = R \times F$</li>
+</ul>
                     </div>
 
                     <div class="glass-card" style="padding: 35px;">

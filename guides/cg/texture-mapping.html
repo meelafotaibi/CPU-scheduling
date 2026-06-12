@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
     <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+    <!-- MathJax Setup -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <canvas id="brain-canvas"></canvas>
@@ -44,10 +54,12 @@
 
                     <div class="glass-card" style="padding: 35px;">
                         <h2>Tiling &amp; Wrapping</h2>
-                        <p>When UV coordinates exceed $[0, 1]$, OpenGL defines wrap modes:
-                        - **GL_REPEAT**: Tiles the texture.
-                        - **GL_CLAMP**: Clamps UV to boundaries, stretching the edge pixels.
-                        - **GL_CLAMP_TO_EDGE**: Clamps texel fetch region.</p>
+                        <p>When UV coordinates exceed $[0, 1]$, OpenGL defines wrap modes:</p>
+<ul>
+    <li><strong>GL_REPEAT</strong>: Tiles the texture.</li>
+    <li><strong>GL_CLAMP</strong>: Clamps UV to boundaries, stretching the edge pixels.</li>
+    <li><strong>GL_CLAMP_TO_EDGE</strong>: Clamps texel fetch region.</li>
+</ul>
                     </div>
                 </div>
 

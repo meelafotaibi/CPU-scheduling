@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLUT Menus &amp; Colors | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="../../assets/css/dsa-monster.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+    <style>
+        :root {
+            --cg-primary: hsl(340, 89%, 60%);
+            --cg-accent: hsl(189, 100%, 52%);
+        }
+        .cg-viewport {
+            width: 100%;
+            height: 320px;
+            background: radial-gradient(circle at center, #1c051a 0%, #050105 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(236, 72, 153, 0.25);
+            box-shadow: 0 0 25px rgba(236, 72, 153, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .cg-viewport canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .pane-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 0.68rem;
+            background: rgba(0,0,0,0.7);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #ccc;
+            font-weight: 700;
+            z-index: 10;
+            text-transform: uppercase;
+        }
+        .opengl-code-panel {
+            background: #080812;
+            border: 1px solid rgba(236, 72, 153, 0.2);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            margin-top: 20px;
+        }
+        .opengl-code-panel h4 {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--monster-accent);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .opengl-code-panel pre {
+            margin: 0;
+            overflow-x: auto;
+        }
+        .opengl-code-panel code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+        }
+        .glut-console {
+            background: #06060c;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            height: 130px;
+            padding: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            color: #4ade80;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+        }
+        .glut-context-menu {
+            position: fixed;
+            background: #080812;
+            border: 1px solid rgba(236, 72, 153, 0.4);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 15px rgba(236, 72, 153, 0.2);
+            border-radius: 8px;
+            padding: 6px 0;
+            z-index: 1000;
+            display: none;
+            min-width: 170px;
+        }
+        .glut-context-menu-item {
+            padding: 8px 16px;
+            color: #ccc;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+        .glut-context-menu-item:hover {
+            background: rgba(236, 72, 153, 0.2);
+            color: #fff;
+        }
+        .glut-context-menu-item .submenu-arrow {
+            font-size: 0.6rem;
+            color: #aaa;
+        }
+        .glut-context-submenu {
+            position: absolute;
+            left: 100%;
+            top: 0;
+            background: #080812;
+            border: 1px solid rgba(236, 72, 153, 0.4);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border-radius: 8px;
+            padding: 6px 0;
+            display: none;
+            min-width: 140px;
+            z-index: 1001;
+        }
+        .glut-context-menu-item:hover > .glut-context-submenu {
+            display: block;
+        }
+        .param-radio-btn {
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #ccc;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        .param-radio-btn.active {
+            background: rgba(236, 72, 153, 0.15);
+            border-color: #ec4899;
+            color: #fff;
+        }
+        .function-tag-active {
+            background: rgba(34, 197, 94, 0.15) !important;
+            border-color: #22c55e !important;
+            color: #4ade80 !important;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="brain-canvas"></canvas>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="../../index.html" class="logo">
+                <img src="../../assets/img/logo.png" alt="AlgoVisual Hub" style="height: 48px; width: 48px;">
+                <span>AlgoVisual Hub</span>
+            </a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../cg.html">Back to Graphics</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="monster-header">
+            <span class="category-badge">🎮 Module Fay — Extras</span>
+            <h1>GLUT Menus &amp; Colors</h1>
+            <p>Build custom hierarchical right-click context menus, dynamically update color settings, and watch the C++ OpenGL configuration rebuild instantly.</p>
+        </header>
+
+        <div class="stats-grid" style="margin-top: 24px;">
+            <div class="stat-card" style="--stat-color: hsl(340, 89%, 60%);">
+                <div class="stat-icon">🎨</div>
+                <div class="stat-value" id="stat-selected-color">Neon Blue</div>
+                <div class="stat-label">Teapot Draw Color</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(189,100%,52%);">
+                <div class="stat-icon">🗂️</div>
+                <div class="stat-value" id="stat-submenus-count">2</div>
+                <div class="stat-label">GLUT Submenus</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(145,75%,50%);">
+                <div class="stat-icon">📝</div>
+                <div class="stat-value" id="stat-total-entries">10</div>
+                <div class="stat-label">Total Menu Entries</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(45,100%,60%);">
+                <div class="stat-icon">🔄</div>
+                <div class="stat-value" id="stat-last-action">Init</div>
+                <div class="stat-label">Last Menu Action</div>
+            </div>
+        </div>
+
+        <div class="monster-layout">
+            <div class="main-panel">
+                <div class="cg-viewport" id="viewport-main">
+                    <canvas id="cg-canvas"></canvas>
+                    <div class="pane-label">Interactive Viewport (Right-Click to open menu!)</div>
+                </div>
+
+                <div class="opengl-code-panel">
+                    <h4><i class="fas fa-code"></i> Live C++ OpenGL Code</h4>
+                    <pre><code id="opengl-code"></code></pre>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="info-card">
+                    <h4>Registered Menu Callbacks</h4>
+                    <p style="font-size: 0.75rem; color: #888; margin-bottom: 12px; line-height: 1.4;">Click any callback tag below to trigger simulated context menu callbacks!</p>
+                    <div style="display: flex; flex-direction: column; gap: 6px;" id="function-tags-container">
+                        <button class="param-radio-btn" style="text-align: left;" onclick="triggerCallbackTag('glutCreateMenu', this)">glutCreateMenu</button>
+                        <button class="param-radio-btn" style="text-align: left;" onclick="triggerCallbackTag('glutAddMenuEntry', this)">glutAddMenuEntry</button>
+                        <button class="param-radio-btn" style="text-align: left;" onclick="triggerCallbackTag('glutAddSubMenu', this)">glutAddSubMenu</button>
+                        <button class="param-radio-btn" style="text-align: left;" onclick="triggerCallbackTag('glutAttachMenu', this)">glutAttachMenu</button>
+                    </div>
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <a href="../../guides/cg/glut-menu.html" id="open-guide-btn" class="btn btn-secondary" style="flex: 1; text-align: center; justify-content: center; font-size: 0.8rem; padding: 10px;"><i class="fas fa-book"></i> Read Guide</a>
+                    </div>
+                </div>
+
+                <!-- Teapot Color dot selection -->
+                <div class="info-card">
+                    <h4>Teapot Color Dots</h4>
+                    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">
+                        <div id="color-dots-container" style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button class="color-dot active" style="background: #3b82f6; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; padding: 0;" onclick="setDrawColor('#3b82f6', this)"></button>
+                            <button class="color-dot" style="background: #a78bfa; width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;" onclick="setDrawColor('#a78bfa', this)"></button>
+                            <button class="color-dot" style="background: #ef4444; width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;" onclick="setDrawColor('#ef4444', this)"></button>
+                            <button class="color-dot" style="background: #22c55e; width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;" onclick="setDrawColor('#22c55e', this)"></button>
+                            <button class="color-dot" style="background: #eab308; width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;" onclick="setDrawColor('#eab308', this)"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Menu Color Card -->
+                <div class="info-card">
+                    <h4>GLUT Custom Colors &amp; Menus</h4>
+                    <p style="font-size: 0.75rem; color: #888; margin-bottom: 12px; line-height: 1.4;">Add new colors dynamically to the GLUT submenus. Right-click either viewport canvas to test your new custom options!</p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <label style="font-size: 0.78rem; color: #aaa; font-weight: 600; width: 95px;">Color Name:</label>
+                            <input type="text" id="custom-color-name" placeholder="Neon Blue" style="flex: 1; padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white; font-size: 0.8rem;" value="Neon Cyan">
+                        </div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <label style="font-size: 0.78rem; color: #aaa; font-weight: 600; width: 95px;">Color Pick:</label>
+                            <input type="color" id="custom-color-hex" value="#06b6d4" oninput="document.getElementById('custom-color-hex-val').innerText = this.value" style="width: 45px; height: 26px; border: none; border-radius: 6px; background: transparent; cursor: pointer; padding: 0;">
+                            <span id="custom-color-hex-val" style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #ec4899; font-weight: 700;">#06b6d4</span>
+                        </div>
+                        <button class="challenge-btn-monster" style="padding: 10px; font-size: 0.82rem; border-radius: 8px;" onclick="addCustomMenuColor()">Add Color to Menu</button>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h4>GLUT Event Monitor Console</h4>
+                    <div class="glut-console" id="glut-console">Initialize Menu Hook...</div>
+                </div>
+
+                <div class="log-panel" style="min-height: 160px;">
+                    <h4><i class="fas fa-info-circle"></i> Mathematical Trace</h4>
+                    <div class="log-text" id="math-trace">Events trigger specific C++ functions hooked during initialization.</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Right-Click Context Menu simulating GLUT Menu APIs -->
+    <div id="glut-menu-root" class="glut-context-menu">
+        <div class="glut-context-menu-item" onclick="selectMenuOption('clear_screen')">
+            <span>Clear Screen</span>
+            <span style="font-size: 0.6rem; color:#aaa;">(C)</span>
+        </div>
+        <div class="glut-context-menu-item">
+            <span>Draw Style</span>
+            <span class="submenu-arrow">▶</span>
+            <div id="glut-style-submenu" class="glut-context-submenu">
+                <div class="glut-context-menu-item" onclick="selectMenuOption('style_wireframe')">Wireframe</div>
+                <div class="glut-context-menu-item" onclick="selectMenuOption('style_solid')">Solid</div>
+                <div class="glut-context-menu-item" onclick="selectMenuOption('style_points')">Points</div>
+            </div>
+        </div>
+        <div class="glut-context-menu-item">
+            <span>Material Color</span>
+            <span class="submenu-arrow">▶</span>
+            <div id="glut-color-submenu" class="glut-context-submenu">
+                <!-- Will be populated dynamically by Javascript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let canvas, ctx;
+        let activeColor = '#3b82f6';
+        let drawStyle = 'wireframe';
+        let rotationAngle = 0;
+        let lastAction = 'Init';
+        let glutLogs = [`[GLUT Console] Context menus active. Right-click canvas to open.`];
+        
+        let menuColors = [
+            { name: 'Neon Blue', hex: '#3b82f6', id: 10 },
+            { name: 'Neon Purple', hex: '#a78bfa', id: 11 },
+            { name: 'Neon Red', hex: '#ef4444', id: 12 },
+            { name: 'Neon Green', hex: '#22c55e', id: 13 },
+            { name: 'Yellow', hex: '#eab308', id: 14 }
+        ];
+        let nextColorId = 15;
+
+        window.addEventListener('load', () => {
+            canvas = document.getElementById('cg-canvas');
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            registerMenuEvents();
+            rebuildColorSubmenu();
+            renderLoop();
+        });
+
+        function resizeCanvas() {
+            const container = document.getElementById('viewport-main');
+            if (container) {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+        }
+
+        function registerMenuEvents() {
+            const showMenu = (e) => {
+                e.preventDefault();
+                const menu = document.getElementById('glut-menu-root');
+                menu.style.display = 'block';
+                menu.style.left = e.clientX + 'px';
+                menu.style.top = e.clientY + 'px';
+                lastAction = 'glutCreateMenu';
+                logGlutEvent(`[glutCreateMenu] Menu opened via right-click attachment`);
+                updateStats();
+            };
+
+            canvas.addEventListener('contextmenu', showMenu);
+
+            window.addEventListener('click', () => {
+                document.getElementById('glut-menu-root').style.display = 'none';
+            });
+        }
+
+        function setDrawColor(color, btn) {
+            activeColor = color;
+            
+            document.querySelectorAll('.color-dot').forEach(d => {
+                d.style.borderColor = 'transparent';
+            });
+            if (btn) {
+                btn.style.borderColor = '#fff';
+            } else {
+                const dots = document.querySelectorAll('.color-dot');
+                for (let d of dots) {
+                    const bg = d.style.backgroundColor || d.style.background;
+                    if (bg.includes(color) || rgbToHex(bg) === color.toLowerCase()) {
+                        d.style.borderColor = '#fff';
+                        break;
+                    }
+                }
+            }
+            const colorObj = menuColors.find(c => c.hex.toLowerCase() === color.toLowerCase());
+            document.getElementById('stat-selected-color').innerText = colorObj ? colorObj.name : color;
+            logGlutEvent(`[glColor3f] Set drawing color to ${color}`);
+            updateStats();
+        }
+
+        function rgbToHex(rgb) {
+            if (!rgb || !rgb.startsWith('rgb')) return rgb;
+            const matches = rgb.match(/\d+/g);
+            if (!matches) return rgb;
+            const r = parseInt(matches[0]).toString(16).padStart(2, '0');
+            const g = parseInt(matches[1]).toString(16).padStart(2, '0');
+            const b = parseInt(matches[2]).toString(16).padStart(2, '0');
+            return '#' + r + g + b;
+        }
+
+        function hexToRgbFloat(hex) {
+            let hexStr = hex.replace('#', '');
+            if (hexStr.length === 3) {
+                hexStr = hexStr[0] + hexStr[0] + hexStr[1] + hexStr[1] + hexStr[2] + hexStr[2];
+            }
+            const val = parseInt(hexStr, 16);
+            const r = ((val >> 16) & 255) / 255;
+            const g = ((val >> 8) & 255) / 255;
+            const b = (val & 255) / 255;
+            return { r, g, b };
+        }
+
+        function selectMenuOption(option) {
+            lastAction = option;
+            if (option === 'clear_screen') {
+                logGlutEvent(`[GLUT] Menu handler: Clear Screen`);
+            } else if (option === 'style_wireframe') {
+                drawStyle = 'wireframe';
+                logGlutEvent(`[GLUT] Menu handler: Set Draw Style -> WIREFRAME`);
+            } else if (option === 'style_solid') {
+                drawStyle = 'solid';
+                logGlutEvent(`[GLUT] Menu handler: Set Draw Style -> SOLID`);
+            } else if (option === 'style_points') {
+                drawStyle = 'points';
+                logGlutEvent(`[GLUT] Menu handler: Set Draw Style -> POINTS`);
+            } else if (option.startsWith('color_id_')) {
+                const id = parseInt(option.substring(9));
+                const col = menuColors.find(c => c.id === id);
+                if (col) {
+                    setDrawColor(col.hex);
+                    logGlutEvent(`[GLUT] Menu handler: Selected color ${col.name}`);
+                }
+            }
+            updateStats();
+        }
+
+        function addCustomMenuColor() {
+            const nameInput = document.getElementById('custom-color-name');
+            const hexInput = document.getElementById('custom-color-hex');
+            
+            const name = nameInput.value.trim() || 'Neon Color';
+            const hex = hexInput.value;
+            
+            if (menuColors.some(c => c.hex.toLowerCase() === hex.toLowerCase())) {
+                logGlutEvent(`[GLUT] Color ${hex} is already in the menu!`);
+                return;
+            }
+            
+            const newColor = { name: name, hex: hex, id: nextColorId++ };
+            menuColors.push(newColor);
+            
+            logGlutEvent(`[glutCreateMenu] Injected new entry "${name}" (ID: ${newColor.id}) to menu`);
+            
+            rebuildColorSubmenu();
+            
+            const pickerContainer = document.getElementById('color-dots-container');
+            if (pickerContainer) {
+                const btn = document.createElement('button');
+                btn.className = 'color-dot';
+                btn.style.background = hex;
+                btn.style.width = '18px';
+                btn.style.height = '18px';
+                btn.style.borderRadius = '50%';
+                btn.style.border = '2px solid transparent';
+                btn.style.cursor = 'pointer';
+                btn.style.padding = '0';
+                btn.onclick = function() { setDrawColor(hex, btn); };
+                pickerContainer.appendChild(btn);
+            }
+            
+            setDrawColor(hex);
+            nameInput.value = "";
+        }
+
+        function rebuildColorSubmenu() {
+            const submenu = document.getElementById('glut-color-submenu');
+            if (submenu) {
+                submenu.innerHTML = menuColors.map(c => `
+                    <div class="glut-context-menu-item" onclick="selectMenuOption('color_id_${c.id}')">${c.name}</div>
+                `).join('');
+            }
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('stat-submenus-count').innerText = 2; // style + color
+            document.getElementById('stat-total-entries').innerText = 5 + menuColors.length; // style (3) + clear (1) + buffer (1) + colors
+            document.getElementById('stat-last-action').innerText = lastAction.replace('style_', '').replace('color_id_', 'Color ID ');
+            updateCode();
+        }
+
+        function triggerCallbackTag(funcName, element) {
+            document.querySelectorAll('#function-tags-container button').forEach(b => {
+                b.classList.remove('function-tag-active');
+            });
+            if (element) {
+                element.classList.add('function-tag-active');
+                setTimeout(() => element.classList.remove('function-tag-active'), 1200);
+            }
+
+            const codePanel = document.querySelector('.opengl-code-panel');
+            if (codePanel) {
+                codePanel.style.borderColor = '#22c55e';
+                codePanel.style.boxShadow = '0 0 25px rgba(34, 197, 94, 0.3)';
+                setTimeout(() => {
+                    codePanel.style.borderColor = 'rgba(236, 72, 153, 0.2)';
+                    codePanel.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
+                }, 1000);
+            }
+
+            lastAction = funcName;
+
+            if (funcName === 'glutCreateMenu') {
+                logGlutEvent(`[glutCreateMenu] Rebuilt contextual submenus. (2 registered)`);
+            } else if (funcName === 'glutAddMenuEntry') {
+                logGlutEvent(`[glutAddMenuEntry] Dynamic menu insertion successful`);
+            } else if (funcName === 'glutAddSubMenu') {
+                logGlutEvent(`[glutAddSubMenu] Submenu tree hooked: 'Material Color' -> 'glut-color-submenu'`);
+            } else if (funcName === 'glutAttachMenu') {
+                logGlutEvent(`[glutAttachMenu] Attached right click mouse hook to viewports`);
+                const rect = canvas.getBoundingClientRect();
+                const menu = document.getElementById('glut-menu-root');
+                menu.style.display = 'block';
+                menu.style.left = (rect.left + rect.width / 2) + 'px';
+                menu.style.top = (rect.top + rect.height / 2) + 'px';
+            }
+            updateStats();
+        }
+
+        function logGlutEvent(msg) {
+            glutLogs.push(msg);
+            if (glutLogs.length > 8) glutLogs.shift();
+            const el = document.getElementById('glut-console');
+            if (el) {
+                el.innerText = glutLogs.join('\n');
+                el.scrollTop = el.scrollHeight;
+            }
+        }
+
+        function renderLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw grid lines
+            ctx.strokeStyle = 'rgba(236, 72, 153, 0.06)';
+            ctx.lineWidth = 1;
+            for (let i = 20; i < canvas.width; i += 40) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            }
+            for (let j = 20; j < canvas.height; j += 40) {
+                ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
+            }
+
+            // Draw teapot silhouette
+            const xc = canvas.width / 2;
+            const yc = canvas.height / 2;
+            const size = 50;
+
+            ctx.strokeStyle = activeColor;
+            ctx.lineWidth = 2;
+
+            if (drawStyle === 'points') {
+                ctx.setLineDash([3, 6]);
+            } else {
+                ctx.setLineDash([]);
+            }
+
+            ctx.save();
+            ctx.translate(xc, yc);
+            ctx.rotate(rotationAngle);
+
+            ctx.beginPath();
+            ctx.arc(0, 0, size, 0, Math.PI * 2);
+            if (drawStyle === 'solid') {
+                ctx.fillStyle = hexToRgbFloat(activeColor) ? `rgba(${Math.round(hexToRgbFloat(activeColor).r * 255)}, ${Math.round(hexToRgbFloat(activeColor).g * 255)}, ${Math.round(hexToRgbFloat(activeColor).b * 255)}, 0.2)` : 'rgba(236, 72, 153, 0.2)';
+                ctx.fill();
+            }
+            ctx.stroke();
+
+            // Draw handle
+            ctx.beginPath();
+            ctx.arc(-size, 0, size / 2, -Math.PI / 2, Math.PI / 2);
+            ctx.stroke();
+
+            // Draw spout
+            ctx.beginPath();
+            ctx.moveTo(size - 5, -size / 4);
+            ctx.lineTo(size + 20, -size / 2);
+            ctx.lineTo(size + 10, size / 4);
+            ctx.stroke();
+
+            ctx.restore();
+            ctx.setLineDash([]);
+
+            rotationAngle += 0.005;
+
+            document.getElementById('math-trace').innerHTML = `
+                <b>Menu Configuration:</b><br>
+                Active color: <span style="color: ${activeColor}"><b>${activeColor}</b></span><br>
+                Submenus: <b>2</b> (Draw Style, Material Color)<br>
+                Entries: <b>${5 + menuColors.length} registered</b>
+            `;
+
+            requestAnimationFrame(renderLoop);
+        }
+
+        function updateCode() {
+            let code = `// GLUT Context Menu Callbacks (C++)\n`;
+            code += `#include <GL/glut.h>\n\n`;
+            code += `// Callback option handler\n`;
+            code += `void rightClickMenu(int option) {\n`;
+            code += `    switch(option) {\n`;
+            code += `        case 1: drawStyle = WIREFRAME; break;\n`;
+            code += `        case 2: drawStyle = SOLID; break;\n`;
+            code += `        case 3: drawStyle = POINTS; break;\n`;
+            code += `        case 4: clearScreen(); break;\n`;
+            menuColors.forEach(c => {
+                const rgb = hexToRgbFloat(c.hex);
+                code += `        case ${c.id}: setDrawColor(${rgb.r.toFixed(2)}f, ${rgb.g.toFixed(2)}f, ${rgb.b.toFixed(2)}f); break; // ${c.name}\n`;
+            });
+            code += `    }\n`;
+            code += `}\n\n`;
+            code += `int main(int argc, char** argv) {\n`;
+            code += `    glutInit(&argc, argv);\n`;
+            code += `    glutCreateWindow("GLUT Context Menus");\n\n`;
+            code += `    // Setup Right-Click Menu and Submenus\n`;
+            code += `    int styleSub = glutCreateMenu(rightClickMenu);\n`;
+            code += `    glutAddMenuEntry("Wireframe", 1);\n`;
+            code += `    glutAddMenuEntry("Solid", 2);\n`;
+            code += `    glutAddMenuEntry("Points", 3);\n\n`;
+            code += `    int colorSub = glutCreateMenu(rightClickMenu);\n`;
+            menuColors.forEach(c => {
+                code += `    glutAddMenuEntry("${c.name}", ${c.id});\n`;
+            });
+            code += `\n`;
+            code += `    glutCreateMenu(rightClickMenu);\n`;
+            code += `    glutAddSubMenu("Draw Style", styleSub);\n`;
+            code += `    glutAddSubMenu("Material Color", colorSub);\n`;
+            code += `    glutAddMenuEntry("Clear Screen", 4);\n`;
+            code += `    glutAttachMenu(GLUT_RIGHT_BUTTON);\n\n`;
+            code += `    glutMainLoop();\n`;
+            code += `    return 0;\n`;
+            code += `}`;
+            document.getElementById('opengl-code').textContent = code;
+        }
+
+        updateCode();
+    </script>
+    <script src="../../assets/js/brain-animation.js"></script>
+</body>
+</html>

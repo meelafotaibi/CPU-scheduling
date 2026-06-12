@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLUT Mouse Interaction | AlgoVisual Hub</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css?v=mobile_fix_1">
+    <link rel="stylesheet" href="../../assets/css/dsa-monster.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
+    <style>
+        :root {
+            --cg-primary: hsl(189, 100%, 52%);
+            --cg-accent: hsl(258, 89%, 66%);
+            --cg-glow: 0 0 25px rgba(6, 182, 212, 0.4);
+        }
+        .cg-viewport {
+            width: 100%;
+            height: 320px;
+            background: radial-gradient(circle at center, #1b0a3a 0%, #070214 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(139, 92, 246, 0.25);
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .cg-viewport canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .pane-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 0.68rem;
+            background: rgba(0,0,0,0.7);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #ccc;
+            font-weight: 700;
+            z-index: 10;
+            text-transform: uppercase;
+        }
+        .opengl-code-panel {
+            background: #080812;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            margin-top: 20px;
+        }
+        .opengl-code-panel h4 {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--monster-accent);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .opengl-code-panel pre {
+            margin: 0;
+            overflow-x: auto;
+        }
+        .opengl-code-panel code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+        }
+        .glut-console {
+            background: #06060c;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            height: 130px;
+            padding: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            color: #4ade80;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+        }
+        .param-radio-btn {
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #ccc;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        .param-radio-btn.active {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: #a855f7;
+            color: #fff;
+        }
+        .function-tag-active {
+            background: rgba(34, 197, 94, 0.15) !important;
+            border-color: #22c55e !important;
+            color: #4ade80 !important;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="brain-canvas"></canvas>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="../../index.html" class="logo">
+                <img src="../../assets/img/logo.png" alt="AlgoVisual Hub" style="height: 48px; width: 48px;">
+                <span>AlgoVisual Hub</span>
+            </a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../cg.html">Back to Graphics</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="monster-header">
+            <span class="category-badge">🎮 Module Fay — Extras</span>
+            <h1>GLUT Mouse Interaction</h1>
+            <p>Visualize mouse coordinate tracking, capture click states, and draw dynamic particle trails using active and passive motion callbacks.</p>
+        </header>
+
+        <div class="stats-grid" style="margin-top: 24px;">
+            <div class="stat-card" style="--stat-color: hsl(189,100%,52%);">
+                <div class="stat-icon">🖱️</div>
+                <div class="stat-value" id="stat-clicks-count">0</div>
+                <div class="stat-label">GLUT Click Count</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(258,89%,66%);">
+                <div class="stat-icon">📍</div>
+                <div class="stat-value" id="stat-mouse-coords">No Hover</div>
+                <div class="stat-label">Cursor (X, Y)</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(145,75%,50%);">
+                <div class="stat-icon">📈</div>
+                <div class="stat-value" id="stat-last-event">Init</div>
+                <div class="stat-label">Last Callback Hooked</div>
+            </div>
+            <div class="stat-card" style="--stat-color: hsl(45,100%,60%);">
+                <div class="stat-icon">💫</div>
+                <div class="stat-value" id="stat-trail-length">0</div>
+                <div class="stat-label">Active Trail Points</div>
+            </div>
+        </div>
+
+        <div class="monster-layout">
+            <div class="main-panel">
+                <div class="cg-viewport" id="viewport-main">
+                    <canvas id="cg-canvas"></canvas>
+                    <div class="pane-label">Interactive Viewport</div>
+                </div>
+
+                <div class="opengl-code-panel">
+                    <h4><i class="fas fa-code"></i> Live C++ OpenGL Code</h4>
+                    <pre><code id="opengl-code"></code></pre>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="info-card">
+                    <h4>Registered Mouse Callbacks</h4>
+                    <p style="font-size: 0.75rem; color: #888; margin-bottom: 12px; line-height: 1.4;">Click any callback tag below to simulate a mouse event and highlight its configuration in the C++ block!</p>
+                    <div style="display: flex; flex-direction: column; gap: 8px;" id="function-tags-container">
+                        <button class="param-radio-btn" style="text-align: left; padding: 10px;" onclick="triggerCallbackTag('glutMouseFunc', this)">glutMouseFunc</button>
+                        <button class="param-radio-btn" style="text-align: left; padding: 10px;" onclick="triggerCallbackTag('glutMotionFunc', this)">glutMotionFunc</button>
+                        <button class="param-radio-btn" style="text-align: left; padding: 10px;" onclick="triggerCallbackTag('glutPassiveMotionFunc', this)">glutPassiveMotionFunc</button>
+                    </div>
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <a href="../../guides/cg/glut-mouse.html" id="open-guide-btn" class="btn btn-secondary" style="flex: 1; text-align: center; justify-content: center; font-size: 0.8rem; padding: 10px;"><i class="fas fa-book"></i> Read Guide</a>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h4>GLUT Event Monitor Console</h4>
+                    <div class="glut-console" id="glut-console">Initialize Mouse Listeners...</div>
+                </div>
+
+                <div class="log-panel" style="min-height: 180px;">
+                    <h4><i class="fas fa-info-circle"></i> Mathematical Trace</h4>
+                    <div class="log-text" id="math-trace">Events trigger specific C++ functions hooked during initialization.</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let canvas, ctx;
+        let clickCount = 0;
+        let mouseX = -1, mouseY = -1;
+        let lastEvent = 'Init';
+        let dragPoints = [];
+        let isDragging = false;
+        let glutLogs = [`[GLUT Console] Mouse listener active.`];
+
+        window.addEventListener('load', () => {
+            canvas = document.getElementById('cg-canvas');
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            registerMouseEvents();
+            renderLoop();
+        });
+
+        function resizeCanvas() {
+            const container = document.getElementById('viewport-main');
+            if (container) {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+        }
+
+        function registerMouseEvents() {
+            const getCoords = (e) => {
+                const rect = canvas.getBoundingClientRect();
+                return {
+                    x: Math.round(e.clientX - rect.left),
+                    y: Math.round(e.clientY - rect.top)
+                };
+            };
+
+            canvas.addEventListener('mousedown', (e) => {
+                if (e.button === 0) {
+                    isDragging = true;
+                    const coords = getCoords(e);
+                    clickCount++;
+                    lastEvent = 'glutMouseFunc (DOWN)';
+                    dragPoints = [{ x: coords.x, y: coords.y, age: 40 }];
+                    logGlutEvent(`[glutMouseFunc] DOWN - Button: Left, x: ${coords.x}, y: ${coords.y}`);
+                    updateStats();
+                }
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                const coords = getCoords(e);
+                mouseX = coords.x;
+                mouseY = coords.y;
+                if (isDragging && e.buttons === 1) {
+                    lastEvent = 'glutMotionFunc (DRAG)';
+                    dragPoints.push({ x: coords.x, y: coords.y, age: 40 });
+                    if (Math.random() < 0.2) {
+                        logGlutEvent(`[glutMotionFunc] DRAG - Coordinates x: ${coords.x}, y: ${coords.y}`);
+                    }
+                } else {
+                    lastEvent = 'glutPassiveMotionFunc (HOVER)';
+                    if (Math.random() < 0.05) {
+                        logGlutEvent(`[glutPassiveMotionFunc] HOVER - Coordinates x: ${coords.x}, y: ${coords.y}`);
+                    }
+                }
+                updateStats();
+            });
+
+            canvas.addEventListener('mouseup', (e) => {
+                if (e.button === 0) {
+                    isDragging = false;
+                    lastEvent = 'glutMouseFunc (UP)';
+                    logGlutEvent(`[glutMouseFunc] UP - Left Button Released`);
+                    updateStats();
+                }
+            });
+
+            canvas.addEventListener('mouseleave', () => {
+                mouseX = -1;
+                mouseY = -1;
+                isDragging = false;
+                updateStats();
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('stat-clicks-count').innerText = clickCount;
+            document.getElementById('stat-mouse-coords').innerText = mouseX >= 0 ? `(${mouseX}, ${mouseY})` : 'No Hover';
+            document.getElementById('stat-last-event').innerText = lastEvent;
+            document.getElementById('stat-trail-length').innerText = dragPoints.length;
+            updateCode();
+        }
+
+        function triggerCallbackTag(funcName, element) {
+            document.querySelectorAll('#function-tags-container button').forEach(b => {
+                b.classList.remove('function-tag-active');
+            });
+            if (element) {
+                element.classList.add('function-tag-active');
+                setTimeout(() => element.classList.remove('function-tag-active'), 1200);
+            }
+
+            const codePanel = document.querySelector('.opengl-code-panel');
+            if (codePanel) {
+                codePanel.style.borderColor = '#22c55e';
+                codePanel.style.boxShadow = '0 0 25px rgba(34, 197, 94, 0.3)';
+                setTimeout(() => {
+                    codePanel.style.borderColor = 'rgba(139, 92, 246, 0.2)';
+                    codePanel.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
+                }, 1000);
+            }
+
+            if (funcName === 'glutMouseFunc') {
+                clickCount++;
+                lastEvent = 'glutMouseFunc (Simulated)';
+                const mockX = Math.round(canvas.width / 2);
+                const mockY = Math.round(canvas.height / 2);
+                dragPoints = [{ x: mockX, y: mockY, age: 40 }];
+                logGlutEvent(`[glutMouseFunc] Simulated LEFT_DOWN click at (${mockX}, ${mockY})`);
+            } else if (funcName === 'glutMotionFunc') {
+                lastEvent = 'glutMotionFunc (Simulated)';
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+                dragPoints = [];
+                for (let i = 0; i < 20; i++) {
+                    const angle = (i / 20) * Math.PI * 2;
+                    dragPoints.push({
+                        x: cx + Math.cos(angle) * 60,
+                        y: cy + Math.sin(angle) * 60,
+                        age: 40
+                    });
+                }
+                logGlutEvent(`[glutMotionFunc] Simulated dragging circular trail`);
+            } else if (funcName === 'glutPassiveMotionFunc') {
+                lastEvent = 'glutPassiveMotionFunc (Simulated)';
+                mouseX = Math.round(Math.random() * canvas.width);
+                mouseY = Math.round(Math.random() * canvas.height);
+                logGlutEvent(`[glutPassiveMotionFunc] Simulated hover position at (${mouseX}, ${mouseY})`);
+            }
+            updateStats();
+        }
+
+        function logGlutEvent(msg) {
+            glutLogs.push(msg);
+            if (glutLogs.length > 8) glutLogs.shift();
+            const el = document.getElementById('glut-console');
+            if (el) {
+                el.innerText = glutLogs.join('\n');
+                el.scrollTop = el.scrollHeight;
+            }
+        }
+
+        function renderLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw grid lines
+            ctx.strokeStyle = 'rgba(139, 92, 246, 0.08)';
+            ctx.lineWidth = 1;
+            for (let i = 20; i < canvas.width; i += 40) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            }
+            for (let j = 20; j < canvas.height; j += 40) {
+                ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
+            }
+
+            // Draw active drag trail
+            if (dragPoints.length > 0) {
+                ctx.strokeStyle = '#22d3ee';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                for (let i = 0; i < dragPoints.length; i++) {
+                    const pt = dragPoints[i];
+                    if (i === 0) ctx.moveTo(pt.x, pt.y);
+                    else ctx.lineTo(pt.x, pt.y);
+                }
+                ctx.stroke();
+
+                // Draw circles at trail vertices
+                dragPoints.forEach(p => {
+                    ctx.fillStyle = 'rgba(34, 211, 238, 0.4)';
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                    p.age--;
+                });
+                dragPoints = dragPoints.filter(p => p.age > 0);
+            }
+
+            // Draw crosshair if hover is active
+            if (mouseX >= 0 && mouseY >= 0) {
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([3, 3]);
+                ctx.beginPath(); ctx.moveTo(0, mouseY); ctx.lineTo(canvas.width, mouseY); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(mouseX, 0); ctx.lineTo(mouseX, canvas.height); ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.fillStyle = '#22d3ee';
+                ctx.font = '10px monospace';
+                ctx.fillText(`(X: ${mouseX}, Y: ${mouseY})`, mouseX + 8, mouseY - 8);
+            }
+
+            document.getElementById('math-trace').innerHTML = `
+                <b>Mouse State Matrix:</b><br>
+                Active Drag points: <b>${dragPoints.length}</b><br>
+                Total clicks tracked: <b>${clickCount}</b><br>
+                Coordinates: <b>X=${mouseX >= 0 ? mouseX : 'N/A'}, Y=${mouseY >= 0 ? mouseY : 'N/A'}</b><br>
+                Is dragging: <span style="color: ${isDragging ? '#22d3ee' : '#aaa'}"><b>${isDragging}</b></span>
+            `;
+
+            requestAnimationFrame(renderLoop);
+        }
+
+        function updateCode() {
+            let code = `// GLUT Mouse Callbacks (C++)\n`;
+            code += `#include <GL/glut.h>\n\n`;
+            code += `int clickCount = ${clickCount};\n`;
+            code += `int cursorX = ${mouseX}, cursorY = ${mouseY};\n\n`;
+            code += `// Mouse click handler (glutMouseFunc)\n`;
+            code += `void mouseClickHandler(int button, int state, int x, int y) {\n`;
+            code += `    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {\n`;
+            code += `        clickCount++;\n`;
+            code += `        // Trigger display updates on click\n`;
+            code += `        glutPostRedisplay();\n`;
+            code += `    }\n`;
+            code += `}\n\n`;
+            code += `// Active drag motion handler (glutMotionFunc)\n`;
+            code += `void mouseDragHandler(int x, int y) {\n`;
+            code += `    cursorX = x; cursorY = y;\n`;
+            code += `    addTrailPoint(x, y);\n`;
+            code += `    glutPostRedisplay();\n`;
+            code += `}\n\n`;
+            code += `// Passive motion handler (glutPassiveMotionFunc)\n`;
+            code += `void mouseHoverHandler(int x, int y) {\n`;
+            code += `    cursorX = x; cursorY = y;\n`;
+            code += `}\n\n`;
+            code += `int main(int argc, char** argv) {\n`;
+            code += `    glutInit(&argc, argv);\n`;
+            code += `    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);\n`;
+            code += `    glutInitWindowSize(800, 600);\n`;
+            code += `    glutCreateWindow("GLUT Mouse Callbacks");\n\n`;
+            code += `    // Hook mouse listeners\n`;
+            code += `    glutMouseFunc(mouseClickHandler);\n`;
+            code += `    glutMotionFunc(mouseDragHandler);\n`;
+            code += `    glutPassiveMotionFunc(mouseHoverHandler);\n\n`;
+            code += `    glutMainLoop();\n`;
+            code += `    return 0;\n`;
+            code += `}`;
+            document.getElementById('opengl-code').textContent = code;
+        }
+
+        updateCode();
+    </script>
+    <script src="../../assets/js/brain-animation.js"></script>
+</body>
+</html>
