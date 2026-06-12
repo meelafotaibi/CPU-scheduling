@@ -67,10 +67,10 @@ Visualizes geometry rendering, buffer operations, and API hooks:
 
 ## 👤 About the Creator
 
-Hi, I'm **Meelo** (GitHub: [@Melioronic](https://github.com/Melioronic)). I am a student developer passionate about open-source education and high-performance frontend interfaces.
+Hi, I'm **Meelo** (GitHub: [@meelafotaibi](https://github.com/meelafotaibi)). I am a student developer passionate about open-source education and high-performance frontend interfaces.
 
 I spent countless hours designing the styling, timing loops, and graphics rendering engines to ensure the learning experience feels premium and responsive. If this hub has helped you learn, consider supporting the project voluntarily to help keep the server lights on:
-👉 **[Support the Platform](support.html)** (Mada, Apple Pay, Google Pay, Visa, PayPal accepted).
+👉 **[Support the Platform](https://www.paypal.com/paypalme/Melioronic)** (Mada, Apple Pay, Google Pay, Visa are, PayPal accepted).
 
 ---
 
