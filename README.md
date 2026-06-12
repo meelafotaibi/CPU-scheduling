@@ -14,17 +14,9 @@ With a meticulously crafted modern "glassmorphic" UI, tailored HSL color palette
 A visually stunning home screen presenting five comprehensive learning paths. Master everything from data structures to graphics pipeline events.
 ![AlgoVisual Hub Landing Page](assets/img/landing_page.jpg)
 
-### 2. Interactive Study Tracks
-Explore carefully designed learning categories with stats, live progress tracking, and gamified achievements saved directly in your browser.
-![Algorithm Category Selector](assets/img/algorithm_categories.png)
-
-### 3. State-of-the-Art Visualizers
+### 2. State-of-the-Art Visualizers
 Every algorithm is equipped with an interactive canvas, live code generation, step-by-step logging, complexity analysis, and custom inputs.
 ![Interactive Visualizer Demos](assets/img/visualizer_page.jpg)
-
-### 4. Cohesive Premium Touches
-Every detail, like the sleek progress bars and support buttons in the header, is crafted to perfection.
-![Premium Support Navbar Action](assets/img/navbar_support.png)
 
 ---
 
