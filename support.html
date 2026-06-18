@@ -2,6 +2,7 @@
 <html lang="en" data-theme="dark">
 
 <head>
+    <link rel="canonical" href="https://cpuos-ae329.web.app/support">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Support AlgoVisual Hub - Free Forever</title>
@@ -9,6 +10,8 @@
     <link rel="icon" href="assets/img/logo.png" type="image/png">
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/responsive.css?v=mobile_fix_1">
+    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+    <script src="paddle.js"></script>
     <style>
         .support-hero {
             text-align: center;
@@ -243,7 +246,7 @@
             margin-left: 2px;
         }
 
-        .paytabs-btn {
+        .paddle-btn {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -264,7 +267,7 @@
             margin-bottom: 12px;
         }
 
-.paytabs-btn:hover {
+        .paddle-btn:hover {
             background: rgba(99, 102, 241, 0.16);
             border-color: rgba(167, 139, 250, 0.78);
             box-shadow: 0 14px 34px rgba(99, 102, 241, 0.26), 0 0 26px rgba(168, 85, 247, 0.18), inset 0 1px 0 rgba(255,255,255,0.2);
@@ -376,10 +379,10 @@
                     </div>
                 </div>
 
-                <!-- PayTabs: full payment gateway with Apple Pay, Google Pay, Mada, Visa, Mastercard -->
-                <button class="paytabs-btn" onclick="handlePayTabs()">
+                <!-- Paddle: full payment gateway with Apple Pay, Google Pay, Mada, Visa, Mastercard -->
+                <button class="paddle-btn" onclick="handlePaddle()">
                     <span style="font-size: 1.3rem;">💳</span>
-                    <span>Pay Securely <span style="font-size: 0.8rem; opacity: 0.6;">(Visa · Mada · Apple Pay · Google Pay — Coming Soon)</span></span>
+                    <span>Pay Securely <span style="font-size: 0.8rem; opacity: 0.6;">(Visa · Mada · Apple Pay · Google Pay)</span></span>
                 </button>
 
                 <!-- PayPal Button -->
@@ -512,8 +515,37 @@
             selectedAmount = parseFloat(input.value) || 0;
         }
 
-        function handlePayTabs() {
-            alert('PayTabs integration coming soon. Please use PayPal for now. 💙');
+        function handlePaddle() {
+            if (typeof PaddleConfig === 'undefined') {
+                alert('Paddle Configuration not loaded. Please try again later. 💙');
+                return;
+            }
+
+            const priceId = PaddleConfig.getPriceId(selectedAmount);
+
+            if (!priceId) {
+                alert('Custom amounts are currently only supported via PayPal. Please select $5, $10, or $20 to pay securely with credit card/Apple Pay, or use the PayPal option. 💙');
+                return;
+            }
+
+            if (typeof Paddle === 'undefined') {
+                alert('Paddle is still loading or could not be loaded. Please check your internet connection or try again. 💙');
+                return;
+            }
+
+            try {
+                Paddle.Checkout.open({
+                    items: [
+                        {
+                            priceId: priceId,
+                            quantity: 1
+                        }
+                    ]
+                });
+            } catch (error) {
+                console.error('Paddle Checkout failed to open:', error);
+                alert('There was an error opening the checkout. Please try again. 💙');
+            }
         }
     </script>
 </body>

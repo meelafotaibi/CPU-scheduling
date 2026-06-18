@@ -7,12 +7,6 @@ class BrainAnimation {
         this.canvas = document.getElementById(canvasId);
         if (!this.canvas) return;
 
-        // Disable on mobile/tablet viewports to optimize touch experience and performance
-        if (window.innerWidth < 768) {
-            this.canvas.style.display = 'none';
-            return;
-        }
-
         // Force canvas into visibility overlaying the background
         this.canvas.style.position = 'fixed';
         this.canvas.style.top = '0';
@@ -25,7 +19,11 @@ class BrainAnimation {
         this.ctx = this.canvas.getContext('2d');
         this.constellations = [];
         this.ambientStars = [];
-        this.constellationCount = 18; // Number of floating distinct zodiacs
+
+        // Optimize counts for mobile viewports to preserve performance
+        const isMobile = window.innerWidth < 768;
+        this.constellationCount = isMobile ? 8 : 18; 
+        this.starCount = isMobile ? 60 : 150;
 
         this.mouseX = 0;
         this.mouseY = 0;
@@ -49,7 +47,7 @@ class BrainAnimation {
         this.ambientStars = [];
 
         // Generate Ambient Background Space Stars
-        for (let i = 0; i < 150; i++) {
+        for (let i = 0; i < this.starCount; i++) {
             this.ambientStars.push({
                 x: Math.random() * this.canvas.width,
                 y: Math.random() * this.canvas.height,
@@ -267,6 +265,26 @@ class BrainAnimation {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    new BrainAnimation('brain-canvas');
+function initBrainAnimation() {
+    // Prevent double initialization
+    if (window.activeBrainAnimation) return;
+    
+    const canvas = document.getElementById('brain-canvas');
+    if (canvas) {
+        window.activeBrainAnimation = new BrainAnimation('brain-canvas');
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBrainAnimation);
+} else {
+    initBrainAnimation();
+}
+
+// Handle iOS Safari bfcache (Back/Forward cache) pageshow events
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        initBrainAnimation();
+    }
 });
+
