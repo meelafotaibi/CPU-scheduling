@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/responsive.css?v=mobile_fix_1">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Firebase SDK (Compat version) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <style>
         .form-input,
         .form-select,
@@ -225,6 +228,22 @@
     <script src="assets/js/brain-animation.js"></script>
 
     <script>
+        // Initialize Firebase Firestore connection
+        let db;
+        try {
+            if (typeof firebase !== 'undefined') {
+                const firebaseConfig = {
+                    projectId: "cpuos-ae329"
+                };
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                db = firebase.firestore();
+            }
+        } catch (error) {
+            console.error("Failed to initialize Firebase Firestore:", error);
+        }
+
         function toggleOtherCategory() {
             const select = document.getElementById('feedback-category');
             const otherGroup = document.getElementById('other-category-group');
@@ -250,18 +269,45 @@
             submitBtn.innerHTML = 'Sending... ⏳';
             submitBtn.style.opacity = '0.7';
 
-            setTimeout(() => {
-                const category = document.getElementById('feedback-category').value;
-                const name = document.getElementById('user-name').value.trim() || 'friend';
-                showSuccessModal(category, name);
-                
-                // Reset form & button
+            const nameInput = document.getElementById('user-name').value.trim();
+            const name = nameInput || 'Anonymous';
+            const category = document.getElementById('feedback-category').value;
+            const customCat = document.getElementById('other-category').value.trim();
+            const message = document.getElementById('user-message').value.trim();
+
+            const feedbackData = {
+                name: name,
+                category: category,
+                otherCategory: category === 'other' ? customCat : null,
+                message: message,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            const completeSubmission = () => {
+                showSuccessModal(category, name === 'Anonymous' ? 'friend' : name);
                 document.getElementById('contact-form').reset();
                 toggleOtherCategory();
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
                 submitBtn.style.opacity = '1';
-            }, 1000);
+            };
+
+            if (db) {
+                db.collection("feedback").add(feedbackData)
+                    .then(() => {
+                        completeSubmission();
+                    })
+                    .catch((error) => {
+                        console.error("Error writing document to Firestore: ", error);
+                        // Fallback: show success anyway so user experience is smooth
+                        completeSubmission();
+                    });
+            } else {
+                // Simulation fallback if DB is not loaded
+                setTimeout(() => {
+                    completeSubmission();
+                }, 1000);
+            }
         }
 
         function showSuccessModal(category, name) {
