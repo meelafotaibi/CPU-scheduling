@@ -14,6 +14,8 @@
     <!-- Firebase SDK (Compat version) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <!-- Automatically initialize Firebase App using Hosting reserved URL -->
+    <script src="/__/firebase/init.js"></script>
     <style>
         .form-input,
         .form-select,
@@ -231,14 +233,10 @@
         // Initialize Firebase Firestore connection
         let db;
         try {
-            if (typeof firebase !== 'undefined') {
-                const firebaseConfig = {
-                    projectId: "cpuos-ae329"
-                };
-                if (!firebase.apps.length) {
-                    firebase.initializeApp(firebaseConfig);
-                }
+            if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
                 db = firebase.firestore();
+            } else {
+                console.warn("Firebase was not initialized. Make sure you are testing on Firebase Hosting or running local emulators.");
             }
         } catch (error) {
             console.error("Failed to initialize Firebase Firestore:", error);
