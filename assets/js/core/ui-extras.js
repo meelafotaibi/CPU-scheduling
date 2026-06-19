@@ -91,7 +91,7 @@ class UIExtrasSystem {
                     text-decoration: none;
                     transition: all 0.3s ease;
                 `;
-                supportBtn.innerHTML = `<i class="fas fa-heart" style="color: var(--accent);"></i> Support`;
+                supportBtn.innerHTML = `<img src="${prefix}assets/img/logo.png" style="height: 1.25em; width: auto; vertical-align: middle; margin-right: 6px;"> Support`;
                 supportBtn.onmouseover = () => {
                     supportBtn.style.background = 'var(--accent)';
                     supportBtn.style.color = '#fff';
