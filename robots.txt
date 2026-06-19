@@ -1,4 +1,0 @@
-User-agent: *
-Disallow:
-
-Sitemap: https://cpuos-ae329.web.app/sitemap.xml
