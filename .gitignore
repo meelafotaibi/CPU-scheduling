@@ -11,17 +11,11 @@ sitemap.xml
 # ================================
 # Core HTML Pages (hidden from public)
 # ================================
-index.html
-algorithms.html
-ai.html
-cg.html
 coming-soon.html
 contact.html
-dsa.html
 faq.html
 guide.html
 marketing_preview.html
-os.html
 pricing.html
 privacy.html
 refund.html
@@ -32,7 +26,6 @@ terms.html
 # ================================
 # Core Directories (hidden from public)
 # ================================
-assets/
 visualizers/
 scripts/
 guides/
