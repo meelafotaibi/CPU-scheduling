@@ -10,6 +10,96 @@
     <link rel="icon" href="assets/img/logo.png" type="image/png">
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/responsive.css?v=mobile_fix_1">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: var(--text);
+            font-size: 0.95rem;
+            outline: none;
+            box-sizing: border-box;
+            font-family: inherit;
+            transition: all 0.25s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+        }
+
+        .form-select option {
+            background: #0f172a;
+            color: var(--text);
+        }
+
+        .btn-submit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 28px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            border: 1px solid rgba(167, 139, 250, 0.64) !important;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.74), rgba(168, 85, 247, 0.58)) !important;
+            color: #ffffff !important;
+            box-shadow: 0 12px 34px rgba(99, 102, 241, 0.28), 0 0 24px rgba(168, 85, 247, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            border-color: rgba(216, 180, 254, 0.82) !important;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.85), rgba(168, 85, 247, 0.7)) !important;
+            box-shadow: 0 16px 42px rgba(99, 102, 241, 0.38), 0 0 34px rgba(168, 85, 247, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.24) !important;
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -42,14 +132,44 @@
                 </p>
             </div>
 
-            <!-- Email card only — no collaboration card -->
-            <div class="glass-card" style="padding: 40px; text-align: center; margin-bottom: 32px;">
-                <div style="font-size: 3rem; margin-bottom: 16px;">📧</div>
-                <h3 style="font-weight: 700; font-size: 1.3rem; margin-bottom: 8px;">Send us an Email</h3>
-                <p style="color: var(--text-muted); margin-bottom: 24px;">For questions, suggestions, bug reports, and feature requests</p>
-                <a href="mailto:devmeelo4@gmail.com" class="btn btn-primary" style="display: inline-flex; padding: 14px 32px; font-size: 1rem;">
-                    devmeelo4@gmail.com
-                </a>
+            <!-- Interactive Feedback Form -->
+            <div class="glass-card" style="padding: 40px; margin-bottom: 32px;">
+                <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; text-align: center;">Send Feedback & Suggestions</h2>
+                <p style="color: var(--text-muted); margin-bottom: 28px; text-align: center; font-size: 0.95rem;">
+                    Help us improve AlgoVisual Hub. Select a category and share your thoughts.
+                </p>
+
+                <form id="contact-form" onsubmit="submitForm(event)" style="display: flex; flex-direction: column; gap: 20px;">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label for="user-name" style="font-weight: 600; font-size: 0.9rem; color: var(--text);">Your Name (Optional)</label>
+                        <input type="text" id="user-name" placeholder="e.g. Alex Smith" class="form-input">
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label for="feedback-category" style="font-weight: 600; font-size: 0.9rem; color: var(--text);">Category</label>
+                        <select id="feedback-category" class="form-select" onchange="toggleOtherCategory()" required>
+                            <option value="" disabled selected>Select a category...</option>
+                            <option value="bug">🐛 Bug Report</option>
+                            <option value="algo">💡 New Algorithm Request</option>
+                            <option value="edu">📚 Educational Feedback</option>
+                            <option value="other">⚙️ Other (please specify)</option>
+                        </select>
+                    </div>
+
+                    <div id="other-category-group" style="display: none; flex-direction: column; gap: 8px; animation: slideDown 0.25s ease-out;">
+                        <label for="other-category" style="font-weight: 600; font-size: 0.9rem; color: var(--text);">Specify Category</label>
+                        <input type="text" id="other-category" placeholder="What is this feedback about?" class="form-input">
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label for="user-message" style="font-weight: 600; font-size: 0.9rem; color: var(--text);">Your Message</label>
+                        <textarea id="user-message" placeholder="Describe your request or issue in detail..." rows="5" class="form-textarea" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-submit" style="margin-top: 10px; width: 100%; justify-content: center; box-sizing: border-box;">
+                        Submit Feedback 🚀
+                    </button>
+                </form>
             </div>
 
             <div class="glass-card" style="padding: 40px;">
@@ -103,6 +223,152 @@
     <script src="assets/js/loader.js"></script>
     <script src="assets/js/core/ui-extras.js"></script>
     <script src="assets/js/brain-animation.js"></script>
+
+    <script>
+        function toggleOtherCategory() {
+            const select = document.getElementById('feedback-category');
+            const otherGroup = document.getElementById('other-category-group');
+            const otherInput = document.getElementById('other-category');
+            if (select.value === 'other') {
+                otherGroup.style.display = 'flex';
+                otherInput.required = true;
+                otherInput.focus();
+            } else {
+                otherGroup.style.display = 'none';
+                otherInput.required = false;
+                otherInput.value = '';
+            }
+        }
+
+        function submitForm(event) {
+            event.preventDefault();
+            const submitBtn = document.querySelector('.btn-submit');
+            const originalText = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Sending... ⏳';
+            submitBtn.style.opacity = '0.7';
+
+            setTimeout(() => {
+                const category = document.getElementById('feedback-category').value;
+                const name = document.getElementById('user-name').value.trim() || 'friend';
+                showSuccessModal(category, name);
+                
+                // Reset form & button
+                document.getElementById('contact-form').reset();
+                toggleOtherCategory();
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+                submitBtn.style.opacity = '1';
+            }, 1000);
+        }
+
+        function showSuccessModal(category, name) {
+            // Create modal overlay
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100vw';
+            overlay.style.height = '100vh';
+            overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.85)';
+            overlay.style.backdropFilter = 'blur(10px)';
+            overlay.style.webkitBackdropFilter = 'blur(10px)';
+            overlay.style.display = 'flex';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+            overlay.style.zIndex = '9999';
+            overlay.style.animation = 'scaleIn 0.3s ease-out';
+            
+            // Create modal card
+            const card = document.createElement('div');
+            card.style.background = 'rgba(30, 41, 59, 0.75)';
+            card.style.border = '1px solid rgba(129, 140, 248, 0.4)';
+            card.style.borderRadius = '24px';
+            card.style.padding = '40px';
+            card.style.maxWidth = '500px';
+            card.style.width = '90%';
+            card.style.textAlign = 'center';
+            card.style.boxShadow = '0 20px 50px rgba(0, 0, 0, 0.5), 0 0 40px rgba(99, 102, 241, 0.2)';
+
+            let title = "Thank You, " + name + "! 💙";
+            let emoji = "🌟";
+            let message = "";
+
+            if (category === 'bug') {
+                emoji = "🐛";
+                message = "Thank you for reporting this bug! Our visualizers are built with high precision, and your report helps us hunt down edge cases. We will investigate the issue immediately to keep the learning experience flawless.";
+            } else if (category === 'algo') {
+                emoji = "💡";
+                message = "What a fantastic algorithm request! We are always looking to expand our visualizer database. Adding process synchronization, memory allocation, and graph concepts is our priority, and your suggestion will be queued up next!";
+            } else if (category === 'edu') {
+                emoji = "📚";
+                message = "We appreciate your educational feedback! Making complex computer science concepts intuitive, accurate, and interactive is our core mission. Your insights help us refine our visualizers and study guides.";
+            } else {
+                emoji = "⚙️";
+                const customCat = document.getElementById('other-category').value.trim();
+                const displayCat = customCat ? `about "${customCat}"` : "feedback";
+                message = `Thank you for sharing your thoughts ${displayCat}! Your feedback, suggestions, and support help us keep the platform free, open, and growing for students worldwide.`;
+            }
+
+            card.innerHTML = `
+                <div style="font-size: 4rem; margin-bottom: 20px; animation: float 3s ease-in-out infinite;">${emoji}</div>
+                <h2 style="font-size: 2rem; font-weight: 900; background: var(--gradient-tri-tone); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; display: block; filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.3));">${title}</h2>
+                <p style="color: #cbd5e1; font-size: 1.1rem; line-height: 1.6; margin-bottom: 28px;">
+                    ${message}
+                </p>
+                <button id="close-modal-btn" class="btn btn-primary" style="width: 100%; box-sizing: border-box; padding: 14px 28px; border-radius: 12px; font-weight: 700; cursor: pointer;">
+                    Awesome! 💙
+                </button>
+            `;
+            
+            overlay.appendChild(card);
+            document.body.appendChild(overlay);
+            
+            // Trigger theme-based confetti
+            triggerConfetti();
+            
+            // Close event
+            card.querySelector('#close-modal-btn').onclick = () => {
+                overlay.style.animation = 'scaleIn 0.2s ease-in reverse';
+                setTimeout(() => {
+                    document.body.removeChild(overlay);
+                }, 180);
+            };
+        }
+
+        function triggerConfetti() {
+            var duration = 3.5 * 1000;
+            var end = Date.now() + duration;
+            var themeColors = ['#6366f1', '#a855f7', '#ec4899', '#3b82f6', '#10b981', '#f59e0b'];
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 60,
+                    origin: { x: 0, y: 0.85 },
+                    colors: themeColors,
+                    ticks: 200,
+                    scalar: 1.2
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 60,
+                    origin: { x: 1, y: 0.85 },
+                    colors: themeColors,
+                    ticks: 200,
+                    scalar: 1.2
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+    </script>
 </body>
 
 </html>
