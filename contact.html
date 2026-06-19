@@ -149,10 +149,10 @@
                         <label for="feedback-category" style="font-weight: 600; font-size: 0.9rem; color: var(--text);">Category</label>
                         <select id="feedback-category" class="form-select" onchange="toggleOtherCategory()" required>
                             <option value="" disabled selected>Select a category...</option>
-                            <option value="bug">🐛 Bug Report</option>
-                            <option value="algo">💡 New Algorithm Request</option>
-                            <option value="edu">📚 Educational Feedback</option>
-                            <option value="other">⚙️ Other (please specify)</option>
+                            <option value="bug">Bug Report</option>
+                            <option value="algo">New Algorithm Request</option>
+                            <option value="edu">Educational Feedback</option>
+                            <option value="other">Other (please specify)</option>
                         </select>
                     </div>
 
@@ -167,7 +167,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-submit" style="margin-top: 10px; width: 100%; justify-content: center; box-sizing: border-box;">
-                        Submit Feedback 🚀
+                        Submit Feedback
                     </button>
                 </form>
             </div>
@@ -292,34 +292,29 @@
             card.style.textAlign = 'center';
             card.style.boxShadow = '0 20px 50px rgba(0, 0, 0, 0.5), 0 0 40px rgba(99, 102, 241, 0.2)';
 
-            let title = "Thank You, " + name + "! 💙";
-            let emoji = "🌟";
+            let title = "Thank You, " + name + "!";
             let message = "";
 
             if (category === 'bug') {
-                emoji = "🐛";
                 message = "Thank you for reporting this bug! Our visualizers are built with high precision, and your report helps us hunt down edge cases. We will investigate the issue immediately to keep the learning experience flawless.";
             } else if (category === 'algo') {
-                emoji = "💡";
                 message = "What a fantastic algorithm request! We are always looking to expand our visualizer database. Adding process synchronization, memory allocation, and graph concepts is our priority, and your suggestion will be queued up next!";
             } else if (category === 'edu') {
-                emoji = "📚";
                 message = "We appreciate your educational feedback! Making complex computer science concepts intuitive, accurate, and interactive is our core mission. Your insights help us refine our visualizers and study guides.";
             } else {
-                emoji = "⚙️";
                 const customCat = document.getElementById('other-category').value.trim();
                 const displayCat = customCat ? `about "${customCat}"` : "feedback";
                 message = `Thank you for sharing your thoughts ${displayCat}! Your feedback, suggestions, and support help us keep the platform free, open, and growing for students worldwide.`;
             }
 
             card.innerHTML = `
-                <div style="font-size: 4rem; margin-bottom: 20px; animation: float 3s ease-in-out infinite;">${emoji}</div>
+                <img src="assets/img/logo.png" alt="AlgoVisual Hub Logo" style="height: 80px; width: auto; margin-bottom: 20px; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 0 20px rgba(129, 140, 248, 0.6));">
                 <h2 style="font-size: 2rem; font-weight: 900; background: var(--gradient-tri-tone); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; display: block; filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.3));">${title}</h2>
                 <p style="color: #cbd5e1; font-size: 1.1rem; line-height: 1.6; margin-bottom: 28px;">
                     ${message}
                 </p>
                 <button id="close-modal-btn" class="btn btn-primary" style="width: 100%; box-sizing: border-box; padding: 14px 28px; border-radius: 12px; font-weight: 700; cursor: pointer;">
-                    Awesome! 💙
+                    Awesome!
                 </button>
             `;
             
