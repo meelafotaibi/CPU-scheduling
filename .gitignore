@@ -1,2 +1,51 @@
+# ================================
+# Firebase / Deployment
+# ================================
 paddle.js
 .firebase/
+firebase.json
+.firebaserc
+robots.txt
+sitemap.xml
+
+# ================================
+# Core HTML Pages (hidden from public)
+# ================================
+index.html
+algorithms.html
+ai.html
+cg.html
+coming-soon.html
+contact.html
+dsa.html
+faq.html
+guide.html
+marketing_preview.html
+os.html
+pricing.html
+privacy.html
+refund.html
+roadmap.html
+support.html
+terms.html
+
+# ================================
+# Core Directories (hidden from public)
+# ================================
+assets/
+visualizers/
+scripts/
+guides/
+.sixth/
+scratch/
+
+# ================================
+# IDE & Config
+# ================================
+.vscode/
+.github/
+
+# ================================
+# project_info docs (internal notes)
+# ================================
+project_info__2.md
