@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="assets/css/responsive.css?v=mobile_fix_1">
     <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
     <script src="paddle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         .support-hero {
             text-align: center;
@@ -202,6 +203,57 @@
             transform: translateY(-1px);
         }
 
+        .share-separator {
+            margin-top: 32px;
+            padding-top: 28px;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .share-separator h3 {
+            font-size: 1.0rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-align: center;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .share-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 16px 24px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            border: 1px solid rgba(129, 140, 248, 0.46) !important;
+            background: rgba(255,255,255,0.045) !important;
+            color: #ffffff !important;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.24), inset 0 1px 0 rgba(255,255,255,0.14) !important;
+            backdrop-filter: blur(18px) saturate(150%);
+            -webkit-backdrop-filter: blur(18px) saturate(150%);
+            transition: all 0.2s ease;
+        }
+
+        .share-btn:hover {
+            background: rgba(99, 102, 241, 0.16) !important;
+            border-color: rgba(167, 139, 250, 0.78) !important;
+            box-shadow: 0 14px 34px rgba(99, 102, 241, 0.26), 0 0 26px rgba(168, 85, 247, 0.18), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+            transform: translateY(-1px);
+        }
+        
+        .share-btn:active {
+            transform: translateY(0);
+        }
+
         .usd-notice {
             background: rgba(245, 158, 11, 0.05);
             border: 1px solid rgba(245, 158, 11, 0.2);
@@ -257,20 +309,26 @@
             font-weight: 700;
             font-size: 1rem;
             cursor: pointer;
-            border: 1px solid rgba(129, 140, 248, 0.46);
-            background: rgba(255,255,255,0.045);
-            color: #ffffff;
-            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.24), inset 0 1px 0 rgba(255,255,255,0.14);
+            border: 1px solid rgba(167, 139, 250, 0.64) !important;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.74), rgba(168, 85, 247, 0.58)) !important;
+            color: #ffffff !important;
+            box-shadow: 0 12px 34px rgba(99, 102, 241, 0.28), 0 0 24px rgba(168, 85, 247, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
             backdrop-filter: blur(18px) saturate(150%);
             -webkit-backdrop-filter: blur(18px) saturate(150%);
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             margin-bottom: 12px;
+            -webkit-text-fill-color: #ffffff !important;
         }
 
         .paddle-btn:hover {
-            background: rgba(99, 102, 241, 0.16);
-            border-color: rgba(167, 139, 250, 0.78);
-            box-shadow: 0 14px 34px rgba(99, 102, 241, 0.26), 0 0 26px rgba(168, 85, 247, 0.18), inset 0 1px 0 rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+            border-color: rgba(216, 180, 254, 0.82) !important;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.85), rgba(168, 85, 247, 0.7)) !important;
+            box-shadow: 0 16px 42px rgba(99, 102, 241, 0.38), 0 0 34px rgba(168, 85, 247, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.24) !important;
+        }
+
+        .paddle-btn:active {
+            transform: translateY(0);
         }
 
         .promise-grid {
@@ -308,6 +366,26 @@
         @media (max-width: 600px) {
             .amount-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
             }
         }
     </style>
@@ -379,24 +457,33 @@
                     </div>
                 </div>
 
-                <!-- Paddle: full payment gateway with Apple Pay, Google Pay, Mada, Visa, Mastercard -->
+                <!-- Paddle Checkout: premium, emotional CTA to support keeping the project alive and free -->
                 <button class="paddle-btn" onclick="handlePaddle()">
-                    <span style="font-size: 1.3rem;">💳</span>
-                    <span>Pay Securely <span style="font-size: 0.8rem; opacity: 0.6;">(Visa · Mada · Apple Pay · Google Pay)</span></span>
+                    <span style="font-size: 1.3rem;">💙</span>
+                    <span>Support keeping AlgoVisual Free & Growing <span style="font-size: 0.8rem; opacity: 0.8;">(Visa · Mada · Apple Pay · Google Pay)</span></span>
                 </button>
 
                 <!-- PayPal Button -->
                 <div class="paypal-section">
-                    <h3>or pay with PayPal</h3>
+                    <h3>or support via PayPal</h3>
                     <button class="paypal-btn" onclick="handlePayPal()">
                         <svg class="paypal-icon" viewBox="0 0 24 24" width="20" height="20" style="vertical-align: middle;">
                             <path fill="#003087" d="M20.08 6.64c.2 1-.03 2.1-.67 2.96-.65.86-1.63 1.4-2.73 1.5l-4.72.63c-.45.06-.8.4-.88.85l-1.12 6.47c-.07.41-.43.72-.85.72H6.62c-.52 0-.9-.47-.8-.98l2.54-14.7C8.45 3.6 8.9 3.2 9.4 3.2h5.5c1.47 0 2.7.38 3.5 1.1.75.7 1.1 1.5 1.18 2.34z"/>
                             <path fill="#0079C1" d="M18.72 8.3c.2 1-.03 2.1-.67 2.96-.65.86-1.63 1.4-2.73 1.5l-4.72.63c-.45.06-.8.4-.88.85l-1.12 6.47c-.07.41-.43.72-.85.72H5.26c-.52 0-.9-.47-.8-.98l2.54-14.7c.07-.41.43-.72.85-.72h5.5c1.47 0 2.7.38 3.5 1.1.75.7 1.1 1.5 1.18 2.34z"/>
                             <path fill="#00457C" d="M15.54 11.23L14.42 17.7c-.07.41-.43.72-.85.72H10.5c-.52 0-.9-.47-.8-.98l1.12-6.47c.07-.41.43-.72.85-.72h2.3c.67 0 1.25.35 1.57.98z"/>
                         </svg>
-                        <span>Pay with PayPal</span>
+                        <span>Support with PayPal</span>
                     </button>
                 </div>
+
+                <!-- Share Section: Free support option under PayPal -->
+                <div class="share-separator">
+                    <h3>or support for free</h3>
+                </div>
+                <button class="share-btn" onclick="handleShare()">
+                    <span style="font-size: 1.2rem;">📢</span>
+                    <span>Share Platform with Friends & Classmates</span>
+                </button>
 
                 <p style="text-align: center; color: var(--text-muted); font-size: 0.82rem; margin-top: 20px;">
                     🔒 Secure payment. No subscription created.
@@ -515,6 +602,119 @@
             selectedAmount = parseFloat(input.value) || 0;
         }
 
+        function handleShare() {
+            const shareData = {
+                title: 'AlgoVisual Hub',
+                text: 'Check out AlgoVisual Hub — an interactive, free learning platform for computer science algorithms, data structures, and operating systems!',
+                url: window.location.origin || 'https://cpuos-ae329.web.app/'
+            };
+            
+            if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+                navigator.share(shareData)
+                    .then(() => {
+                        showThankYouPopup();
+                    })
+                    .catch(err => {
+                        if (err.name !== 'AbortError') {
+                            copyShareLink();
+                        }
+                    });
+            } else {
+                copyShareLink();
+            }
+        }
+
+        function copyShareLink() {
+            const shareUrl = window.location.origin || 'https://cpuos-ae329.web.app/';
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                showThankYouPopup(true);
+            }).catch(err => {
+                alert('Please copy and share this link: ' + shareUrl + ' 💙');
+            });
+        }
+
+        function showThankYouPopup(isCopied = false) {
+            // Create the modal overlay
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100vw';
+            overlay.style.height = '100vh';
+            overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.85)';
+            overlay.style.backdropFilter = 'blur(10px)';
+            overlay.style.webkitBackdropFilter = 'blur(10px)';
+            overlay.style.display = 'flex';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+            overlay.style.zIndex = '9999';
+            overlay.style.animation = 'scaleIn 0.3s ease-out';
+            
+            // Create the modal card
+            const card = document.createElement('div');
+            card.style.background = 'rgba(30, 41, 59, 0.7)';
+            card.style.border = '1px solid rgba(129, 140, 248, 0.4)';
+            card.style.borderRadius = '24px';
+            card.style.padding = '40px';
+            card.style.maxWidth = '450px';
+            card.style.width = '90%';
+            card.style.textAlign = 'center';
+            card.style.boxShadow = '0 20px 50px rgba(0, 0, 0, 0.5), 0 0 40px rgba(99, 102, 241, 0.2)';
+            
+            const description = isCopied 
+                ? "Platform link copied to clipboard! Share it with your friends or classmates to support AlgoVisual Hub. 💙 Your support helps us keep the platform free, open, and growing."
+                : "Thank you so much for sharing and supporting AlgoVisual Hub! 💙 Your support helps us keep the platform free, open, and growing for students worldwide.";
+
+            card.innerHTML = `
+                <div style="font-size: 4rem; margin-bottom: 20px; animation: float 3s ease-in-out infinite;">👑</div>
+                <h2 style="font-size: 2rem; font-weight: 900; background: var(--gradient-tri-tone); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; display: block; filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.3));">Thank You So Much For Supporting! 💙</h2>
+                <p style="color: #cbd5e1; font-size: 1.1rem; line-height: 1.6; margin-bottom: 28px;">
+                    ${description}
+                </p>
+                <button id="close-thankyou-btn" class="btn btn-primary" style="width: 100%; box-sizing: border-box; padding: 14px 28px; border-radius: 12px; font-weight: 700; cursor: pointer;">
+                    Close 💙
+                </button>
+            `;
+            
+            overlay.appendChild(card);
+            document.body.appendChild(overlay);
+            
+            // Animate confetti
+            triggerConfetti();
+            
+            // Close event
+            card.querySelector('#close-thankyou-btn').onclick = () => {
+                overlay.style.animation = 'scaleIn 0.2s ease-in reverse';
+                setTimeout(() => {
+                    document.body.removeChild(overlay);
+                }, 180);
+            };
+        }
+        
+        function triggerConfetti() {
+            var duration = 3.5 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 4,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0, y: 0.8 }
+                });
+                confetti({
+                    particleCount: 4,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1, y: 0.8 }
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
         function handlePaddle() {
             if (typeof PaddleConfig === 'undefined') {
                 alert('Paddle Configuration not loaded. Please try again later. 💙');
@@ -524,7 +724,7 @@
             const priceId = PaddleConfig.getPriceId(selectedAmount);
 
             if (!priceId) {
-                alert('Custom amounts are currently only supported via PayPal. Please select $5, $10, or $20 to pay securely with credit card/Apple Pay, or use the PayPal option. 💙');
+                alert('Custom amounts are currently only supported via PayPal. Please select $5, $10, or $20 to support with credit card/Apple Pay, or use the PayPal option. 💙');
                 return;
             }
 

@@ -1,5 +1,7 @@
 # AlgoVisual Hub 🚀
 
+🌐 **Live Website:** [cpuos-ae329.web.app](https://cpuos-ae329.web.app/)
+
 Welcome to **AlgoVisual Hub**, an interactive, high-fidelity learning platform designed to make abstract computer science concepts visible, intuitive, and beautiful.
 
 I built this platform from the ground up to solve a problem I faced myself: textbooks and static slides make dynamic computer science systems feel lifeless. My vision is to create a cinematic, state-of-the-art visualizer hub that wows you at first glance and teaches you the core mechanics of complex systems through interaction.
@@ -87,3 +89,5 @@ npm run dev
 # Run smoke testing suite (automated headless Chrome validation)
 node scratch/milestone-smoke-test.mjs
 ```
+
+🌐 **Live Website:** [cpuos-ae329.web.app](https://cpuos-ae329.web.app/)
