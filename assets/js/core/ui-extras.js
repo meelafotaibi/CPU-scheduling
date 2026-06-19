@@ -457,44 +457,50 @@ class UIExtrasSystem {
         const path = window.location.pathname.toLowerCase();
         if (!path.includes('/visualizers/')) return;
 
+        // Extract the last segment and strip any trailing .html
+        let segment = path.split('/').pop();
+        if (segment.endsWith('.html')) {
+            segment = segment.slice(0, -5);
+        }
+
         // Detect algorithm key
         let algoKey = "";
-        if (path.includes('disk.html')) algoKey = "disk";
-        else if (path.includes('cpu-scheduling.html')) algoKey = "cpu-scheduling";
-        else if (path.includes('semaphores.html')) algoKey = "semaphores";
-        else if (path.includes('bankers.html')) algoKey = "bankers";
-        else if (path.includes('page-replacement.html')) algoKey = "page-replacement";
-        else if (path.includes('memory-allocation.html')) algoKey = "memory-allocation";
-        else if (path.includes('deadlock-detection.html')) algoKey = "deadlock-detection";
-        else if (path.includes('process-sync.html')) algoKey = "process-sync";
-        else if (path.includes('bubble.html')) algoKey = "bubble";
-        else if (path.includes('selection.html')) algoKey = "selection";
-        else if (path.includes('insertion.html')) algoKey = "insertion";
-        else if (path.includes('merge.html')) algoKey = "merge";
-        else if (path.includes('quick.html')) algoKey = "quick";
-        else if (path.includes('advanced-sorting.html') || path.includes('radix')) algoKey = "radix-bucket";
-        else if (path.includes('bfs.html')) algoKey = "bfs";
-        else if (path.includes('dfs.html')) algoKey = "dfs";
-        else if (path.includes('dijkstra.html')) algoKey = "dijkstra";
-        else if (path.includes('astar.html')) algoKey = "astar";
-        else if (path.includes('bellman-ford.html')) algoKey = "bellman-ford";
-        else if (path.includes('mst.html')) algoKey = "mst";
-        else if (path.includes('topo.html')) algoKey = "topo";
-        else if (path.includes('cycle-detection.html')) algoKey = "cycle-detection";
-        else if (path.includes('recursion.html')) algoKey = "recursion";
-        else if (path.includes('dp.html')) algoKey = "dp";
-        else if (path.includes('trie.html')) algoKey = "trie";
-        else if (path.includes('heap.html')) algoKey = "heap";
-        else if (path.includes('avl.html')) algoKey = "avl";
-        else if (path.includes('bst.html')) algoKey = "bst";
-        else if (path.includes('stack-queue.html')) algoKey = "stack-queue";
-        else if (path.includes('linked-list.html')) algoKey = "linked-list";
-        else if (path.includes('minimax.html')) algoKey = "minimax";
-        else if (path.includes('linear-regression.html')) algoKey = "linear-regression";
-        else if (path.includes('knn.html')) algoKey = "knn";
-        else if (path.includes('kmeans.html')) algoKey = "kmeans";
-        else if (path.includes('perceptron.html')) algoKey = "perceptron";
-        else if (path.includes('binary-search.html') || path.includes('search.html')) algoKey = "binary-search";
+        if (segment === 'disk') algoKey = "disk";
+        else if (segment === 'cpu-scheduling') algoKey = "cpu-scheduling";
+        else if (segment === 'semaphores') algoKey = "semaphores";
+        else if (segment === 'bankers') algoKey = "bankers";
+        else if (segment === 'page-replacement') algoKey = "page-replacement";
+        else if (segment === 'memory-allocation') algoKey = "memory-allocation";
+        else if (segment === 'deadlock-detection') algoKey = "deadlock-detection";
+        else if (segment === 'process-sync') algoKey = "process-sync";
+        else if (segment === 'bubble') algoKey = "bubble";
+        else if (segment === 'selection') algoKey = "selection";
+        else if (segment === 'insertion') algoKey = "insertion";
+        else if (segment === 'merge') algoKey = "merge";
+        else if (segment === 'quick') algoKey = "quick";
+        else if (segment === 'advanced-sorting' || segment === 'radix') algoKey = "radix-bucket";
+        else if (segment === 'bfs') algoKey = "bfs";
+        else if (segment === 'dfs') algoKey = "dfs";
+        else if (segment === 'dijkstra') algoKey = "dijkstra";
+        else if (segment === 'astar') algoKey = "astar";
+        else if (segment === 'bellman-ford') algoKey = "bellman-ford";
+        else if (segment === 'mst') algoKey = "mst";
+        else if (segment === 'topo') algoKey = "topo";
+        else if (segment === 'cycle-detection') algoKey = "cycle-detection";
+        else if (segment === 'recursion') algoKey = "recursion";
+        else if (segment === 'dp') algoKey = "dp";
+        else if (segment === 'trie') algoKey = "trie";
+        else if (segment === 'heap') algoKey = "heap";
+        else if (segment === 'avl') algoKey = "avl";
+        else if (segment === 'bst') algoKey = "bst";
+        else if (segment === 'stack-queue') algoKey = "stack-queue";
+        else if (segment === 'linked-list') algoKey = "linked-list";
+        else if (segment === 'minimax') algoKey = "minimax";
+        else if (segment === 'linear-regression') algoKey = "linear-regression";
+        else if (segment === 'knn') algoKey = "knn";
+        else if (segment === 'kmeans') algoKey = "kmeans";
+        else if (segment === 'perceptron') algoKey = "perceptron";
+        else if (segment === 'binary-search' || segment === 'search') algoKey = "binary-search";
 
         if (!algoKey) return;
 
