@@ -97,6 +97,33 @@
         font-size: 0.8rem !important;
         margin: 2px;
     }
+
+    /* Stacking visualizer controls cleanly on mobile viewport */
+    .controls,
+    .monster-controls {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+    }
+
+    .controls > *,
+    .monster-controls > * {
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    .controls button,
+    .monster-controls button {
+        width: 100% !important;
+        justify-content: center !important;
+        display: inline-flex !important;
+        align-items: center !important;
+    }
+
+    .controls .divider-v,
+    .monster-controls .divider-v {
+        display: none !important;
+    }
 }
 
 /* Very small screens */
