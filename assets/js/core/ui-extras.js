@@ -186,14 +186,14 @@ class UIExtrasSystem {
                 <p><strong>Common uses:</strong> ${content.usage}</p>
                 
                 <div style="margin-top: 24px;">
-                    <h4 style="color: var(--success); margin-bottom: 12px;">✅ Advantages</h4>
+                    <h4 style="color: var(--success); margin-bottom: 12px;"><i class="fas fa-check-circle" style="color: var(--success);"></i> Advantages</h4>
                     <ul style="margin-left: 20px; color: var(--text-muted);">
                         ${prosHTML}
                     </ul>
                 </div>
                 
                 <div style="margin-top: 20px;">
-                    <h4 style="color: var(--warning); margin-bottom: 12px;">⚠️ Limitations</h4>
+                    <h4 style="color: var(--warning); margin-bottom: 12px;"><i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i> Limitations</h4>
                     <ul style="margin-left: 20px; color: var(--text-muted);">
                         ${consHTML}
                     </ul>
@@ -247,7 +247,7 @@ class UIExtrasSystem {
                         <button class="code-tab active" data-lang="python">Python</button>
                         <button class="code-tab" data-lang="cpp">C++</button>
                         <button class="code-tab" data-lang="java">Java</button>
-                        <button class="copy-btn">📋 Copy</button>
+                        <button class="copy-btn"><i class="fas fa-clipboard"></i> Copy</button>
                     </div>
                 </div>
                 <div class="code-viewer">
@@ -277,9 +277,9 @@ class UIExtrasSystem {
 
         copyBtn.addEventListener('click', () => {
             navigator.clipboard.writeText(codeContent.textContent);
-            copyBtn.textContent = '✅ Copied!';
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
             setTimeout(() => {
-                copyBtn.textContent = '📋 Copy';
+                copyBtn.innerHTML = '<i class="fas fa-clipboard"></i> Copy';
             }, 2000);
         });
     }
@@ -665,7 +665,7 @@ window.shareScreenshot = async function (targetId, algoName) {
 
     const btn = document.activeElement;
     const originalText = btn ? btn.textContent : 'Share';
-    if (btn) btn.textContent = '📸 Capturing...';
+    if (btn) btn.innerHTML = '<i class="fas fa-camera"></i> Capturing...';
 
     try {
         await loadHtml2Canvas();

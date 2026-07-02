@@ -246,7 +246,7 @@ class ProgressSystem {
 
             GamificationSystem.checkProgressAchievements();
 
-            this.showToast(`✨ Completed: ${algoName}! Category progress updated.`);
+            this.showToast(`<i class="fas fa-star" style="color: #f59e0b;"></i> Completed: ${algoName}! Category progress updated.`);
         }
     }
 
@@ -276,7 +276,7 @@ class ProgressSystem {
             align-items: center;
             gap: 12px;
         `;
-        toast.innerHTML = `<span>🎉</span> <span>${message}</span>`;
+        toast.innerHTML = `<span><i class="fas fa-award" style="color: var(--accent);"></i></span> <span>${message}</span>`;
         document.body.appendChild(toast);
         setTimeout(() => {
             toast.style.animation = 'fadeOut 0.5s forwards';
@@ -333,7 +333,7 @@ class GamificationSystem {
         }
     }
 
-    static unlock(id, title, desc, icon = '🏆') {
+    static unlock(id, title, desc, icon = '<i class="fas fa-trophy"></i>') {
         const unlocked = this.getAchievements();
         if (unlocked.some(a => a.id === id)) return;
 
@@ -354,9 +354,9 @@ class GamificationSystem {
             }
 
             if (score <= optimalScore) {
-                this.unlock('algo_master_' + algoName, `Beat ${algoName}!`, `Succeeded with optimal or better moves than the standard algorithm.`, '👑');
+                this.unlock('algo_master_' + algoName, `Beat ${algoName}!`, `Succeeded with optimal or better moves than the standard algorithm.`, '<i class="fas fa-crown"></i>');
             } else {
-                this.unlock('algo_challenger_' + algoName, `Challenged ${algoName}!`, `Completed the manual challenge and learned the mechanics.`, '🥋');
+                this.unlock('algo_challenger_' + algoName, `Challenged ${algoName}!`, `Completed the manual challenge and learned the mechanics.`, '<i class="fas fa-user-ninja"></i>');
             }
 
             return { isBest: isBetter, best: isBetter ? score : parseInt(currentBest, 10) };
@@ -373,16 +373,16 @@ class GamificationSystem {
         Object.values(progress.completed).forEach(arr => completedCount += arr.length);
 
         if (completedCount >= 1) {
-            this.unlock('first_step', 'First Step Taken', 'Completed your very first algorithm visualization!', '👣');
+            this.unlock('first_step', 'First Step Taken', 'Completed your very first algorithm visualization!', '<i class="fas fa-shoe-prints"></i>');
         }
         if (completedCount >= 5) {
-            this.unlock('algo_explorer', 'Algorithm Explorer', 'Successfully completed 5 different algorithm visualizers!', '🧭');
+            this.unlock('algo_explorer', 'Algorithm Explorer', 'Successfully completed 5 different algorithm visualizers!', '<i class="fas fa-compass"></i>');
         }
         if (progress.completed['sorting'] && progress.completed['sorting'].length >= 3) {
-            this.unlock('sorting_wizard', 'Sorting Wizard', 'Completed Bubble, Quick, and Merge Sort!', '🧙‍♂️');
+            this.unlock('sorting_wizard', 'Sorting Wizard', 'Completed Bubble, Quick, and Merge Sort!', '<i class="fas fa-hat-wizard"></i>');
         }
         if (progress.completed['os'] && progress.completed['os'].length >= 3) {
-            this.unlock('scheduler_pro', 'Kernel Scheduler', 'Completed FCFS, SJF, and Round Robin simulations!', '⚙️');
+            this.unlock('scheduler_pro', 'Kernel Scheduler', 'Completed FCFS, SJF, and Round Robin simulations!', '<i class="fas fa-cog"></i>');
         }
     }
 
@@ -414,7 +414,7 @@ class GamificationSystem {
         banner.innerHTML = `
             <div style="font-size: 2.8rem; background: var(--gradient-tri-tone); -webkit-background-clip: text; background-clip: text; padding: 5px;">${icon}</div>
             <div style="flex: 1;">
-                <h4 style="margin: 0; font-size: 1.2rem; font-weight: 800; text-transform: uppercase; background: var(--gradient-tri-tone); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">🏆 Achievement Unlocked!</h4>
+                <h4 style="margin: 0; font-size: 1.2rem; font-weight: 800; text-transform: uppercase; background: var(--gradient-tri-tone); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"><i class="fas fa-trophy"></i> Achievement Unlocked!</h4>
                 <h5 style="margin: 4px 0; font-size: 1.1rem; color: #fff; font-weight: 700;">${title}</h5>
                 <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">${desc}</p>
             </div>

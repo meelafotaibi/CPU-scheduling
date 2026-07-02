@@ -130,7 +130,7 @@ class LinkedListAlgo {
             this.challengeNodes.push({ value: val, x, y, next: null });
         });
 
-        this.ui.updateStatus(`🎯 Pointer Repair Challenge! Link the nodes to create the list: <b>${this.targetSequence.join(' ➔ ')}</b>.<br>Click a node's RIGHT half to link from, then click target node. Click empty space to set to NULL.`);
+        this.ui.updateStatus(`<i class="fas fa-crosshairs" style="color: var(--primary);"></i> Pointer Repair Challenge! Link the nodes to create the list: <b>${this.targetSequence.join(' ➔ ')}</b>.<br>Click a node's RIGHT half to link from, then click target node. Click empty space to set to NULL.`);
         this.engine.draw();
     }
 
@@ -158,7 +158,7 @@ class LinkedListAlgo {
                         traversed.every((v, idx) => v === this.targetSequence[idx]);
 
         if (matches) {
-            this.ui.updateStatus(`👑 Match Complete! You repaired the list in <b>${this.moves} operations</b>.`);
+            this.ui.updateStatus(`<i class="fas fa-crown" style="color: #f59e0b;"></i> Match Complete! You repaired the list in <b>${this.moves} operations</b>.`);
             if (typeof GamificationSystem !== 'undefined') {
                 GamificationSystem.saveScore('linked-list', 'manual_repair', this.moves, 4);
                 ProgressSystem.complete('dsa', 'Linked List');

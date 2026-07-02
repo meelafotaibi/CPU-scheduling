@@ -405,7 +405,7 @@ class BankersAlgo {
             this.ctx.fillStyle = '#ef4444';
             this.ctx.font = 'bold 12px Arial';
             this.ctx.textAlign = 'center';
-            this.ctx.fillText('⚠️ DEADLOCK DETECTED (RAG CYCLE)', cw / 2, ch - 15);
+            this.ctx.fillText('WARNING: DEADLOCK DETECTED (RAG CYCLE)', cw / 2, ch - 15);
         }
     }
 
@@ -577,7 +577,7 @@ class BankersAlgo {
         let scoreMessage = '';
         if (this.gameScore > highscore) {
             localStorage.setItem('bankers_highscore', this.gameScore);
-            scoreMessage = `🏆 NEW HIGH SCORE!`;
+            scoreMessage = `NEW HIGH SCORE!`;
         } else {
             scoreMessage = `High Score: ${highscore}`;
         }
@@ -634,7 +634,7 @@ function generateIncomingRequest() {
 function updateGameUI() {
     const algo = window.algo;
     document.getElementById('game-score').innerText = algo.gameScore;
-    document.getElementById('game-lives').innerText = '❤️'.repeat(algo.gameLives);
+    document.getElementById('game-lives').innerHTML = '<i class="fas fa-heart"></i>'.repeat(algo.gameLives);
     document.getElementById('game-timer').innerText = algo.gameTimeRemaining + 's';
 
     const queueDiv = document.getElementById('incoming-requests-queue');

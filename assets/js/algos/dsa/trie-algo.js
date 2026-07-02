@@ -53,7 +53,7 @@ class TrieAlgo {
                 this.moves++;
 
                 if (this.currentLetterIndex >= this.targetWord.length) {
-                    this.ui.updateStatus(`👑 Word Spelled! You traced "${this.targetWord}" in the Trie correctly!`);
+                    this.ui.updateStatus(`<i class="fas fa-crown" style="color: #f59e0b;"></i> Word Spelled! You traced "${this.targetWord}" in the Trie correctly!`);
                     if (typeof GamificationSystem !== 'undefined') {
                         GamificationSystem.saveScore('trie', 'prefix_matcher', this.moves, this.targetWord.length);
                         ProgressSystem.complete('dsa', 'Trie Structure');
@@ -64,7 +64,7 @@ class TrieAlgo {
                 }
             } else {
                 this.nodeCoords[clickedPath].challengeHighlight = 'incorrect';
-                this.ui.updateStatus(`❌ Incorrect prefix! We are tracing "${this.targetWord}" starting from root.`);
+                this.ui.updateStatus(`<i class="fas fa-times-circle" style="color: var(--danger);"></i> Incorrect prefix! We are tracing "${this.targetWord}" starting from root.`);
             }
             this.drawTrie();
         }
@@ -85,7 +85,7 @@ class TrieAlgo {
 
         // Clear previous highlights
         this.nodeCoords = {};
-        this.ui.updateStatus(`🎯 Trie Path Tracer! Trace the word: <b>${this.targetWord}</b> in the Trie by clicking the letters from the root.`);
+        this.ui.updateStatus(`<i class="fas fa-crosshairs" style="color: var(--primary);"></i> Trie Path Tracer! Trace the word: <b>${this.targetWord}</b> in the Trie by clicking the letters from the root.`);
         this.drawTrie();
     }
 

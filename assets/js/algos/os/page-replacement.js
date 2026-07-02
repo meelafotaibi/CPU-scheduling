@@ -218,7 +218,7 @@ class PageReplacementAlgo {
             let scoreMsg = '';
             if (this.gameScore > hs) {
                 localStorage.setItem('page_highscore', this.gameScore);
-                scoreMsg = `🏆 NEW HIGH SCORE!`;
+                scoreMsg = `NEW HIGH SCORE!`;
             } else {
                 scoreMsg = `High Score: ${hs}`;
             }
@@ -308,7 +308,6 @@ class PageReplacementAlgo {
     }
 }
 
-// Logging for Game Mode
 function logGameMessage(msg) {
     const box = document.getElementById('status-text');
     if (box) box.innerText = msg;
@@ -395,7 +394,7 @@ function generateBeladyPlot(refString) {
         } else {
             reportBox.innerHTML = `
                 <div style="background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; padding: 15px; border-radius: 12px; font-size: 0.85rem;">
-                    <strong>✅ No Belady's Anomaly Detected</strong><br>
+                    <strong><i class="fas fa-check-circle" style="color: var(--success);"></i> No Belady's Anomaly Detected</strong><br>
                     For the current reference string, FIFO page faults decreased or remained steady across all frame sizes.
                 </div>
             `;

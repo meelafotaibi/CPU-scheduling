@@ -306,7 +306,7 @@ class DiskAlgo {
             const prevHs = localStorage.getItem(hsKey) || 0;
             if (this.gameScore > prevHs) {
                 localStorage.setItem(hsKey, this.gameScore);
-                alert(`🏆 New Personal High Score for ${this.gameDifficulty.toUpperCase()} difficulty: ${this.gameScore}!`);
+                alert(`New Personal High Score for ${this.gameDifficulty.toUpperCase()} difficulty: ${this.gameScore}!`);
             }
             
             this.startNewGameLevel(this.gameDifficulty);
@@ -442,7 +442,7 @@ function generateComparisons(requests, initialHead) {
             return `<tr>
                 <td><strong>${algo}</strong></td>
                 <td><span style="${isMin ? 'color: var(--success); font-weight: 800;' : 'color: var(--text);'}">${seek} cylinders</span></td>
-                <td>${isMin ? '🏆 Optimal' : 'Sub-optimal'}</td>
+                <td>${isMin ? '<i class="fas fa-trophy"></i> Optimal' : 'Sub-optimal'}</td>
             </tr>`;
         }).join('');
     }

@@ -189,7 +189,7 @@ class AVLAlgo {
         this.challengeUnbalancedNode = choice.unbalanced;
         this.requiredRotationMode = choice.rotation;
 
-        this.ui.updateStatus(`🎯 Balance Rotator! The tree is unbalanced at node <b>${choice.unbalanced}</b>.<br>Click the correct rotation type in the control bar below to rebalance it.`);
+        this.ui.updateStatus(`<i class="fas fa-bullseye" style="color: var(--accent);"></i> Balance Rotator! The tree is unbalanced at node <b>${choice.unbalanced}</b>.<br>Click the correct rotation type in the control bar below to rebalance it.`);
         this.draw();
     }
 
@@ -221,14 +221,14 @@ class AVLAlgo {
                 this.root = this.leftRotate(this.root);
             }
 
-            this.ui.updateStatus(`👑 Balanced! You correctly solved the imbalance using a <b>${mode} rotation</b> in ${this.moves} move.`);
+            this.ui.updateStatus(`<i class="fas fa-crown" style="color: #f59e0b;"></i> Balanced! You correctly solved the imbalance using a <b>${mode} rotation</b> in ${this.moves} move.`);
             if (typeof GamificationSystem !== 'undefined') {
                 GamificationSystem.saveScore('avl', 'tree_balancer', this.moves, 1);
                 ProgressSystem.complete('dsa', 'AVL Trees');
             }
             this.challengeActive = false;
         } else {
-            this.ui.updateStatus(`❌ Incorrect rotation! That would make the tree more unbalanced. Try again!`);
+            this.ui.updateStatus(`<i class="fas fa-times-circle" style="color: var(--danger);"></i> Incorrect rotation! That would make the tree more unbalanced. Try again!`);
         }
         this.draw();
     }

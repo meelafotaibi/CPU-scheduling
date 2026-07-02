@@ -103,7 +103,7 @@ class KruskalAlgo {
             this.engine.updateNodeStatus(v, 'visited');
 
             this.ui.updateStats(this.totalWeight);
-            this.ui.updateStatus(`✅ Accepted edge (${u}→${v}), weight=${w}. MST weight: ${this.totalWeight}`);
+            this.ui.updateStatus(`<i class="fas fa-check-circle" style="color: var(--success);"></i> Accepted edge (${u}→${v}), weight=${w}. MST weight: ${this.totalWeight}`);
         } else {
             // Cycle detected - highlight in current color momentarily
             this.engine.updateNodeStatus(u, 'current');
@@ -112,13 +112,13 @@ class KruskalAlgo {
                 this.engine.updateNodeStatus(u, 'default');
                 this.engine.updateNodeStatus(v, 'default');
             }, 400);
-            this.ui.updateStatus(`❌ Skipped edge (${u}→${v}) — would create cycle.`);
+            this.ui.updateStatus(`<i class="fas fa-times-circle" style="color: var(--danger);"></i> Skipped edge (${u}→${v}) — would create cycle.`);
         }
 
         // Check if MST is complete (V-1 edges)
         if (this.mstEdges.length >= this.engine.nodes.length - 1) {
             this.complete = true;
-            this.ui.updateStatus(`🎉 MST Complete! Total Weight: ${this.totalWeight}`);
+            this.ui.updateStatus(`<i class="fas fa-award" style="color: var(--accent);"></i> MST Complete! Total Weight: ${this.totalWeight}`);
             return false;
         }
 

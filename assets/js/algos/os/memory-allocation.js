@@ -157,7 +157,7 @@ function updateUI() {
     // Update challenge stats if active
     if (gameState.active) {
         document.getElementById('game-score').innerText = gameState.score;
-        document.getElementById('game-lives').innerText = '❤️'.repeat(gameState.lives);
+        document.getElementById('game-lives').innerHTML = '<i class="fas fa-heart"></i>'.repeat(gameState.lives);
         document.getElementById('game-timer').innerText = gameState.timeRemaining + 's';
         
         const qContainer = document.getElementById('game-request-queue');
@@ -800,7 +800,7 @@ function endGame(timeOut) {
     
     if (gameState.score > previousHighscore) {
         localStorage.setItem(highscoreKey, gameState.score);
-        highscoreMessage = `🏆 NEW HIGH SCORE for ${gameState.level.toUpperCase()}!`;
+        highscoreMessage = `NEW HIGH SCORE for ${gameState.level.toUpperCase()}!`;
     } else {
         highscoreMessage = `High Score: ${previousHighscore}`;
     }

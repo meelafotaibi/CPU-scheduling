@@ -69,7 +69,7 @@ class PrimsAlgo {
             if (this.visited.size < this.engine.nodes.length) {
                 this.ui.updateStatus(`Graph is disconnected. MST complete for current component. Weight: ${this.totalWeight}`);
             } else {
-                this.ui.updateStatus(`🎉 MST Complete! Total Weight: ${this.totalWeight}`);
+                this.ui.updateStatus(`<i class="fas fa-award" style="color: var(--accent);"></i> MST Complete! Total Weight: ${this.totalWeight}`);
             }
             return false;
         }
@@ -84,7 +84,7 @@ class PrimsAlgo {
         this.mstEdges.push(edge);
         this.totalWeight += edge.weight;
         this.ui.updateStats(this.totalWeight);
-        this.ui.updateStatus(`✅ Adding edge (${edge.from}→${edge.to}), weight=${edge.weight}. MST weight: ${this.totalWeight}`);
+        this.ui.updateStatus(`<i class="fas fa-check-circle" style="color: var(--success);"></i> Adding edge (${edge.from}→${edge.to}), weight=${edge.weight}. MST weight: ${this.totalWeight}`);
 
         // Highlight the newly added edge destination
         this.engine.updateNodeStatus(edge.from, 'current');
@@ -97,7 +97,7 @@ class PrimsAlgo {
         // Check if MST complete
         if (this.visited.size >= this.engine.nodes.length) {
             this.complete = true;
-            this.ui.updateStatus(`🎉 MST Complete! Total Weight: ${this.totalWeight}`);
+            this.ui.updateStatus(`<i class="fas fa-award" style="color: var(--accent);"></i> MST Complete! Total Weight: ${this.totalWeight}`);
             return false;
         }
 

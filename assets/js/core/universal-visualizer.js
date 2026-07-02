@@ -56,7 +56,7 @@ class UniversalVisualizer {
                     <div style="margin-top: 20px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
                         <button class="btn btn-primary" onclick="startAlgorithm()">Start \${algoKey.toUpperCase()}</button>
                         <button class="btn btn-secondary" onclick="resetVisualization()">Reset</button>
-                        <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', '\${algoKey.toUpperCase()}')">📸 Share</button>
+                        <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', '\${algoKey.toUpperCase()}')"><i class="fas fa-camera"></i> Share</button>
                     </div>
                 \`;
             } else if (['bubble-sort', 'insertion', 'selection', 'merge-sort', 'quick-sort', 'heap'].includes(algoKey)) {
@@ -66,7 +66,7 @@ class UniversalVisualizer {
                         <button class="btn btn-primary" onclick="startSorting()">Start Sort</button>
                         <button class="btn btn-secondary" onclick="generateArray()">New Array</button>
                         <button class="btn btn-secondary" onclick="resetArray()">Reset</button>
-                        <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', '\${algoKey.toUpperCase()}')">📸 Share</button>
+                        <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', '\${algoKey.toUpperCase()}')"><i class="fas fa-camera"></i> Share</button>
                     </div>
                 \`;
                 initializeSortingArray();
@@ -80,7 +80,7 @@ class UniversalVisualizer {
                             <button class="btn btn-primary" onclick="insertNode()" style="width: 100%; margin-bottom: 8px;">Insert</button>
                             <button class="btn btn-secondary" onclick="searchNode()" style="width: 100%; margin-bottom: 8px;">Search</button>
                             <button class="btn btn-secondary" onclick="clearTree()" style="width: 100%; margin-bottom: 8px;">Clear</button>
-                            <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', '\${algoKey.toUpperCase()}')" style="width: 100%;">📸 Share</button>
+                            <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', '\${algoKey.toUpperCase()}')" style="width: 100%;"><i class="fas fa-camera"></i> Share</button>
                         </div>
                     </div>
                 \`;
@@ -91,7 +91,7 @@ class UniversalVisualizer {
                             <h3>\${algoKey.toUpperCase()} Visualizer</h3>
                             <p style="color: var(--text-muted); margin: 16px 0;">Interactive visualization coming soon</p>
                             <button class="btn btn-primary" onclick="startDemo()">Start Demo</button>
-                            <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', '\${algoKey.toUpperCase()}')">📸 Share</button>
+                            <button class="btn btn-secondary" onclick="shareScreenshot('visualizer-container', '\${algoKey.toUpperCase()}')"><i class="fas fa-camera"></i> Share</button>
                         </div>
                     </div>
                 \`;

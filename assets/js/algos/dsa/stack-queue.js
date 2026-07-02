@@ -158,7 +158,7 @@ class StackQueueAlgo {
         }
 
         this.targetSequence = simOutput;
-        this.ui.updateStatus(`🎯 Match Challenge! Use the buffer to output: <b>${this.targetSequence.join(', ')}</b>.`);
+        this.ui.updateStatus(`<i class="fas fa-crosshairs" style="color: var(--primary);"></i> Match Challenge! Use the buffer to output: <b>${this.targetSequence.join(', ')}</b>.`);
         this.engine.draw();
     }
 
@@ -207,7 +207,7 @@ class StackQueueAlgo {
                         this.outputList.every((v, i) => v === this.targetSequence[i]);
 
         if (matches) {
-            this.ui.updateStatus(`👑 Challenge Met! Output matched target successfully in <b>${this.moves} operations</b>.`);
+            this.ui.updateStatus(`<i class="fas fa-crown" style="color: #f59e0b;"></i> Challenge Met! Output matched target successfully in <b>${this.moves} operations</b>.`);
             if (typeof GamificationSystem !== 'undefined') {
                 GamificationSystem.saveScore('stack-queue', 'manual_flow', this.moves, 10);
                 ProgressSystem.complete('dsa', 'Stack & Queue');
@@ -217,7 +217,7 @@ class StackQueueAlgo {
             // If output exceeded size or mismatched, notify
             const isMismatched = this.outputList.some((v, idx) => v !== this.targetSequence[idx]);
             if (isMismatched || this.outputList.length > this.targetSequence.length) {
-                this.ui.updateStatus(`⚠️ Mismatched output sequence! Restarting challenge...`);
+                this.ui.updateStatus(`<i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i> Mismatched output sequence! Restarting challenge...`);
                 setTimeout(() => this.startChallenge(), 2000);
             }
         }

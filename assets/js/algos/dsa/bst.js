@@ -57,7 +57,7 @@ class BSTAlgo {
                 clickedNode.challengeHighlight = 'correct';
                 this.currentPathIndex++;
                 if (this.currentPathIndex >= this.targetPath.length) {
-                    this.ui.updateStatus(`👑 Path Guesser Complete! You found node <b>${this.targetValue}</b> with only ${this.errors} errors.`);
+                    this.ui.updateStatus(`<i class="fas fa-crown" style="color: #f59e0b;"></i> Path Guesser Complete! You found node <b>${this.targetValue}</b> with only ${this.errors} errors.`);
                     if (typeof GamificationSystem !== 'undefined') {
                         GamificationSystem.saveScore('bst', 'path_guesser', this.errors, 0);
                         ProgressSystem.complete('dsa', 'Binary Search Trees');
@@ -70,7 +70,7 @@ class BSTAlgo {
                 // Incorrect
                 clickedNode.challengeHighlight = 'incorrect';
                 this.errors++;
-                this.ui.updateStatus(`❌ Incorrect! Think about the BST search property: search value ${this.targetValue} compared with ${expectedNode.value}.`);
+                this.ui.updateStatus(`<i class="fas fa-times-circle" style="color: var(--danger);"></i> Incorrect! Think about the BST search property: search value ${this.targetValue} compared with ${expectedNode.value}.`);
             }
             this.engine.draw();
         }
@@ -109,7 +109,7 @@ class BSTAlgo {
         };
         resetHighlights(this.root);
 
-        this.ui.updateStatus(`🎯 BST Path Guesser! Guess the search path for value: <b>${this.targetValue}</b>.<br>Click nodes in the correct order starting from the ROOT.`);
+        this.ui.updateStatus(`<i class="fas fa-bullseye" style="color: var(--accent);"></i> BST Path Guesser! Guess the search path for value: <b>${this.targetValue}</b>.<br>Click nodes in the correct order starting from the ROOT.`);
         this.engine.draw();
     }
 

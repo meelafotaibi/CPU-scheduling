@@ -80,7 +80,7 @@ class HeapAlgo {
                     
                     const isParentChild = (p1 === this.selectedIdx) || (p2 === clickedIdx);
                     if (!isParentChild) {
-                        this.ui.updateStatus(`❌ Swaps are only allowed between direct parent and child nodes!`);
+                        this.ui.updateStatus(`<i class="fas fa-times-circle" style="color: var(--danger);"></i> Swaps are only allowed between direct parent and child nodes!`);
                         this.selectedIdx = null;
                         this.engine.clearHighlights();
                         return;
@@ -124,7 +124,7 @@ class HeapAlgo {
         this.engine.setHeap(arr);
         this.optimalMoves = this.calculateOptimalHeapifySwaps([...arr]);
 
-        this.ui.updateStatus(`🎯 Heapify Challenge! Swap violating nodes to restore the ${this.isMaxHeap ? 'Max Heap' : 'Min Heap'} property.<br>Click a node to select, then click its parent/child to swap. goal: restore heap!`);
+        this.ui.updateStatus(`<i class="fas fa-crosshairs" style="color: var(--primary);"></i> Heapify Challenge! Swap violating nodes to restore the ${this.isMaxHeap ? 'Max Heap' : 'Min Heap'} property.<br>Click a node to select, then click its parent/child to swap. goal: restore heap!`);
     }
 
     stopChallenge() {
@@ -179,7 +179,7 @@ class HeapAlgo {
         }
 
         if (isCorrect) {
-            this.ui.updateStatus(`👑 Heap restored in <b>${this.moves} swaps</b> (Optimal: ${this.optimalMoves})!`);
+            this.ui.updateStatus(`<i class="fas fa-crown" style="color: #f59e0b;"></i> Heap restored in <b>${this.moves} swaps</b> (Optimal: ${this.optimalMoves})!`);
             if (typeof GamificationSystem !== 'undefined') {
                 GamificationSystem.saveScore('heap', 'heapify_bubble', this.moves, this.optimalMoves);
                 ProgressSystem.complete('dsa', 'Binary Heaps');
