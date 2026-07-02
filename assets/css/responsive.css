@@ -1,6 +1,11 @@
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
 
+    html, body {
+        overflow-x: hidden !important;
+        max-width: 100% !important;
+    }
+
     /* Navigation */
     nav .container {
         padding: 0 16px;
