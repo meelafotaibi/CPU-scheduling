@@ -98,26 +98,75 @@
         margin: 2px;
     }
 
-    /* Stacking visualizer controls cleanly on mobile viewport */
+    /* Stacking visualizer controls cleanly on mobile viewport via CSS Grid */
     .controls,
     .monster-controls {
-        flex-direction: column !important;
-        align-items: stretch !important;
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
         gap: 12px !important;
+        align-items: stretch !important;
     }
 
     .controls > *,
     .monster-controls > * {
+        grid-column: span 1 !important;
         width: 100% !important;
         box-sizing: border-box;
     }
 
     .controls button,
     .monster-controls button {
+        grid-column: span 1 !important;
         width: 100% !important;
         justify-content: center !important;
         display: inline-flex !important;
         align-items: center !important;
+    }
+
+    .monster-controls input[type="number"] {
+        grid-column: span 1 !important;
+    }
+    .monster-controls button[onclick*="Insert"],
+    .monster-controls button[onclick*="doInsert"],
+    .monster-controls button[onclick*="insertNode"] {
+        grid-column: span 2 !important;
+    }
+
+    .controls select,
+    .controls div:has(select),
+    .controls div:has(> select) {
+        grid-column: span 3 !important;
+    }
+
+    .controls > div:first-child:has(select) {
+        grid-column: span 3 !important;
+    }
+
+    .monster-controls label,
+    .monster-controls .speed-label {
+        grid-column: span 1 !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    .monster-controls input[type="range"] {
+        grid-column: span 2 !important;
+        margin: 0 !important;
+    }
+
+    .controls div[style*="align-items: center"],
+    .controls div:has(input[type="range"]) {
+        grid-column: span 3 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+
+    .controls button[onclick*="share"],
+    .monster-controls button[onclick*="share"],
+    .controls #share-btn,
+    .monster-controls #share-btn {
+        grid-column: span 3 !important;
     }
 
     .controls .divider-v,
