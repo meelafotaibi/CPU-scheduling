@@ -6,7 +6,7 @@ Welcome to **AlgoVisual Hub**, an interactive, high-fidelity learning platform d
 
 I built this platform from the ground up to solve a problem I faced myself: textbooks and static slides make dynamic computer science systems feel lifeless. My vision is to create a cinematic, state-of-the-art visualizer hub that wows you at first glance and teaches you the core mechanics of complex systems through interaction.
 
-With a meticulously crafted modern "glassmorphic" UI, tailored HSL color palettes, neon accents, floating canvas backgrounds, and smooth micro-animations, the platform represents a new standard for educational web design. 100% free, 100% ad-free, and open source forever.
+With a meticulously crafted modern "glassmorphic" UI, tailored HSL color palettes, neon accents, floating canvas backgrounds, and smooth micro-animations, the platform represents a new standard for educational web design. 100% free, 100% ad-free, and built to help students learn.
 
 ---
 
@@ -69,7 +69,7 @@ Visualizes geometry rendering, buffer operations, and API hooks:
 
 ## 👤 About the Creator
 
-Hi, I'm **Meelo** (GitHub: [@meelafotaibi](https://github.com/meelafotaibi)). I am a student developer passionate about open-source education and high-performance frontend interfaces.
+Hi, I'm **Meelo** (GitHub: [@meelafotaibi](https://github.com/meelafotaibi)). I am a student developer passionate about computer science education and high-performance frontend interfaces.
 
 I spent countless hours designing the styling, timing loops, and graphics rendering engines to ensure the learning experience feels premium and responsive. If this hub has helped you learn, consider supporting the project voluntarily to help keep the server lights on:
 👉 **[Support the Platform](https://www.paypal.com/paypalme/Melioronic)** (Mada, Apple Pay, Google Pay, Visa are, PayPal accepted).
