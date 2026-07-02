@@ -671,7 +671,7 @@ window.shareScreenshot = async function (targetId, algoName) {
         await loadHtml2Canvas();
 
         const canvas = await html2canvas(target, {
-            backgroundColor: '#ffffff', // Force white background for dark mode/transparency
+            backgroundColor: '#090d16', // Preserve rich dark background for glassmorphic/neon aesthetics
             scale: window.devicePixelRatio || 2,
             logging: false,
             useCORS: true
@@ -692,20 +692,39 @@ function addWatermark(canvas, algoName) {
     const width = canvas.width;
     const height = canvas.height;
 
-    // Add explicit brand strip at bottom
-    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-    ctx.fillRect(0, height - 40, width, 40);
+    // Calculate proportional font sizing and padding for high-DPI screenshots
+    const scaleFactor = Math.max(1, Math.round(width / 800));
+    const fontSize = Math.max(14, 16 * scaleFactor);
+    const padding = Math.max(15, 20 * scaleFactor);
+    const stripHeight = Math.max(45, 50 * scaleFactor);
 
-    ctx.font = "bold 24px Inter, system-ui, sans-serif";
-    ctx.fillStyle = "#111827"; // Dark text
-    ctx.textAlign = "right";
+    // Add translucent dark glass brand strip at the bottom
+    ctx.fillStyle = "rgba(9, 13, 22, 0.95)";
+    ctx.fillRect(0, height - stripHeight, width, stripHeight);
+
+    // Draw glowing neon accent line at the top of the brand strip
+    const gradient = ctx.createLinearGradient(0, 0, width, 0);
+    gradient.addColorStop(0, "#6366f1"); // Indigo
+    gradient.addColorStop(0.5, "#a855f7"); // Purple
+    gradient.addColorStop(1, "#ec4899"); // Pink
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = Math.max(2, 3 * scaleFactor);
+    ctx.beginPath();
+    ctx.moveTo(0, height - stripHeight);
+    ctx.lineTo(width, height - stripHeight);
+    ctx.stroke();
+
+    // Brand Label
+    ctx.font = `bold ${fontSize}px Inter, system-ui, sans-serif`;
+    ctx.textAlign = "left";
     ctx.textBaseline = "middle";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("AlgoVisual Hub", padding, height - (stripHeight / 2));
 
-    ctx.fillText(
-        `AlgoVisual Hub • ${algoName}`,
-        width - 20,
-        height - 20
-    );
+    // Algorithm name label on the right
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#a5b4fc"; // Soft lavender-indigo
+    ctx.fillText(algoName, width - padding, height - (stripHeight / 2));
 }
 
 function downloadCanvas(canvas, algoName) {
