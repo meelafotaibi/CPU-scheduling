@@ -64,6 +64,7 @@ Visualizes geometry rendering, buffer operations, and API hooks:
 *   **Interactive Challenges**: Gamification system with achievements saved in localStorage.
 *   **Execution Log System**: Detailed, real-time step trackers for deep debugging.
 *   **URL Session Sharing**: Instantly share a visualizer's state by copying the URL parameters.
+*   **Secure Voluntary Support**: Integrated payment options via Paddle (Mada, Apple Pay, Google Pay, Credit Card) and PayPal on the Support page.
 
 ---
 
@@ -72,7 +73,8 @@ Visualizes geometry rendering, buffer operations, and API hooks:
 Hi, I'm **Meelo** (GitHub: [@meelafotaibi](https://github.com/meelafotaibi)). I am a student developer passionate about computer science education and high-performance frontend interfaces.
 
 I spent countless hours designing the styling, timing loops, and graphics rendering engines to ensure the learning experience feels premium and responsive. If this hub has helped you learn, consider supporting the project voluntarily to help keep the server lights on:
-👉 **[Support the Platform](https://www.paypal.com/paypalme/Melioronic)** (Mada, Apple Pay, Google Pay, Visa are, PayPal accepted).
+👉 **[Support via Credit Card / Apple Pay / Google Pay / Mada](https://cpuos-ae329.web.app/support.html)** (processed securely via Paddle on the site).
+👉 **[Support via PayPal](https://www.paypal.com/paypalme/Melioronic)**.
 
 ---
 
