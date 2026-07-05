@@ -194,16 +194,24 @@ class CPUSchedulerUI {
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
 
-        card.addEventListener('mousemove', (e) => {
+        this.removeCardHoverEffect(card);
+
+        const listener = (e) => {
             const x = (e.clientX - centerX) / 10;
             const y = (e.clientY - centerY) / 10;
             card.style.transform = `perspective(1000px) rotateX(${-y}deg) rotateY(${x}deg) translateZ(10px)`;
-        });
+        };
+
+        card._cardMouseMoveListener = listener;
+        card.addEventListener('mousemove', listener);
     }
 
     removeCardHoverEffect(card) {
         card.style.transform = '';
-        card.removeEventListener('mousemove', () => { });
+        if (card._cardMouseMoveListener) {
+            card.removeEventListener('mousemove', card._cardMouseMoveListener);
+            delete card._cardMouseMoveListener;
+        }
     }
 
     handleToggle(btn) {

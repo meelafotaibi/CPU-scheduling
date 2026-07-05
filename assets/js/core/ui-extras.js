@@ -93,14 +93,14 @@ class UIExtrasSystem {
                 `;
                 supportBtn.innerHTML = `<img src="${prefix}assets/img/logo.png" style="height: 1.25em; width: auto; vertical-align: middle; margin-right: 6px;"> Support`;
                 supportBtn.onmouseover = () => {
-                    supportBtn.style.background = 'var(--accent)';
-                    supportBtn.style.color = '#fff';
-                    supportBtn.style.boxShadow = '0 0 20px rgba(236, 72, 153, 0.5)';
+                    supportBtn.style.setProperty('background', 'var(--accent)', 'important');
+                    supportBtn.style.setProperty('color', '#ffffff', 'important');
+                    supportBtn.style.setProperty('box-shadow', '0 0 20px rgba(236, 72, 153, 0.5)', 'important');
                 };
                 supportBtn.onmouseout = () => {
-                    supportBtn.style.background = 'transparent';
-                    supportBtn.style.color = 'var(--accent)';
-                    supportBtn.style.boxShadow = '0 0 10px rgba(236, 72, 153, 0.15)';
+                    supportBtn.style.setProperty('background', 'transparent', 'important');
+                    supportBtn.style.setProperty('color', 'var(--accent)', 'important');
+                    supportBtn.style.setProperty('box-shadow', '0 0 10px rgba(236, 72, 153, 0.15)', 'important');
                 };
                 navLinks.appendChild(supportBtn);
             }
